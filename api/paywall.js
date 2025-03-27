@@ -1,87 +1,75 @@
-// api/paywall.js - Vercel Serverless Function
-import { verifyToken } from '../utils/auth';
-import Stripe from 'stripe';
+import { useEffect, useState } from "react";
+import { loadStripe } from "@stripe/stripe-js";
 
-// Initialize Stripe with your secret key
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
-export default async function handler(req, res) {
-  // CORS handling
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-  res.setHeader(
-    'Access-Control-Allow-Headers',
-    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization'
+export default function Paywall() {
+  const [hasAccess, setHasAccess] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    async function checkSubscription() {
+      try {
+        const res = await fetch("/api/paywall", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`, // Ensure user is authenticated
+          },
+        });
+
+        const data = await res.json();
+        if (data.error) throw new Error(data.message);
+        setHasAccess(data.hasActiveSubscription);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    checkSubscription();
+  }, []);
+
+  async function handleSubscribe() {
+    setLoading(true);
+    try {
+      const stripe = await stripePromise;
+      const res = await fetch("/api/paywall", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: "user@example.com" }), // Replace with actual user email
+      });
+
+      const data = await res.json();
+      if (!data.checkoutUrl) throw new Error("Failed to create checkout session");
+
+      window.location.href = data.checkoutUrl; // Redirect to Stripe Checkout
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p style={{ color: "red" }}>{error}</p>;
+
+  return hasAccess ? (
+    <div>
+      <h2>🎉 You have full access! Enjoy your content.</h2>
+      <p>Welcome to the premium section.</p>
+    </div>
+  ) : (
+    <div style={{ textAlign: "center", padding: "20px", border: "1px solid #ccc" }}>
+      <h2>🔒 This content is locked.</h2>
+      <p>Subscribe now to unlock premium content.</p>
+      <button 
+        onClick={handleSubscribe} 
+        style={{ padding: "10px 20px", fontSize: "16px", cursor: "pointer" }}
+      >
+        Subscribe Now
+      </button>
+    </div>
   );
-
-  // Handle OPTIONS request
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
-  }
-
-  // Route handling
-  switch (req.method) {
-    case 'GET':
-      return handleSubscriptionCheck(req, res);
-    case 'POST':
-      return handleCheckoutSession(req, res);
-    default:
-      res.setHeader('Allow', ['GET', 'POST']);
-      res.status(405).end(`Method ${req.method} Not Allowed`);
-  }
-}
-
-// Check subscription status
-async function handleSubscriptionCheck(req, res) {
-  try {
-    // Verify JWT token
-    const user = verifyToken(req.headers.authorization);
-    
-    // In a real app, you'd check against your database
-    const subscriptionStatus = await checkUserSubscription(user.id);
-    
-    res.status(200).json({
-      hasActiveSubscription: subscriptionStatus.active,
-      subscriptionDetails: subscriptionStatus
-    });
-  } catch (error) {
-    res.status(401).json({ error: 'Unauthorized', message: error.message });
-  }
-}
-
-// Create Stripe checkout session
-async function handleCheckoutSession(req, res) {
-  try {
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      mode: 'subscription',
-      line_items: [{
-        price: process.env.STRIPE_PRICE_ID, // Your Stripe price ID
-        quantity: 1,
-      }],
-      success_url: `${process.env.FRONTEND_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.FRONTEND_URL}/cancel`,
-      // Optional: add customer email if available
-      customer_email: req.body.email || undefined,
-    });
-
-    res.status(200).json({ checkoutUrl: session.url });
-  } catch (error) {
-    console.error('Checkout session error:', error);
-    res.status(500).json({ error: 'Could not create checkout session' });
-  }
-}
-
-// Placeholder for subscription check
-async function checkUserSubscription(userId) {
-  // In a real implementation, this would:
-  // 1. Check database for user's subscription
-  // 2. Verify with Stripe if subscription is active
-  return {
-    active: false,
-    userId: userId,
-    reason: 'Implement actual subscription verification'
-  };
 }
