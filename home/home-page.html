@@ -64,7 +64,7 @@
       background: #475569;
     }
 
-    /* Enhanced Tooltip styles */
+    /* Enhanced Tooltip styles - update to trigger only on info icon */
     .tooltip {
       position: relative;
       display: inline-block;
@@ -118,8 +118,8 @@
       border-color: transparent transparent #217346 transparent;
     }
 
-    /* Hover effect */
-    .tooltip:hover .tooltip-text {
+    /* Only show tooltip when hovering over the info icon */
+    .tooltip .info-icon:hover + .tooltip-text {
       visibility: visible;
       opacity: 1;
       transform: translateY(0);
@@ -180,13 +180,7 @@
 
     /* Column header styling */
     .has-notes {
-      border-bottom: 1.5px dotted #6b7280;
-      cursor: help;
       padding-bottom: 1px;
-    }
-
-    .dark .has-notes {
-      border-bottom-color: #9ca3af;
     }
 
     .tooltip .info-icon {
@@ -201,6 +195,7 @@
       color: white;
       margin-left: 5px;
       vertical-align: text-top;
+      cursor: help;
     }
 
     .dark .tooltip .info-icon {
@@ -373,6 +368,92 @@
       border-color: #4b5563;
       color: #9ca3af;
     }
+
+    /* Custom tooltip for dropdown options */
+    .dropdown-tooltip {
+      position: relative;
+    }
+
+    .dropdown-tooltip .tooltip-text {
+      left: auto;
+      right: 0;
+    }
+
+    .dropdown-tooltip .tooltip-text::before {
+      left: auto;
+      right: 15px;
+    }
+    
+    /* Auto-mapping suggestion panel */
+    .mapping-suggestion-panel {
+      margin-bottom: 1.5rem;
+      background-color: #f0f9ff;
+      border: 1px solid #bae6fd;
+      border-radius: 0.375rem;
+      padding: 1rem;
+    }
+    
+    .dark .mapping-suggestion-panel {
+      background-color: rgba(14, 165, 233, 0.1);
+      border-color: rgba(14, 165, 233, 0.2);
+    }
+    
+    .mapping-suggestion {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.5rem;
+      padding: 0.5rem;
+      border-radius: 0.25rem;
+      background-color: #fff;
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    }
+    
+    .dark .mapping-suggestion {
+      background-color: #1f2937;
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.1);
+    }
+    
+    .mapping-suggestion:last-child {
+      margin-bottom: 0;
+    }
+    
+    .mapping-confidence {
+      display: inline-block;
+      padding: 0.125rem 0.375rem;
+      border-radius: 0.25rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+    
+    .confidence-high {
+      background-color: #dcfce7;
+      color: #166534;
+    }
+    
+    .dark .confidence-high {
+      background-color: rgba(22, 101, 52, 0.3);
+      color: #4ade80;
+    }
+    
+    .confidence-medium {
+      background-color: #fef9c3;
+      color: #854d0e;
+    }
+    
+    .dark .confidence-medium {
+      background-color: rgba(133, 77, 14, 0.3);
+      color: #facc15;
+    }
+    
+    .confidence-low {
+      background-color: #fee2e2;
+      color: #b91c1c;
+    }
+    
+    .dark .confidence-low {
+      background-color: rgba(185, 28, 28, 0.3);
+      color: #f87171;
+    }
   </style>
 </head>
 <body>
@@ -390,7 +471,7 @@
       return false;
     };
 
-    // Custom Select Component with hover preview support
+    // Custom Select Component with hover preview support and descriptions
     const CustomSelect = ({ 
       options, 
       value, 
@@ -398,7 +479,8 @@
       placeholder = "-- Select an option --", 
       isError = false,
       suggestedValue = null,
-      columnSamples = {}
+      columnSamples = {},
+      columnDescriptions = {}
     }) => {
       const [isOpen, setIsOpen] = useState(false);
       const [previewVisible, setPreviewVisible] = useState(false);
@@ -474,14 +556,28 @@
       const selectedOption = options.find(opt => opt.value === value);
       const displayValue = selectedOption ? selectedOption.label : placeholder;
       
+      // Helper to check if a column has a description
+      const hasDescription = (optionValue) => {
+        return columnDescriptions[optionValue] && columnDescriptions[optionValue].trim() !== '';
+      };
+      
       return (
         <div ref={containerRef} className="custom-select-container">
           <div 
             className={`custom-select-header ${isOpen ? 'open' : ''} ${isError ? 'error' : ''}`} 
             onClick={handleToggle}
           >
-            <span className={!selectedOption ? 'text-gray-400 dark:text-gray-500' : ''}>
+            <span className={!selectedOption ? 'text-gray-400 dark:text-gray-500' : 'flex items-center'}>
               {displayValue}
+              {value && hasDescription(value) && (
+                <div className="tooltip ml-1">
+                  <span className="info-icon text-xs">i</span>
+                  <span 
+                    className={`tooltip-text ${columnDescriptions[value] && columnDescriptions[value].length > 150 ? 'large' : ''}`}
+                    dangerouslySetInnerHTML={{ __html: columnDescriptions[value] }}
+                  />
+                </div>
+              )}
             </span>
             <span className="arrow">▼</span>
           </div>
@@ -498,10 +594,24 @@
                 onMouseEnter={(e) => handleOptionMouseEnter(e, option.value)}
                 onMouseLeave={handleOptionMouseLeave}
               >
-                <span>{option.label}</span>
-                {option.value === suggestedValue && (
-                  <span className="text-sm text-gray-500 dark:text-gray-400">(Suggested)</span>
-                )}
+                <div className="flex justify-between w-full items-center">
+                  <div className="flex items-center">
+                    <span className="mr-1">{option.label}</span>
+                    {hasDescription(option.value) && (
+                      <div className="tooltip">
+                        <span className="info-icon text-xs">i</span>
+                        <span 
+                          className={`tooltip-text ${columnDescriptions[option.value] && columnDescriptions[option.value].length > 150 ? 'large' : ''}`}
+                          dangerouslySetInnerHTML={{ __html: columnDescriptions[option.value] }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                  
+                  {option.value === suggestedValue && (
+                    <span className="text-sm text-gray-500 dark:text-gray-400">(Suggested)</span>
+                  )}
+                </div>
               </div>
             ))}
           </div>
@@ -543,6 +653,7 @@
       const [dataHeaders, setDataHeaders] = useState([]);
       const [mappings, setMappings] = useState({});
       const [suggestedMappings, setSuggestedMappings] = useState({});
+      const [mappingScores, setMappingScores] = useState({});
       const [mappedData, setMappedData] = useState(null);
       const [step, setStep] = useState(1);
       const [isDarkMode, setIsDarkMode] = useState(initDarkMode());
@@ -567,10 +678,14 @@
       
       // Template header notes state from data validation or comments
       const [templateHeaderNotes, setTemplateHeaderNotes] = useState({});
+      const [dataHeaderDescriptions, setDataHeaderDescriptions] = useState({});
       const [debugInfo, setDebugInfo] = useState("");
       
       // Column data samples for preview
       const [columnSamples, setColumnSamples] = useState({});
+      
+      // State to track if suggestions have been reviewed
+      const [suggestionsReviewed, setSuggestionsReviewed] = useState(false);
       
       // Listen for dark mode changes
       useEffect(() => {
@@ -783,10 +898,37 @@
               
               setTemplate({ workbook, sheet: selectedSheet, headers, data: fullData });
               setTemplateHeaders(headers);
+              
+              // Reset suggestions reviewed state when loading a new template
+              setSuggestionsReviewed(false);
             } else {
               // Process data file normally (unchanged)
               const headerRowIndex = dataHeaderRow - 1;
               const headers = jsonData[headerRowIndex] || [];
+              
+              // Generate demo descriptions for data headers
+              const descriptions = {};
+              headers.forEach((header, index) => {
+                if (!header) return;
+                
+                // Create descriptive text based on header name
+                const words = header.split(/[\s_.-]+/);
+                const formattedHeader = words.map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+                
+                if (index % 5 === 0) {
+                  descriptions[header] = `<h4>${formattedHeader}</h4><p>Contains unique identifier values for each record. Use this for reference or linking to other systems.</p>`;
+                } else if (index % 5 === 1) {
+                  descriptions[header] = `<h4>${formattedHeader}</h4><p>This column stores ${formattedHeader.toLowerCase()} values from the source system. <span class="highlight">Important for data integrity</span>.</p>`;
+                } else if (index % 5 === 2) {
+                  descriptions[header] = `<h4>About ${formattedHeader}</h4><p>Contains formatted text data with ${formattedHeader.toLowerCase()} information. This data is used for reporting and analytics.</p>`;
+                } else if (index % 5 === 3) {
+                  descriptions[header] = `<h4>${formattedHeader} Details</h4><p>This column provides metadata about each record, including things like:</p><ul><li>Source system information</li><li>Last update timestamp</li><li>Validation status</li></ul>`;
+                } else {
+                  descriptions[header] = `<h4>${formattedHeader} Column</h4><p>This field contains supplementary information that may be useful for specific reporting needs. The content is <span class="highlight">variable in format</span>.</p>`;
+                }
+              });
+              
+              setDataHeaderDescriptions(descriptions);
               
               // Get data rows (all rows after the header row)
               const dataRows = jsonData.slice(headerRowIndex + 1);
@@ -831,9 +973,13 @@
               
               // If template headers already exist, generate suggested mappings
               if (templateHeaders.length > 0) {
-                const suggestions = generateFuzzyMappings(templateHeaders, headers);
+                const { suggestions, scores } = generateFuzzyMappings(templateHeaders, headers);
                 setSuggestedMappings(suggestions);
+                setMappingScores(scores);
                 setMappings(suggestions);
+                
+                // Reset suggestions reviewed state when loading new data
+                setSuggestionsReviewed(false);
               }
             }
           } catch (error) {
@@ -852,50 +998,82 @@
         reader.readAsBinaryString(file);
       };
 
-      // Simple fuzzy matching function
+      // Enhanced fuzzy matching function
       const fuzzyMatch = (str1, str2) => {
         if (!str1 || !str2) return 0;
         
-        const s1 = String(str1).toLowerCase().replace(/\s+/g, '');
-        const s2 = String(str2).toLowerCase().replace(/\s+/g, '');
+        // Normalize strings: lowercase, remove special chars, trim whitespace
+        const cleanStr1 = String(str1).toLowerCase().replace(/[^a-z0-9]/gi, '');
+        const cleanStr2 = String(str2).toLowerCase().replace(/[^a-z0-9]/gi, '');
         
-        // Calculate similarity score
-        let score = 0;
-        const minLength = Math.min(s1.length, s2.length);
+        // Exact match after normalization is a perfect score
+        if (cleanStr1 === cleanStr2) return 1.0;
         
-        for (let i = 0; i < minLength; i++) {
-          if (s1[i] === s2[i]) score++;
+        // Calculate Levenshtein distance-based similarity
+        const len1 = cleanStr1.length;
+        const len2 = cleanStr2.length;
+        
+        // If either string is empty, similarity is 0
+        if (len1 === 0 || len2 === 0) return 0;
+        
+        // Check for containment (one string is part of the other)
+        if (cleanStr1.includes(cleanStr2) || cleanStr2.includes(cleanStr1)) {
+          // Length ratio determines strength of the match
+          const containmentScore = Math.min(len1, len2) / Math.max(len1, len2);
+          // Boost score for containment
+          return Math.min(1.0, containmentScore + 0.3);
         }
         
-        return score / Math.max(s1.length, s2.length);
+        // Character by character matching, giving more weight to matching prefixes
+        let matchScore = 0;
+        const maxLen = Math.max(len1, len2);
+        const minLen = Math.min(len1, len2);
+        
+        for (let i = 0; i < minLen; i++) {
+          // Characters match
+          if (cleanStr1[i] === cleanStr2[i]) {
+            // Earlier matches are more important (prefix bonus)
+            matchScore += 1 - (i / (2 * maxLen));
+          }
+        }
+        
+        // Normalize score
+        return matchScore / maxLen;
       };
 
-      // Generate suggested mappings based on fuzzy matching
+      // Generate suggested mappings based on enhanced fuzzy matching
       const generateFuzzyMappings = (templateHeaders, dataHeaders) => {
         const suggestions = {};
+        const scores = {};
         
         templateHeaders.forEach(templateHeader => {
           if (!templateHeader) return;
           
-          let bestMatch = null;
-          let bestScore = 0;
+          // Track all matches for this template header
+          let matches = [];
           
           dataHeaders.forEach(dataHeader => {
             if (!dataHeader) return;
             
             const score = fuzzyMatch(templateHeader, dataHeader);
-            if (score > 0.6 && score > bestScore) {
-              bestScore = score;
-              bestMatch = dataHeader;
+            if (score > 0.3) { // Consider any match above 30% similarity
+              matches.push({ header: dataHeader, score });
             }
           });
           
-          if (bestMatch) {
-            suggestions[templateHeader] = bestMatch;
+          // Sort matches by score (highest first)
+          matches.sort((a, b) => b.score - a.score);
+          
+          // Store scores for all potential matches
+          scores[templateHeader] = matches;
+          
+          // Only use the best match if it's good enough (above 60% similarity)
+          if (matches.length > 0 && matches[0].score > 0.6) {
+            suggestions[templateHeader] = matches[0].header;
           }
         });
         
-        return suggestions;
+        return { suggestions, scores };
       };
 
       // Handle mapping change
@@ -904,6 +1082,31 @@
           ...prev,
           [templateHeader]: dataHeader
         }));
+      };
+
+      // Accept all suggestions
+      const acceptAllSuggestions = () => {
+        setMappings(suggestedMappings);
+        setSuggestionsReviewed(true);
+      };
+      
+      // Accept a specific mapping suggestion
+      const acceptSuggestion = (templateHeader) => {
+        if (suggestedMappings[templateHeader]) {
+          setMappings(prev => ({
+            ...prev,
+            [templateHeader]: suggestedMappings[templateHeader]
+          }));
+        }
+      };
+      
+      // Clear a specific mapping
+      const clearMapping = (templateHeader) => {
+        setMappings(prev => {
+          const newMappings = { ...prev };
+          delete newMappings[templateHeader];
+          return newMappings;
+        });
       };
 
       // Validate mappings before proceeding
@@ -1088,10 +1291,40 @@
 
       // Dynamically check if any notes are available
       const hasAnyNotes = Object.values(templateHeaderNotes).some(note => note && note.trim() !== '');
+      
+      // Check if any data descriptions are available
+      const hasAnyDataDescriptions = Object.values(dataHeaderDescriptions).some(
+        desc => desc && desc.trim() !== ''
+      );
 
       // Function to determine if a note needs the "large" class
       const isLargeNote = (note) => {
         return note && note.length > 150;
+      };
+      
+      // Get confidence level label based on score
+      const getConfidenceLevel = (score) => {
+        if (score >= 0.8) return 'High';
+        if (score >= 0.6) return 'Medium';
+        return 'Low';
+      };
+      
+      // Get confidence level class based on score
+      const getConfidenceClass = (score) => {
+        if (score >= 0.8) return 'confidence-high';
+        if (score >= 0.6) return 'confidence-medium';
+        return 'confidence-low';
+      };
+      
+      // Get the number of unmapped required fields
+      const getUnmappedRequiredFieldsCount = () => {
+        return templateHeaders.filter(header => {
+          return (
+            header && 
+            fieldRequirements[header] === 'Required' && 
+            (!mappings[header] || mappings[header] === '')
+          );
+        }).length;
       };
 
       return (
@@ -1259,16 +1492,16 @@
                             {templateHeaders.filter(Boolean).map((header, index) => (
                               <tr key={index} className={index % 2 === 0 ? 'bg-gray-50 dark:bg-gray-700/30' : 'dark:bg-gray-800'}>
                                 <td className="py-1 px-3 border-b dark:border-gray-600">
-                                  <div className="tooltip">
-                                    <span className={headerHasNotes(header) ? "has-notes" : ""}>
-                                      {header}
-                                      {headerHasNotes(header) && <span className="info-icon ml-1">i</span>}
-                                    </span>
+                                  <div className="tooltip flex items-center">
+                                    <span className="has-notes">{header}</span>
                                     {headerHasNotes(header) && (
-                                      <span 
-                                        className={`tooltip-text ${isLargeNote(templateHeaderNotes[header]) ? 'large' : ''}`}
-                                        dangerouslySetInnerHTML={{ __html: templateHeaderNotes[header] }}
-                                      />
+                                      <>
+                                        <span className="info-icon ml-1">i</span>
+                                        <span 
+                                          className={`tooltip-text ${isLargeNote(templateHeaderNotes[header]) ? 'large' : ''}`}
+                                          dangerouslySetInnerHTML={{ __html: templateHeaderNotes[header] }}
+                                        />
+                                      </>
                                     )}
                                   </div>
                                 </td>
@@ -1395,9 +1628,111 @@
               <div className="bg-white dark:bg-gray-800 p-4 md:p-6 rounded-lg shadow dark:text-white">
                 <h2 className="text-lg font-medium mb-4 text-excel-600 dark:text-excel-400">Map Template Columns to Data Columns</h2>
                 <p className="mb-4 text-gray-600 dark:text-gray-300">
-                  We've attempted to automatically map columns based on similar names. Please review and adjust as needed.
+                  We've automatically matched columns based on name similarity. Please review and adjust as needed.
                   <span className="text-red-500 dark:text-red-400 ml-2 font-medium">Required fields must be mapped.</span>
                 </p>
+                
+                {!suggestionsReviewed && Object.keys(suggestedMappings).length > 0 && (
+                  <div className="mapping-suggestion-panel mb-6 dark:bg-blue-950/20">
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="font-medium text-blue-800 dark:text-blue-300">Suggested Column Mappings</h3>
+                      <button 
+                        onClick={acceptAllSuggestions}
+                        className="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded transition-colors"
+                      >
+                        Accept All
+                      </button>
+                    </div>
+                    
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full bg-white dark:bg-gray-800 border dark:border-gray-700 text-sm rounded-md">
+                        <thead className="bg-gray-50 dark:bg-gray-700">
+                          <tr>
+                            <th className="py-2 px-3 border-b dark:border-gray-600 text-left">Template Column</th>
+                            <th className="py-2 px-3 border-b dark:border-gray-600 text-left">Suggested Data Column</th>
+                            <th className="py-2 px-3 border-b dark:border-gray-600 text-left">Confidence</th>
+                            <th className="py-2 px-3 border-b dark:border-gray-600 text-left">Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {Object.entries(suggestedMappings).map(([templateHeader, dataHeader], index) => {
+                            // Get the match score for this suggestion
+                            const matchScores = mappingScores[templateHeader] || [];
+                            const matchInfo = matchScores.find(m => m.header === dataHeader);
+                            const score = matchInfo ? matchInfo.score : 0;
+                            const confidenceLevel = getConfidenceLevel(score);
+                            const confidenceClass = getConfidenceClass(score);
+                            
+                            return (
+                              <tr key={index} className={index % 2 === 0 ? 'bg-gray-50 dark:bg-gray-700/30' : 'dark:bg-gray-800'}>
+                                <td className="py-2 px-3 border-b dark:border-gray-600">
+                                  <div className="tooltip flex items-center">
+                                    <span className="has-notes">{templateHeader}</span>
+                                    {headerHasNotes(templateHeader) && (
+                                      <>
+                                        <span className="info-icon ml-1">i</span>
+                                        <span 
+                                          className={`tooltip-text ${isLargeNote(templateHeaderNotes[templateHeader]) ? 'large' : ''}`}
+                                          dangerouslySetInnerHTML={{ __html: templateHeaderNotes[templateHeader] }}
+                                        />
+                                      </>
+                                    )}
+                                  </div>
+                                </td>
+                                <td className="py-2 px-3 border-b dark:border-gray-600">
+                                  <div className="flex items-center">
+                                    <span>{dataHeader}</span>
+                                    {dataHeaderDescriptions[dataHeader] && (
+                                      <div className="tooltip ml-1">
+                                        <span className="info-icon text-xs">i</span>
+                                        <span 
+                                          className={`tooltip-text ${dataHeaderDescriptions[dataHeader] && dataHeaderDescriptions[dataHeader].length > 150 ? 'large' : ''}`}
+                                          dangerouslySetInnerHTML={{ __html: dataHeaderDescriptions[dataHeader] }}
+                                        />
+                                      </div>
+                                    )}
+                                  </div>
+                                </td>
+                                <td className="py-2 px-3 border-b dark:border-gray-600">
+                                  <span className={`mapping-confidence ${confidenceClass}`}>
+                                    {confidenceLevel}
+                                  </span>
+                                </td>
+                                <td className="py-2 px-3 border-b dark:border-gray-600">
+                                  <div className="flex space-x-2">
+                                    <button
+                                      onClick={() => acceptSuggestion(templateHeader)}
+                                      className="px-2 py-0.5 bg-green-500 hover:bg-green-600 text-white text-sm rounded"
+                                      title="Accept this mapping"
+                                    >
+                                      ✓
+                                    </button>
+                                    <button
+                                      onClick={() => clearMapping(templateHeader)}
+                                      className="px-2 py-0.5 bg-red-500 hover:bg-red-600 text-white text-sm rounded"
+                                      title="Reject this mapping"
+                                    >
+                                      ✗
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                    
+                    <div className="mt-3">
+                      <button 
+                        onClick={() => setSuggestionsReviewed(true)}
+                        className="text-blue-600 dark:text-blue-400 text-sm hover:underline"
+                      >
+                        Dismiss suggestions
+                      </button>
+                    </div>
+                  </div>
+                )}
                 
                 <div className="mb-4 flex flex-col sm:flex-row gap-2 text-sm">
                   {hasAnyNotes && (
@@ -1405,7 +1740,7 @@
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 flex-shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
                         <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9a1 1 0 00-1-1z" clipRule="evenodd" />
                       </svg>
-                      <span><span className="font-medium">Tip:</span> Hover over column names with dotted underlines and "i" icons to see input guidance from the Excel template.</span>
+                      <span><span className="font-medium">Tip:</span> Hover over the "i" icons next to template column names to see input guidance from the Excel template.</span>
                     </div>
                   )}
                   
@@ -1413,7 +1748,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 flex-shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
                       <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9a1 1 0 00-1-1z" clipRule="evenodd" />
                     </svg>
-                    <span><span className="font-medium">Tip:</span> Hover over a dropdown option for 1.5 seconds to see sample data from that column.</span>
+                    <span><span className="font-medium">Tip:</span> Hover over the "i" icons next to data column names to see descriptions, or hover on any cell for 1.5 seconds to see sample data.</span>
                   </div>
                 </div>
                 
@@ -1430,16 +1765,16 @@
                       {templateHeaders.filter(Boolean).map((header, index) => (
                         <tr key={index} className={index % 2 === 0 ? 'bg-gray-50 dark:bg-gray-700/30' : 'dark:bg-gray-800'}>
                           <td className="py-2 px-4 border-b dark:border-gray-600">
-                            <div className="tooltip">
-                              <span className={headerHasNotes(header) ? "has-notes" : ""}>
-                                {header}
-                                {headerHasNotes(header) && <span className="info-icon ml-1">i</span>}
-                              </span>
+                            <div className="tooltip flex items-center">
+                              <span className="has-notes">{header}</span>
                               {headerHasNotes(header) && (
-                                <span 
-                                  className={`tooltip-text ${isLargeNote(templateHeaderNotes[header]) ? 'large' : ''}`}
-                                  dangerouslySetInnerHTML={{ __html: templateHeaderNotes[header] }}
-                                />
+                                <>
+                                  <span className="info-icon ml-1">i</span>
+                                  <span 
+                                    className={`tooltip-text ${isLargeNote(templateHeaderNotes[header]) ? 'large' : ''}`}
+                                    dangerouslySetInnerHTML={{ __html: templateHeaderNotes[header] }}
+                                  />
+                                </>
                               )}
                             </div>
                           </td>
@@ -1464,6 +1799,7 @@
                               isError={fieldRequirements[header] === 'Required' && (!mappings[header] || mappings[header] === '')}
                               suggestedValue={suggestedMappings[header] || null}
                               columnSamples={columnSamples}
+                              columnDescriptions={dataHeaderDescriptions}
                             />
                           </td>
                         </tr>
@@ -1496,7 +1832,16 @@
                         </svg>
                         Mapping Data...
                       </span>
-                    ) : 'Map Data'}
+                    ) : (
+                      <>
+                        Map Data
+                        {getUnmappedRequiredFieldsCount() > 0 && (
+                          <span className="ml-2 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full">
+                            {getUnmappedRequiredFieldsCount()} unmapped required
+                          </span>
+                        )}
+                      </>
+                    )}
                   </button>
                 </div>
               </div>
@@ -1520,19 +1865,21 @@
                         <tr>
                           {mappedData[0].map((header, index) => (
                             <th key={index} className="py-2 px-4 border-b dark:border-gray-600 text-left">
-                              <div className="tooltip">
+                              <div className="tooltip flex items-center">
                                 <span className={header && headerHasNotes(header) ? "has-notes" : ""}>
                                   {header || '(Empty Column)'}
                                   {header && fieldRequirements[header] === 'Required' && (
                                     <span className="ml-1 text-red-500 dark:text-red-400">*</span>
                                   )}
-                                  {header && headerHasNotes(header) && <span className="info-icon ml-1">i</span>}
                                 </span>
                                 {header && headerHasNotes(header) && (
-                                  <span 
-                                    className={`tooltip-text ${isLargeNote(templateHeaderNotes[header]) ? 'large' : ''}`}
-                                    dangerouslySetInnerHTML={{ __html: templateHeaderNotes[header] }}
-                                  />
+                                  <>
+                                    <span className="info-icon ml-1">i</span>
+                                    <span 
+                                      className={`tooltip-text ${isLargeNote(templateHeaderNotes[header]) ? 'large' : ''}`}
+                                      dangerouslySetInnerHTML={{ __html: templateHeaderNotes[header] }}
+                                    />
+                                  </>
                                 )}
                               </div>
                             </th>
