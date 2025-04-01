@@ -923,6 +923,55 @@
     .dark .main-tab-badge {
       background-color: #0284c7;
     }
+
+    /* Export options panel */
+    .export-options-panel {
+      margin-top: 20px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 16px;
+      background-color: #f9fafb;
+    }
+
+    .dark .export-options-panel {
+      background-color: #1f2937;
+      border-color: #374151;
+    }
+
+    .export-options-title {
+      font-weight: 600;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+    }
+
+    .export-options-title svg {
+      margin-right: 8px;
+    }
+
+    .export-option-group {
+      margin-bottom: 16px;
+    }
+
+    .export-option-label {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+
+    .export-option-label input {
+      margin-top: 2px;
+      margin-right: 8px;
+    }
+
+    .export-option-description {
+      font-size: 0.875rem;
+      color: #4b5563;
+    }
+
+    .dark .export-option-description {
+      color: #9ca3af;
+    }
   </style>
 </head>
 <body>
@@ -1151,7 +1200,8 @@
         template: false,
         data: false,
         mapping: false,
-        headerLoad: false
+        headerLoad: false,
+        export: false
       });
       
       // Sheet selection states
@@ -1208,6 +1258,16 @@
       // States for per-worksheet configuration
       const [worksheetHeaderRows, setWorksheetHeaderRows] = useState({});
       const [worksheetRequirementRows, setWorksheetRequirementRows] = useState({});
+      
+      // Export options
+      const [exportOptions, setExportOptions] = useState({
+        preserveFormulas: true,
+        preserveFormatting: true,
+        preserveStyles: true,
+        applyColumnFormats: true,
+        preserveValidation: true,
+        includeMacros: false // Default to false
+      });
       
       // Listen for dark mode changes
       useEffect(() => {
@@ -2548,9 +2608,19 @@
         }
       };
 
+      // Update export options
+      const handleExportOptionChange = (option, value) => {
+        setExportOptions(prev => ({
+          ...prev,
+          [option]: value
+        }));
+      };
+
       // Export data directly into a copy of the original template
       const exportExcel = () => {
         if (!mappedData || !template || !templateFile) return;
+        
+        setIsLoading(prev => ({ ...prev, export: true }));
         
         try {
           // Read the template file again to get a fresh copy
@@ -2559,309 +2629,268 @@
           reader.onload = (evt) => {
             try {
               const binaryString = evt.target.result;
-              // Create a new workbook from the template file with all formatting preserved
-              const workbook = XLSX.read(binaryString, { 
-                type: 'binary',
+              
+              // Create a new workbook from the template file with select options for better compatibility
+              const readOpts = { 
+                type: 'binary', 
                 cellFormula: true, 
-                cellStyles: true,
                 cellDates: true,
                 cellNF: true
-              });
+              };
               
-              // Create a lookup of reference cells with style information
-              const styleLookup = {};
-              const mergeLookup = {};
+              // Only add certain options if they are enabled
+              if (exportOptions.preserveStyles) {
+                readOpts.cellStyles = true;
+              }
               
-              // Process all worksheets first to extract style information
+              if (exportOptions.includeMacros) {
+                readOpts.bookVBA = true;
+                readOpts.bookFiles = true;
+              }
+              
+              const workbook = XLSX.read(binaryString, readOpts);
+              
+              // IMPORTANT: Store the source styles, formats, and template info to be referenced later
+              const templateInfo = {};
+              
+              // Process all worksheets to build a comprehensive style library
               workbook.SheetNames.forEach(sheetName => {
                 const worksheet = workbook.Sheets[sheetName];
                 
-                // Get existing merged cells
-                if (worksheet['!merges'] && worksheet['!merges'].length) {
-                  mergeLookup[sheetName] = [...worksheet['!merges']];
-                }
+                templateInfo[sheetName] = {
+                  merges: worksheet['!merges'] ? [...worksheet['!merges']] : [],
+                  styles: {},
+                  formats: {},
+                  formulas: {},
+                  validations: worksheet['!dataValidations'] ? [...worksheet['!dataValidations']] : []
+                };
                 
-                // Extract style info from existing cells
-                styleLookup[sheetName] = {};
+                // Extract cell styles, formats, and formulas
                 Object.keys(worksheet).forEach(cellRef => {
-                  // Skip special properties starting with '!'
-                  if (cellRef[0] === '!') return;
+                  if (cellRef[0] === '!') return; // Skip metadata
                   
                   const cell = worksheet[cellRef];
-                  if (cell && (cell.s || cell.z || cell.l || cell.f)) {
-                    // Store style (s), number format (z), hyperlink (l), and formula (f) info for this cell
-                    styleLookup[sheetName][cellRef] = {};
-                    if (cell.s) styleLookup[sheetName][cellRef].s = JSON.parse(JSON.stringify(cell.s)); // Deep clone style object
-                    if (cell.z) styleLookup[sheetName][cellRef].z = cell.z;
-                    if (cell.l) styleLookup[sheetName][cellRef].l = JSON.parse(JSON.stringify(cell.l)); // Deep clone hyperlink object
-                    if (cell.f) styleLookup[sheetName][cellRef].f = cell.f;
+                  
+                  // Store cell info for reference
+                  if (cell) {
+                    // Deep clone style objects to avoid reference issues
+                    if (exportOptions.preserveStyles && cell.s) {
+                      templateInfo[sheetName].styles[cellRef] = JSON.parse(JSON.stringify(cell.s));
+                    }
+                    
+                    // Store number format
+                    if (exportOptions.applyColumnFormats && cell.z) {
+                      templateInfo[sheetName].formats[cellRef] = cell.z;
+                    }
+                    
+                    // Store formulas if enabled
+                    if (exportOptions.preserveFormulas && cell.f) {
+                      templateInfo[sheetName].formulas[cellRef] = cell.f;
+                    }
                   }
                 });
               });
               
-              // Helper function to preserve cell formatting with enhanced color preservation
-              const preserveCellFormatting = (worksheet, cellRef, value, dataType) => {
-                const sheetName = worksheet['!sheetname'] || workbook.SheetNames.find(name => workbook.Sheets[name] === worksheet);
-                
-                // Get or create the cell
-                let cell = worksheet[cellRef];
-                if (!cell) {
-                  cell = { t: dataType || 's', v: value };
-                  worksheet[cellRef] = cell;
+              // Function to apply styles and formatting to cells
+              const applyTemplateStyles = (worksheetName, worksheet, cellRef, value, rowOffset = 0) => {
+                // Create the cell if it doesn't exist
+                if (!worksheet[cellRef]) {
+                  worksheet[cellRef] = { v: value };
                 } else {
-                  // Update the cell value
-                  cell.v = value;
-                  
-                  // Set appropriate data type
-                  if (dataType) {
-                    cell.t = dataType;
-                  } else if (typeof value === 'number') {
-                    cell.t = 'n';
-                  } else if (typeof value === 'boolean') {
-                    cell.t = 'b';
-                  } else if (value instanceof Date) {
-                    cell.t = 'd';
+                  worksheet[cellRef].v = value;
+                }
+                
+                // Determine appropriate data type
+                if (typeof value === 'number') {
+                  worksheet[cellRef].t = 'n';
+                } else if (typeof value === 'boolean') {
+                  worksheet[cellRef].t = 'b';
+                } else if (value instanceof Date) {
+                  worksheet[cellRef].t = 'd';
+                } else {
+                  worksheet[cellRef].t = 's';
+                }
+                
+                if (!templateInfo[worksheetName]) return;
+                
+                const decodedCell = XLSX.utils.decode_cell(cellRef);
+                const colIndex = decodedCell.c;
+                
+                // Find column style reference - look for the same column in the template
+                // First try header row, then template data rows
+                const colLetter = XLSX.utils.encode_col(colIndex);
+                
+                // Try to find style from the template using the same column
+                if (exportOptions.preserveStyles) {
+                  // First look for exact cell style
+                  if (templateInfo[worksheetName].styles[cellRef]) {
+                    worksheet[cellRef].s = JSON.parse(JSON.stringify(templateInfo[worksheetName].styles[cellRef]));
                   } else {
-                    cell.t = 's';
-                  }
-                }
-                
-                // Find potential style information from the style lookup
-                // Try to get style from exact cell match first
-                if (sheetName && styleLookup[sheetName] && styleLookup[sheetName][cellRef]) {
-                  const styleInfo = styleLookup[sheetName][cellRef];
-                  
-                  // Apply style, number format, and hyperlink information
-                  if (styleInfo.s) cell.s = JSON.parse(JSON.stringify(styleInfo.s)); // Deep clone to avoid reference issues
-                  if (styleInfo.z) cell.z = styleInfo.z; 
-                  if (styleInfo.l) cell.l = JSON.parse(JSON.stringify(styleInfo.l));
-                  if (styleInfo.f) cell.f = styleInfo.f;
-                }
-                
-                // If no exact match, try to inherit style from the column for non-empty rows
-                if (!cell.s && value !== null && value !== undefined && value !== '') {
-                  const { c: colIndex } = XLSX.utils.decode_cell(cellRef);
-                  const colLetter = XLSX.utils.encode_col(colIndex);
-                  
-                  // Try to find a style from a cell in the header row or template data rows
-                  const { r: rowIndex } = XLSX.utils.decode_cell(cellRef);
-                  
-                  // First try to find style from header cells, then from data cells
-                  for (const existingCellRef in styleLookup[sheetName]) {
-                    const { c: existingColIndex } = XLSX.utils.decode_cell(existingCellRef);
-                    const existingColLetter = XLSX.utils.encode_col(existingColIndex);
+                    // Look for any cell style in the same column (for new rows)
+                    // Check sample cells from the template in the same column
+                    let foundStyle = false;
                     
-                    if (existingColLetter === colLetter && styleLookup[sheetName][existingCellRef].s) {
-                      cell.s = JSON.parse(JSON.stringify(styleLookup[sheetName][existingCellRef].s)); // Deep clone style
-                      if (styleLookup[sheetName][existingCellRef].z) {
-                        cell.z = styleLookup[sheetName][existingCellRef].z;
+                    // Try header row first
+                    const headerCellRef = colLetter + '1';
+                    if (templateInfo[worksheetName].styles[headerCellRef]) {
+                      worksheet[cellRef].s = JSON.parse(JSON.stringify(templateInfo[worksheetName].styles[headerCellRef]));
+                      foundStyle = true;
+                    }
+                    
+                    // If no style found yet, look for any data row with a style in this column
+                    if (!foundStyle) {
+                      for (let r = 2; r < 10; r++) { // Check first few rows
+                        const dataRowCellRef = colLetter + r;
+                        if (templateInfo[worksheetName].styles[dataRowCellRef]) {
+                          worksheet[cellRef].s = JSON.parse(JSON.stringify(templateInfo[worksheetName].styles[dataRowCellRef]));
+                          break;
+                        }
                       }
-                      break;
                     }
                   }
-                  
-                  // If still no style, look for any filled cell in the same column but in data rows
-                  if (!cell.s) {
-                    for (const existingCellRef in worksheet) {
-                      if (existingCellRef[0] === '!') continue;
-                      
-                      const decodedRef = XLSX.utils.decode_cell(existingCellRef);
-                      if (decodedRef.c === colIndex && worksheet[existingCellRef].s) {
-                        cell.s = JSON.parse(JSON.stringify(worksheet[existingCellRef].s)); // Deep clone style
-                        if (worksheet[existingCellRef].z) {
-                          cell.z = worksheet[existingCellRef].z;
-                        }
+                }
+                
+                // Apply number format if enabled
+                if (exportOptions.applyColumnFormats) {
+                  // First look for exact cell format
+                  if (templateInfo[worksheetName].formats[cellRef]) {
+                    worksheet[cellRef].z = templateInfo[worksheetName].formats[cellRef];
+                  } else {
+                    // Look for any cell format in the same column
+                    for (const templateCellRef in templateInfo[worksheetName].formats) {
+                      const templateCell = XLSX.utils.decode_cell(templateCellRef);
+                      if (templateCell.c === colIndex) {
+                        worksheet[cellRef].z = templateInfo[worksheetName].formats[templateCellRef];
                         break;
                       }
                     }
                   }
                 }
+                
+                // Apply formulas if enabled - adjust row references where needed
+                if (exportOptions.preserveFormulas) {
+                  const baseRow = decodedCell.r - rowOffset; // Calculate base row to check template formulas
+                  
+                  // Try to find a matching formula from the template
+                  if (baseRow >= 0) {
+                    const templateCellRef = XLSX.utils.encode_cell({c: colIndex, r: baseRow});
+                    
+                    if (templateInfo[worksheetName].formulas[templateCellRef]) {
+                      let formula = templateInfo[worksheetName].formulas[templateCellRef];
+                      
+                      // For formulas that reference other cells, adjust row references
+                      // This is a simplified approach - complex formulas might need more sophisticated adjustment
+                      if (rowOffset > 0) {
+                        // Replace cell references like A1, B2, etc. with adjusted row numbers
+                        formula = formula.replace(/([A-Z]+)(\d+)/g, (match, col, row) => {
+                          const newRow = parseInt(row) + rowOffset;
+                          return `${col}${newRow}`;
+                        });
+                      }
+                      
+                      worksheet[cellRef].f = formula;
+                    }
+                  }
+                }
               };
               
-              if (enableMultiTabMapping) {
-                // Multi-tab export logic with enhanced debugging and improved color preservation
-                console.log(`Processing ${Object.keys(mappedData).length} category mappings`);
+              // Function to update worksheet with mapped data
+              const updateWorksheet = (worksheetName, mappedRows, headerRowIndex = 0) => {
+                // Get or create the worksheet
+                let worksheet = workbook.Sheets[worksheetName];
                 
-                // Track worksheets that have been processed to avoid overwriting data
-                const processedWorksheets = new Set();
+                if (!worksheet) {
+                  console.warn(`Worksheet ${worksheetName} not found in template, creating new worksheet`);
+                  worksheet = {};
+                  workbook.Sheets[worksheetName] = worksheet;
+                  workbook.SheetNames.push(worksheetName);
+                }
                 
-                // Process each category-worksheet combination
-                Object.keys(mappedData).forEach(mappingKey => {
-                  const { category, worksheet: worksheetName, data: mappedRows, headerRow = templateHeaderRow, isMainTab = false } = mappedData[mappingKey];
+                // Calculate start row where data should be inserted
+                const dataStartRow = headerRowIndex + 1; // Row after header
+                
+                // Clear existing data in the worksheet to prevent conflicts
+                // First find the existing range
+                if (worksheet['!ref']) {
+                  const range = XLSX.utils.decode_range(worksheet['!ref']);
                   
-                  console.log(`Processing mapping: ${mappingKey} with ${mappedRows.length} rows`);
-                  
-                  // Check if the worksheet exists in the workbook
-                  if (!workbook.SheetNames.includes(worksheetName)) {
-                    console.warn(`Worksheet ${worksheetName} not found in template. Skipping mapping ${mappingKey}.`);
-                    return;
-                  }
-                  
-                  // Get the target worksheet
-                  const workbookSheet = workbook.Sheets[worksheetName];
-                  
-                  // Set the worksheet name property to help with style lookups
-                  workbookSheet['!sheetname'] = worksheetName;
-                  
-                  // Find the header row index (0-based) from the headerRow (1-based)
-                  const headerRowIndex = headerRow - 1;
-                  
-                  // Calculate starting row based on whether this worksheet has been processed before
-                  let startRowIndex = headerRowIndex + 1; // Default to first row after header
-                  
-                  if (processedWorksheets.has(worksheetName)) {
-                    // If the worksheet has been processed before, check if it's the main tab
-                    // For main tab, we always start from the original position because it contains all data
-                    if (isMainTab) {
-                      startRowIndex = headerRowIndex + 1;
-                      
-                      // Clean previous data in the main tab first
-                      // Find existing range
-                      const range = XLSX.utils.decode_range(workbookSheet['!ref'] || 'A1:A1');
-                      
-                      // Delete rows after header but before our new data
-                      for (let r = headerRowIndex + 1; r <= range.e.r; r++) {
-                        for (let c = 0; c <= range.e.c; c++) {
-                          const cellRef = XLSX.utils.encode_cell({r, c});
-                          if (workbookSheet[cellRef]) {
-                            delete workbookSheet[cellRef];
-                          }
-                        }
-                      }
-                    } else {
-                      // For category-specific worksheets, append after the last row
-                      const range = XLSX.utils.decode_range(workbookSheet['!ref'] || 'A1:A1');
-                      startRowIndex = range.e.r + 1; // Start at the row after the current last row
+                  // Clear cells after the header row (preserve header)
+                  for (let r = dataStartRow; r <= range.e.r; r++) {
+                    for (let c = range.s.c; c <= range.e.c; c++) {
+                      const cellRef = XLSX.utils.encode_cell({r, c});
+                      delete worksheet[cellRef];
                     }
                   }
-                  
-                  // For each data row (skip the header in mappedRows[0])
-                  for (let dataRowIndex = 1; dataRowIndex < mappedRows.length; dataRowIndex++) {
-                    const dataRow = mappedRows[dataRowIndex];
-                    // Target row = starting row + (current row index - 1)
-                    const targetRowIndex = startRowIndex + (dataRowIndex - 1);
-                    
-                    // For each column in the mapped data
-                    for (let colIndex = 0; colIndex < dataRow.length; colIndex++) {
-                      const value = dataRow[colIndex];
-                      if (value === undefined || value === null) continue;
-                      
-                      // Create the cell address in A1 notation
-                      const cellRef = XLSX.utils.encode_cell({r: targetRowIndex, c: colIndex});
-                      
-                      if (preserveFormatting) {
-                        // Use our enhanced formatting preservation function
-                        preserveCellFormatting(workbookSheet, cellRef, value);
-                      } else {
-                        // Simple update without special formatting preservation
-                        const cell = workbookSheet[cellRef] || { t: 's', v: '' };
-                        cell.v = value;
-                        
-                        // Set appropriate data type
-                        if (typeof value === 'number') {
-                          cell.t = 'n';
-                        } else if (typeof value === 'boolean') {
-                          cell.t = 'b';
-                        } else if (value instanceof Date) {
-                          cell.t = 'd';
-                        } else {
-                          cell.t = 's';
-                        }
-                        
-                        workbookSheet[cellRef] = cell;
-                      }
-                    }
-                  }
-                  
-                  // Update the range to include all the data
-                  const range = XLSX.utils.decode_range(workbookSheet['!ref'] || 'A1:A1');
-                  const lastDataRow = startRowIndex + mappedRows.length - 2; // -2 because we skip header row and start at startRowIndex
-                  const lastDataCol = mappedRows[0].length - 1;
-                  
-                  // Only extend the range if needed
-                  if (lastDataRow > range.e.r) range.e.r = lastDataRow;
-                  if (lastDataCol > range.e.c) range.e.c = lastDataCol;
-                  
-                  workbookSheet['!ref'] = XLSX.utils.encode_range(range);
-                  
-                  // Preserve the original merged cells
-                  if (mergeLookup[worksheetName]) {
-                    workbookSheet['!merges'] = mergeLookup[worksheetName];
-                  }
-                  
-                  // Mark this worksheet as processed
-                  processedWorksheets.add(worksheetName);
-                  
-                  console.log(`Completed mapping for: ${mappingKey}`);
-                });
-              } else {
-                // Standard single-worksheet export
-                const sheet = template.sheet;
-                const worksheet = workbook.Sheets[sheet];
+                }
                 
-                // Set the worksheet name property to help with style lookups
-                worksheet['!sheetname'] = sheet;
-                
-                // Find the header row index (0-based) from the templateHeaderRow (1-based)
-                const headerRowIndex = templateHeaderRow - 1;
-                
-                // For each data row (skip the header in mappedData[0])
-                for (let dataRowIndex = 1; dataRowIndex < mappedData.length; dataRowIndex++) {
-                  const dataRow = mappedData[dataRowIndex];
-                  // Template row index = header row index + current data row index
-                  const targetRowIndex = headerRowIndex + dataRowIndex; 
+                // Now add the mapped data
+                // Start with row after header
+                for (let rowIndex = 1; rowIndex < mappedRows.length; rowIndex++) {
+                  const dataRow = mappedRows[rowIndex];
+                  const targetRowIndex = dataStartRow + (rowIndex - 1); // -1 because we skip header
                   
-                  // For each column in the mapped data
                   for (let colIndex = 0; colIndex < dataRow.length; colIndex++) {
                     const value = dataRow[colIndex];
+                    
+                    // Skip undefined or null values
                     if (value === undefined || value === null) continue;
                     
-                    // Create the cell address in A1 notation
+                    // Calculate cell reference
                     const cellRef = XLSX.utils.encode_cell({r: targetRowIndex, c: colIndex});
                     
-                    if (preserveFormatting) {
-                      // Use our enhanced formatting preservation function
-                      preserveCellFormatting(worksheet, cellRef, value);
-                    } else {
-                      // Simple update without special formatting preservation
-                      const cell = worksheet[cellRef] || { t: 's', v: '' };
-                      cell.v = value;
-                      
-                      // Set appropriate data type
-                      if (typeof value === 'number') {
-                        cell.t = 'n';
-                      } else if (typeof value === 'boolean') {
-                        cell.t = 'b';
-                      } else if (value instanceof Date) {
-                        cell.t = 'd';
-                      } else {
-                        cell.t = 's';
-                      }
-                      
-                      worksheet[cellRef] = cell;
-                    }
+                    // Add cell with styles from template
+                    applyTemplateStyles(worksheetName, worksheet, cellRef, value, targetRowIndex - dataStartRow);
                   }
                 }
                 
-                // Update the range to include all the data
-                const range = XLSX.utils.decode_range(worksheet['!ref'] || 'A1:A1');
-                const lastDataRow = headerRowIndex + mappedData.length - 1;
-                const lastDataCol = mappedData[0].length - 1;
+                // Update the range to include all added data
+                const maxRow = dataStartRow + mappedRows.length - 2; // -2 to account for header skip
+                const maxCol = mappedRows[0].length - 1;
                 
-                // Only extend the range if needed
-                if (lastDataRow > range.e.r) range.e.r = lastDataRow;
-                if (lastDataCol > range.e.c) range.e.c = lastDataCol;
+                // Get current range or default to first cell
+                let rangeStart = {r: 0, c: 0};
+                let rangeEnd = {r: maxRow, c: maxCol};
                 
-                worksheet['!ref'] = XLSX.utils.encode_range(range);
-                
-                // Preserve the original merged cells
-                if (mergeLookup[sheet]) {
-                  worksheet['!merges'] = mergeLookup[sheet];
+                if (worksheet['!ref']) {
+                  const currentRange = XLSX.utils.decode_range(worksheet['!ref']);
+                  rangeStart = {r: currentRange.s.r, c: currentRange.s.c};
+                  rangeEnd = {
+                    r: Math.max(currentRange.e.r, maxRow),
+                    c: Math.max(currentRange.e.c, maxCol)
+                  };
                 }
+                
+                worksheet['!ref'] = XLSX.utils.encode_range({
+                  s: rangeStart,
+                  e: rangeEnd
+                });
+                
+                // Restore merges if available and enabled
+                if (exportOptions.preserveStyles && templateInfo[worksheetName] && templateInfo[worksheetName].merges) {
+                  worksheet['!merges'] = [...templateInfo[worksheetName].merges];
+                }
+                
+                // Restore data validations if available and enabled
+                if (exportOptions.preserveValidation && templateInfo[worksheetName] && templateInfo[worksheetName].validations) {
+                  worksheet['!dataValidations'] = [...templateInfo[worksheetName].validations];
+                }
+              };
+              
+              // Process all mapped data
+              if (enableMultiTabMapping) {
+                // Multi-tab export
+                Object.keys(mappedData).forEach(mappingKey => {
+                  const { worksheet: worksheetName, data: mappedRows, headerRow = templateHeaderRow } = mappedData[mappingKey];
+                  
+                  // Update the worksheet with this data
+                  updateWorksheet(worksheetName, mappedRows, headerRow - 1); // Convert to 0-based
+                });
+              } else {
+                // Single worksheet export
+                updateWorksheet(template.sheet, mappedData, templateHeaderRow - 1); // Convert to 0-based
               }
               
-              // Fixed: Make sure all necessary properties are properly preserved
-              // Write the workbook directly with minimal options to prevent corruption
+              // Clean up options to minimize compatibility issues
               const writeOpts = {
                 bookType: 'xlsx',
                 type: 'binary'
@@ -2873,7 +2902,7 @@
               // Write the workbook to a file
               const wbout = XLSX.write(workbook, writeOpts);
               
-              // Convert binary string to ArrayBuffer
+              // Convert binary string to ArrayBuffer for more reliable download
               const buf = new ArrayBuffer(wbout.length);
               const view = new Uint8Array(buf);
               for (let i = 0; i < wbout.length; i++) {
@@ -2881,7 +2910,7 @@
               }
               
               // Create Blob and download
-              const blob = new Blob([buf], {type: 'application/octet-stream'});
+              const blob = new Blob([buf], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
               const url = URL.createObjectURL(blob);
               const a = document.createElement('a');
               a.href = url;
@@ -2893,22 +2922,25 @@
                 URL.revokeObjectURL(url);
               }, 100);
               
-              // Add a message to the UI
               alert("Export complete! The file will download with your template's formatting preserved.");
             } catch (error) {
               console.error('Error processing template for export:', error);
               setDebugInfo(`Error exporting: ${error.message}`);
               alert(`Error during export: ${error.message}`);
+            } finally {
+              setIsLoading(prev => ({ ...prev, export: false }));
             }
           };
           
           reader.onerror = () => {
             console.error('Error reading template file for export');
+            setIsLoading(prev => ({ ...prev, export: false }));
           };
           
           reader.readAsBinaryString(templateFile);
         } catch (error) {
           console.error('Error exporting Excel file:', error);
+          setIsLoading(prev => ({ ...prev, export: false }));
         }
       };
 
@@ -4142,7 +4174,7 @@
                                 <span className="format-icon">✓</span> Hyperlinks and styles
                               </div>
                               <div className="format-item">
-                                <span className="format-icon">✓</span> Macros and VBA (if present)
+                                <span className="format-icon">✓</span> Cell formatting and alignment
                               </div>
                             </div>
                           </div>
@@ -4151,6 +4183,92 @@
                     </div>
                   )}
                   
+                  <div className="export-options-panel">
+                    <div className="export-options-title">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd" />
+                      </svg>
+                      Export Options
+                    </div>
+                    
+                    <div className="export-option-group">
+                      <div className="export-option-label">
+                        <input 
+                          type="checkbox" 
+                          id="preserveFormulas" 
+                          checked={exportOptions.preserveFormulas}
+                          onChange={(e) => handleExportOptionChange('preserveFormulas', e.target.checked)}
+                        />
+                        <div>
+                          <label htmlFor="preserveFormulas" className="font-medium">Preserve Formulas</label>
+                          <p className="export-option-description">
+                            Keep Excel formulas from the template (recommended for calculated fields)
+                          </p>
+                        </div>
+                      </div>
+                      
+                      <div className="export-option-label">
+                        <input 
+                          type="checkbox" 
+                          id="preserveStyles" 
+                          checked={exportOptions.preserveStyles}
+                          onChange={(e) => handleExportOptionChange('preserveStyles', e.target.checked)}
+                        />
+                        <div>
+                          <label htmlFor="preserveStyles" className="font-medium">Preserve Cell Styles</label>
+                          <p className="export-option-description">
+                            Keep colors, fonts, borders and cell styles from the template
+                          </p>
+                        </div>
+                      </div>
+                      
+                      <div className="export-option-label">
+                        <input 
+                          type="checkbox" 
+                          id="applyColumnFormats" 
+                          checked={exportOptions.applyColumnFormats}
+                          onChange={(e) => handleExportOptionChange('applyColumnFormats', e.target.checked)}
+                        />
+                        <div>
+                          <label htmlFor="applyColumnFormats" className="font-medium">Apply Column Formats</label>
+                          <p className="export-option-description">
+                            Apply number, date, and text formats from the template columns
+                          </p>
+                        </div>
+                      </div>
+                      
+                      <div className="export-option-label">
+                        <input 
+                          type="checkbox" 
+                          id="preserveValidation" 
+                          checked={exportOptions.preserveValidation}
+                          onChange={(e) => handleExportOptionChange('preserveValidation', e.target.checked)}
+                        />
+                        <div>
+                          <label htmlFor="preserveValidation" className="font-medium">Preserve Data Validation</label>
+                          <p className="export-option-description">
+                            Keep dropdown lists and validation rules from the template
+                          </p>
+                        </div>
+                      </div>
+                      
+                      <div className="export-option-label">
+                        <input 
+                          type="checkbox" 
+                          id="includeMacros" 
+                          checked={exportOptions.includeMacros}
+                          onChange={(e) => handleExportOptionChange('includeMacros', e.target.checked)}
+                        />
+                        <div>
+                          <label htmlFor="includeMacros" className="font-medium">Include Macros (VBA)</label>
+                          <p className="export-option-description">
+                            Try to include macros from template (if present). May cause compatibility issues in some cases.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
                   {enableMultiTabMapping ? (
                     <div className="mt-4 mb-6">
                       <div className="tab-selector mb-3">
@@ -4335,12 +4453,25 @@
                   </button>
                   <button
                     onClick={exportExcel}
-                    className="px-4 py-2 bg-excel-500 hover:bg-excel-600 text-white rounded transition-colors flex items-center justify-center"
+                    disabled={isLoading.export}
+                    className={`px-4 py-2 ${isLoading.export ? 'bg-gray-400 dark:bg-gray-600 cursor-not-allowed' : 'bg-excel-500 hover:bg-excel-600'} text-white rounded transition-colors flex items-center justify-center`}
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                    {enableMultiTabMapping ? 'Download Multi-Tab Mapped Excel File' : 'Download Mapped Excel File'}
+                    {isLoading.export ? (
+                      <span className="flex items-center">
+                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Exporting Excel File...
+                      </span>
+                    ) : (
+                      <>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        {enableMultiTabMapping ? 'Download Multi-Tab Mapped Excel File' : 'Download Mapped Excel File'}
+                      </>
+                    )}
                   </button>
                 </div>
               </div>
