@@ -472,6 +472,100 @@
       background-color: rgba(185, 28, 28, 0.3);
       color: #f87171;
     }
+
+    /* Badge styles */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .worksheet-badge {
+      background-color: #e0f2fe;
+      color: #0369a1;
+      border: 1px solid #bae6fd;
+    }
+
+    .dark .worksheet-badge {
+      background-color: rgba(14, 165, 233, 0.2);
+      border-color: rgba(14, 165, 233, 0.3);
+      color: #38bdf8;
+    }
+
+    /* Category mapping styles */
+    .category-mapping-item {
+      border: 1px solid #e5e7eb;
+      border-radius: 0.375rem;
+      margin-bottom: 0.75rem;
+      background-color: white;
+    }
+
+    .dark .category-mapping-item {
+      background-color: #1f2937;
+      border-color: #374151;
+    }
+
+    .category-mapping-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid #e5e7eb;
+      background-color: #f9fafb;
+      border-top-left-radius: 0.375rem;
+      border-top-right-radius: 0.375rem;
+    }
+
+    .dark .category-mapping-header {
+      background-color: #374151;
+      border-color: #4b5563;
+    }
+
+    .category-mapping-body {
+      padding: 1rem;
+    }
+
+    /* Tab selector styles */
+    .tab-selector {
+      display: flex;
+      overflow-x: auto;
+      border-bottom: 1px solid #e5e7eb;
+      margin-bottom: 1rem;
+    }
+
+    .dark .tab-selector {
+      border-color: #4b5563;
+    }
+
+    .tab-item {
+      padding: 0.5rem 1rem;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      white-space: nowrap;
+      font-weight: 500;
+    }
+
+    .tab-item:hover {
+      color: #4b5563;
+    }
+
+    .dark .tab-item:hover {
+      color: #9ca3af;
+    }
+
+    .tab-item.active {
+      border-bottom-color: #217346;
+      color: #217346;
+    }
+
+    .dark .tab-item.active {
+      border-bottom-color: #4fb06a;
+      color: #4fb06a;
+    }
   </style>
 </head>
 <body>
@@ -726,6 +820,15 @@
       // State to track if suggestions have been reviewed
       const [suggestionsReviewed, setSuggestionsReviewed] = useState(false);
       
+      // States for multi-tab mapping
+      const [enableMultiTabMapping, setEnableMultiTabMapping] = useState(false);
+      const [categoryColumn, setCategoryColumn] = useState('');
+      const [categoryValues, setCategoryValues] = useState([]);
+      const [categoryWorksheetMappings, setCategoryWorksheetMappings] = useState({});
+      const [activeTab, setActiveTab] = useState(null);
+      const [tabSpecificMappings, setTabSpecificMappings] = useState({});
+      const [useSharedMappings, setUseSharedMappings] = useState(true);
+      
       // Listen for dark mode changes
       useEffect(() => {
         const darkModeListener = (e) => {
@@ -920,7 +1023,7 @@
                     notes[header] = `<h4>${header}</h4><p>This field should contain ${header.toLowerCase()} information that follows these rules:</p><ul><li>Must be properly formatted</li><li>Should be accurate and verified</li></ul>`;
                   } else if (index % 4 === 2) {
                     notes[header] = `<h4>Format Required</h4><p>The <span class="highlight">${header}</span> field expects data in a specific format. Please ensure your data matches this expectation.</p>`;
-                  } else if (index % 4 === 3 && fieldRequirements[header] === 'Required') {
+                  } else if (index % 4 === 3 && requirements[header] === 'Required') {
                     notes[header] = `<h4>Required Field</h4><p>The <span class="highlight">${header}</span> field must be completed. Missing data will cause validation errors.</p>`;
                   }
                 });
@@ -940,6 +1043,15 @@
               
               // Reset suggestions reviewed state when loading a new template
               setSuggestionsReviewed(false);
+              
+              // Reset multi-tab mapping settings
+              setEnableMultiTabMapping(false);
+              setCategoryColumn('');
+              setCategoryValues([]);
+              setCategoryWorksheetMappings({});
+              setActiveTab(null);
+              setTabSpecificMappings({});
+              setUseSharedMappings(true);
             } else {
               // Process data file normally (unchanged)
               const headerRowIndex = dataHeaderRow - 1;
@@ -1019,6 +1131,11 @@
                 
                 // Reset suggestions reviewed state when loading new data
                 setSuggestionsReviewed(false);
+              }
+              
+              // Get unique values for category column if one is selected
+              if (enableMultiTabMapping && categoryColumn) {
+                updateCategoryValues(headers, dataRows, categoryColumn);
               }
             }
           } catch (error) {
@@ -1116,10 +1233,94 @@
       };
 
       // Handle mapping change
-      const handleMappingChange = (templateHeader, dataHeader) => {
-        setMappings(prev => ({
+      const handleMappingChange = (templateHeader, dataHeader, tabName = null) => {
+        if (enableMultiTabMapping && !useSharedMappings && tabName) {
+          // Update tab-specific mappings
+          setTabSpecificMappings(prev => {
+            const newMappings = { ...prev };
+            if (!newMappings[tabName]) {
+              newMappings[tabName] = {};
+            }
+            newMappings[tabName][templateHeader] = dataHeader;
+            return newMappings;
+          });
+        } else {
+          // Update shared mappings
+          setMappings(prev => ({
+            ...prev,
+            [templateHeader]: dataHeader
+          }));
+        }
+      };
+
+      // Update category values when category column changes
+      const updateCategoryValues = (headers, dataRows, categoryCol) => {
+        // Find the index of the category column
+        const colIndex = headers.indexOf(categoryCol);
+        
+        if (colIndex === -1) {
+          setCategoryValues([]);
+          setCategoryWorksheetMappings({});
+          return;
+        }
+        
+        // Get unique values from the category column
+        const uniqueValues = new Set();
+        dataRows.forEach(row => {
+          if (row && colIndex < row.length && row[colIndex] !== undefined && row[colIndex] !== null && row[colIndex] !== '') {
+            uniqueValues.add(String(row[colIndex]));
+          }
+        });
+        
+        const valueArray = Array.from(uniqueValues).sort();
+        
+        // Update state with the unique values
+        setCategoryValues(valueArray);
+        
+        // Initialize worksheet mappings for each category value
+        const initialMappings = {};
+        valueArray.forEach(value => {
+          // If there's a template sheet with a matching name, use that
+          const matchingSheet = templateSheets.find(sheet => 
+            sheet.toLowerCase() === value.toLowerCase() || 
+            sheet.toLowerCase().includes(value.toLowerCase())
+          );
+          
+          initialMappings[value] = matchingSheet || templateSheets[0];
+        });
+        
+        setCategoryWorksheetMappings(initialMappings);
+        
+        // Set the first category value as the active tab
+        if (valueArray.length > 0 && !activeTab) {
+          setActiveTab(valueArray[0]);
+        }
+      };
+
+      // Handle category column change
+      const handleCategoryColumnChange = (column) => {
+        setCategoryColumn(column);
+        
+        if (!column) {
+          setCategoryValues([]);
+          setCategoryWorksheetMappings({});
+          setActiveTab(null);
+          return;
+        }
+        
+        // Retrieve the data rows
+        if (!data || !data.data || data.data.length <= 1) return;
+        
+        const dataRows = data.data.slice(1); // Skip header row
+        
+        updateCategoryValues(data.headers, dataRows, column);
+      };
+
+      // Handle worksheet mapping change
+      const handleWorksheetMappingChange = (categoryValue, worksheet) => {
+        setCategoryWorksheetMappings(prev => ({
           ...prev,
-          [templateHeader]: dataHeader
+          [categoryValue]: worksheet
         }));
       };
 
@@ -1140,23 +1341,34 @@
       };
       
       // Clear a specific mapping
-      const clearMapping = (templateHeader) => {
-        setMappings(prev => {
-          const newMappings = { ...prev };
-          delete newMappings[templateHeader];
-          return newMappings;
-        });
+      const clearMapping = (templateHeader, tabName = null) => {
+        if (enableMultiTabMapping && !useSharedMappings && tabName) {
+          setTabSpecificMappings(prev => {
+            const newMappings = { ...prev };
+            if (newMappings[tabName] && newMappings[tabName][templateHeader]) {
+              delete newMappings[tabName][templateHeader];
+            }
+            return newMappings;
+          });
+        } else {
+          setMappings(prev => {
+            const newMappings = { ...prev };
+            delete newMappings[templateHeader];
+            return newMappings;
+          });
+        }
       };
 
       // Validate mappings before proceeding
-      const validateMappings = () => {
+      const validateMappings = (tabMappings = null) => {
         const missingRequiredFields = [];
+        const mappingsToCheck = tabMappings || mappings;
         
         templateHeaders.forEach(header => {
           if (!header) return;
           
           const isRequired = fieldRequirements[header] === 'Required';
-          const isMapped = mappings[header] && mappings[header] !== '';
+          const isMapped = mappingsToCheck[header] && mappingsToCheck[header] !== '';
           
           if (isRequired && !isMapped) {
             missingRequiredFields.push(header);
@@ -1183,40 +1395,127 @@
             // We no longer block the process, just note it in the console
           }
           
-          const mappedRows = [];
-          const templateHeadersArr = template.headers;
-          
-          // Start with a row containing template headers
-          mappedRows.push(templateHeadersArr);
-          
-          // For each data row (skip header)
-          for (let i = 1; i < data.data.length; i++) {
-            const dataRow = data.data[i];
-            const mappedRow = new Array(templateHeadersArr.length).fill('');
+          if (enableMultiTabMapping) {
+            // Handle multi-tab mapping
+            const mappedDataByCategory = {};
             
-            // For each template header
-            templateHeadersArr.forEach((templateHeader, templateColIndex) => {
-              if (!templateHeader) return;
+            // Find the index of the category column
+            const categoryColIndex = data.headers.indexOf(categoryColumn);
+            
+            if (categoryColIndex === -1) {
+              throw new Error("Category column not found in data headers");
+            }
+            
+            // Group data rows by category
+            const groupedData = {};
+            
+            // Start from row 1 (skip header row)
+            for (let i = 1; i < data.data.length; i++) {
+              const dataRow = data.data[i];
               
-              const dataHeader = mappings[templateHeader];
-              
-              if (dataHeader) {
-                // Find the index of this header in the data
-                const dataColIndex = data.headers.indexOf(dataHeader);
+              // Ensure the row has data in the category column
+              if (dataRow && categoryColIndex < dataRow.length) {
+                const categoryValue = String(dataRow[categoryColIndex] || "");
                 
-                if (dataColIndex !== -1 && dataRow && dataColIndex < dataRow.length) {
-                  mappedRow[templateColIndex] = dataRow[dataColIndex];
+                // Create array for this category if it doesn't exist
+                if (!groupedData[categoryValue]) {
+                  groupedData[categoryValue] = [];
                 }
+                
+                // Add row to the appropriate category
+                groupedData[categoryValue].push(dataRow);
               }
+            }
+            
+            // Process each category group
+            Object.keys(groupedData).forEach(categoryValue => {
+              const targetWorksheet = categoryWorksheetMappings[categoryValue];
+              
+              if (!targetWorksheet) {
+                console.warn(`No target worksheet defined for category: ${categoryValue}`);
+                return;
+              }
+              
+              const rows = groupedData[categoryValue];
+              const templateHeadersArr = template.headers;
+              const mappedRows = [templateHeadersArr]; // Start with template headers
+              
+              // Get the correct mappings for this category/tab
+              const currentMappings = !useSharedMappings && tabSpecificMappings[categoryValue] 
+                ? tabSpecificMappings[categoryValue] 
+                : mappings;
+              
+              // Map each data row
+              rows.forEach(dataRow => {
+                const mappedRow = new Array(templateHeadersArr.length).fill('');
+                
+                // For each template header
+                templateHeadersArr.forEach((templateHeader, templateColIndex) => {
+                  if (!templateHeader) return;
+                  
+                  const dataHeader = currentMappings[templateHeader];
+                  
+                  if (dataHeader) {
+                    // Find the index of this header in the data
+                    const dataColIndex = data.headers.indexOf(dataHeader);
+                    
+                    if (dataColIndex !== -1 && dataRow && dataColIndex < dataRow.length) {
+                      mappedRow[templateColIndex] = dataRow[dataColIndex];
+                    }
+                  }
+                });
+                
+                mappedRows.push(mappedRow);
+              });
+              
+              // Store mapped data for this category
+              mappedDataByCategory[categoryValue] = {
+                worksheet: targetWorksheet,
+                data: mappedRows
+              };
             });
             
-            mappedRows.push(mappedRow);
+            // Set the mapped data with all category mappings
+            setMappedData(mappedDataByCategory);
+          } else {
+            // Standard single-worksheet mapping
+            const mappedRows = [];
+            const templateHeadersArr = template.headers;
+            
+            // Start with a row containing template headers
+            mappedRows.push(templateHeadersArr);
+            
+            // For each data row (skip header)
+            for (let i = 1; i < data.data.length; i++) {
+              const dataRow = data.data[i];
+              const mappedRow = new Array(templateHeadersArr.length).fill('');
+              
+              // For each template header
+              templateHeadersArr.forEach((templateHeader, templateColIndex) => {
+                if (!templateHeader) return;
+                
+                const dataHeader = mappings[templateHeader];
+                
+                if (dataHeader) {
+                  // Find the index of this header in the data
+                  const dataColIndex = data.headers.indexOf(dataHeader);
+                  
+                  if (dataColIndex !== -1 && dataRow && dataColIndex < dataRow.length) {
+                    mappedRow[templateColIndex] = dataRow[dataColIndex];
+                  }
+                }
+              });
+              
+              mappedRows.push(mappedRow);
+            }
+            
+            setMappedData(mappedRows);
           }
           
-          setMappedData(mappedRows);
           setStep(3);
         } catch (error) {
           console.error('Error mapping data:', error);
+          setDebugInfo(`Error mapping data: ${error.message}`);
         } finally {
           setIsLoading(prev => ({ ...prev, mapping: false }));
         }
@@ -1235,58 +1534,125 @@
               const binaryString = evt.target.result;
               // Create a new workbook from the template file
               const workbook = XLSX.read(binaryString, { type: 'binary' });
-              const sheet = template.sheet;
-              const worksheet = workbook.Sheets[sheet];
               
-              // Find the header row index (0-based) from the templateHeaderRow (1-based)
-              const headerRowIndex = templateHeaderRow - 1;
-              
-              // For each data row (skip the header in mappedData[0])
-              for (let dataRowIndex = 1; dataRowIndex < mappedData.length; dataRowIndex++) {
-                const dataRow = mappedData[dataRowIndex];
-                // Template row index = header row index + current data row index
-                const targetRowIndex = headerRowIndex + dataRowIndex; 
-                
-                // For each column in the mapped data
-                for (let colIndex = 0; colIndex < dataRow.length; colIndex++) {
-                  if (dataRow[colIndex] === undefined || dataRow[colIndex] === null) continue;
+              if (enableMultiTabMapping) {
+                // Multi-tab export logic
+                Object.keys(mappedData).forEach(categoryValue => {
+                  const { worksheet, data: mappedRows } = mappedData[categoryValue];
                   
-                  // Create the cell address in A1 notation
-                  const cellRef = XLSX.utils.encode_cell({r: targetRowIndex, c: colIndex});
-                  
-                  // Get or create the cell
-                  if (!worksheet[cellRef]) {
-                    worksheet[cellRef] = { t: 's', v: '' };
+                  // Check if the worksheet exists in the workbook
+                  if (!workbook.SheetNames.includes(worksheet)) {
+                    console.warn(`Worksheet ${worksheet} not found in template. Skipping category ${categoryValue}.`);
+                    return;
                   }
                   
-                  // Update the cell value
-                  worksheet[cellRef].v = dataRow[colIndex];
+                  const workbookSheet = workbook.Sheets[worksheet];
                   
-                  // Try to detect the type of the value and set the cell type
-                  if (typeof dataRow[colIndex] === 'number') {
-                    worksheet[cellRef].t = 'n';
-                  } else if (typeof dataRow[colIndex] === 'boolean') {
-                    worksheet[cellRef].t = 'b';
-                  } else if (dataRow[colIndex] instanceof Date) {
-                    worksheet[cellRef].t = 'd';
-                    // Excel uses a different epoch, so convert dates to numbers
-                    worksheet[cellRef].v = XLSX.SSF.parse_date_code(dataRow[colIndex]);
-                  } else {
-                    worksheet[cellRef].t = 's';
+                  // Find the header row index (0-based) from the templateHeaderRow (1-based)
+                  const headerRowIndex = templateHeaderRow - 1;
+                  
+                  // For each data row (skip the header in mappedRows[0])
+                  for (let dataRowIndex = 1; dataRowIndex < mappedRows.length; dataRowIndex++) {
+                    const dataRow = mappedRows[dataRowIndex];
+                    // Template row index = header row index + current data row index
+                    const targetRowIndex = headerRowIndex + dataRowIndex; 
+                    
+                    // For each column in the mapped data
+                    for (let colIndex = 0; colIndex < dataRow.length; colIndex++) {
+                      if (dataRow[colIndex] === undefined || dataRow[colIndex] === null) continue;
+                      
+                      // Create the cell address in A1 notation
+                      const cellRef = XLSX.utils.encode_cell({r: targetRowIndex, c: colIndex});
+                      
+                      // Get or create the cell
+                      if (!workbookSheet[cellRef]) {
+                        workbookSheet[cellRef] = { t: 's', v: '' };
+                      }
+                      
+                      // Update the cell value
+                      workbookSheet[cellRef].v = dataRow[colIndex];
+                      
+                      // Try to detect the type of the value and set the cell type
+                      if (typeof dataRow[colIndex] === 'number') {
+                        workbookSheet[cellRef].t = 'n';
+                      } else if (typeof dataRow[colIndex] === 'boolean') {
+                        workbookSheet[cellRef].t = 'b';
+                      } else if (dataRow[colIndex] instanceof Date) {
+                        workbookSheet[cellRef].t = 'd';
+                        // Excel uses a different epoch, so convert dates to numbers
+                        workbookSheet[cellRef].v = XLSX.SSF.parse_date_code(dataRow[colIndex]);
+                      } else {
+                        workbookSheet[cellRef].t = 's';
+                      }
+                    }
+                  }
+                  
+                  // Update the range to include all the data
+                  const range = XLSX.utils.decode_range(workbookSheet['!ref'] || 'A1:A1');
+                  const lastDataRow = headerRowIndex + mappedRows.length - 1;
+                  const lastDataCol = mappedRows[0].length - 1;
+                  
+                  // Only extend the range if needed
+                  if (lastDataRow > range.e.r) range.e.r = lastDataRow;
+                  if (lastDataCol > range.e.c) range.e.c = lastDataCol;
+                  
+                  workbookSheet['!ref'] = XLSX.utils.encode_range(range);
+                });
+              } else {
+                // Standard single-worksheet export
+                const sheet = template.sheet;
+                const worksheet = workbook.Sheets[sheet];
+                
+                // Find the header row index (0-based) from the templateHeaderRow (1-based)
+                const headerRowIndex = templateHeaderRow - 1;
+                
+                // For each data row (skip the header in mappedData[0])
+                for (let dataRowIndex = 1; dataRowIndex < mappedData.length; dataRowIndex++) {
+                  const dataRow = mappedData[dataRowIndex];
+                  // Template row index = header row index + current data row index
+                  const targetRowIndex = headerRowIndex + dataRowIndex; 
+                  
+                  // For each column in the mapped data
+                  for (let colIndex = 0; colIndex < dataRow.length; colIndex++) {
+                    if (dataRow[colIndex] === undefined || dataRow[colIndex] === null) continue;
+                    
+                    // Create the cell address in A1 notation
+                    const cellRef = XLSX.utils.encode_cell({r: targetRowIndex, c: colIndex});
+                    
+                    // Get or create the cell
+                    if (!worksheet[cellRef]) {
+                      worksheet[cellRef] = { t: 's', v: '' };
+                    }
+                    
+                    // Update the cell value
+                    worksheet[cellRef].v = dataRow[colIndex];
+                    
+                    // Try to detect the type of the value and set the cell type
+                    if (typeof dataRow[colIndex] === 'number') {
+                      worksheet[cellRef].t = 'n';
+                    } else if (typeof dataRow[colIndex] === 'boolean') {
+                      worksheet[cellRef].t = 'b';
+                    } else if (dataRow[colIndex] instanceof Date) {
+                      worksheet[cellRef].t = 'd';
+                      // Excel uses a different epoch, so convert dates to numbers
+                      worksheet[cellRef].v = XLSX.SSF.parse_date_code(dataRow[colIndex]);
+                    } else {
+                      worksheet[cellRef].t = 's';
+                    }
                   }
                 }
+                
+                // Update the range to include all the data
+                const range = XLSX.utils.decode_range(worksheet['!ref'] || 'A1:A1');
+                const lastDataRow = headerRowIndex + mappedData.length - 1;
+                const lastDataCol = mappedData[0].length - 1;
+                
+                // Only extend the range if needed
+                if (lastDataRow > range.e.r) range.e.r = lastDataRow;
+                if (lastDataCol > range.e.c) range.e.c = lastDataCol;
+                
+                worksheet['!ref'] = XLSX.utils.encode_range(range);
               }
-              
-              // Update the range to include all the data
-              const range = XLSX.utils.decode_range(worksheet['!ref'] || 'A1:A1');
-              const lastDataRow = headerRowIndex + mappedData.length - 1;
-              const lastDataCol = mappedData[0].length - 1;
-              
-              // Only extend the range if needed
-              if (lastDataRow > range.e.r) range.e.r = lastDataRow;
-              if (lastDataCol > range.e.c) range.e.c = lastDataCol;
-              
-              worksheet['!ref'] = XLSX.utils.encode_range(range);
               
               // Generate a filename based on the template
               const filename = templateFile.name.replace(/\.[^/.]+$/, '') + '_filled.xlsx';
@@ -1298,6 +1664,7 @@
               XLSX.writeFile(workbook, filename);
             } catch (error) {
               console.error('Error processing template for export:', error);
+              setDebugInfo(`Error exporting: ${error.message}`);
             }
           };
           
@@ -1321,6 +1688,25 @@
       // Toggle requirement row availability
       const toggleRequirementRow = (e) => {
         setRequirementRowAvailable(e.target.checked);
+      };
+      
+      // Toggle multi-tab mapping
+      const toggleMultiTabMapping = (e) => {
+        const enabled = e.target.checked;
+        setEnableMultiTabMapping(enabled);
+        
+        if (!enabled) {
+          setCategoryColumn('');
+          setCategoryValues([]);
+          setCategoryWorksheetMappings({});
+          setActiveTab(null);
+          setTabSpecificMappings({});
+        }
+      };
+      
+      // Toggle shared mappings
+      const toggleSharedMappings = (e) => {
+        setUseSharedMappings(e.target.checked);
       };
 
       // Helper function to check if a header has notes
@@ -1356,14 +1742,26 @@
       };
       
       // Get the number of unmapped required fields
-      const getUnmappedRequiredFieldsCount = () => {
+      const getUnmappedRequiredFieldsCount = (tabName = null) => {
+        const currentMappings = tabName && !useSharedMappings && tabSpecificMappings[tabName] 
+          ? tabSpecificMappings[tabName] 
+          : mappings;
+          
         return templateHeaders.filter(header => {
           return (
             header && 
             fieldRequirements[header] === 'Required' && 
-            (!mappings[header] || mappings[header] === '')
+            (!currentMappings[header] || currentMappings[header] === '')
           );
         }).length;
+      };
+
+      // Get current mappings based on active tab
+      const getCurrentMappings = () => {
+        if (enableMultiTabMapping && !useSharedMappings && activeTab && tabSpecificMappings[activeTab]) {
+          return tabSpecificMappings[activeTab];
+        }
+        return mappings;
       };
 
       return (
@@ -1671,6 +2069,136 @@
                   <span className="text-red-500 dark:text-red-400 ml-2 font-medium">Required fields must be mapped.</span>
                 </p>
                 
+                {/* Multi-tab mapping option */}
+                <div className="mb-6 border dark:border-gray-700 rounded-lg p-4 bg-gray-50 dark:bg-gray-900/50">
+                  <div className="flex items-center mb-3">
+                    <input
+                      type="checkbox"
+                      id="enableMultiTabMapping"
+                      checked={enableMultiTabMapping}
+                      onChange={toggleMultiTabMapping}
+                      className="mr-2 h-4 w-4 rounded border-gray-300 text-excel-500 focus:ring-excel-500 dark:border-gray-600 dark:focus:ring-excel-600"
+                    />
+                    <label htmlFor="enableMultiTabMapping" className="text-gray-700 dark:text-gray-300 font-medium">
+                      Enable Multi-Tab Mapping
+                    </label>
+                  </div>
+                  
+                  {enableMultiTabMapping && (
+                    <div className="pl-6">
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                        Map your data to different worksheets in the template based on a category column.
+                      </p>
+                      
+                      <div className="mb-3">
+                        <label className="block mb-2 text-gray-700 dark:text-gray-300">Select Category Column</label>
+                        <CustomSelect
+                          options={[
+                            { value: '', label: '-- Select a column --' },
+                            ...dataHeaders.filter(Boolean).map(header => ({
+                              value: header,
+                              label: header
+                            }))
+                          ]}
+                          value={categoryColumn}
+                          onChange={handleCategoryColumnChange}
+                          columnSamples={columnSamples}
+                          columnDescriptions={dataHeaderDescriptions}
+                        />
+                      </div>
+                      
+                      {categoryColumn && categoryValues.length > 0 && (
+                        <>
+                          <div className="mb-3">
+                            <div className="flex items-center justify-between mb-2">
+                              <label className="text-gray-700 dark:text-gray-300">Category to Worksheet Mapping</label>
+                              <span className="text-sm text-gray-500 dark:text-gray-400">
+                                {categoryValues.length} unique values found
+                              </span>
+                            </div>
+                            
+                            <div className="border dark:border-gray-700 rounded overflow-hidden">
+                              <div className="overflow-y-auto max-h-64">
+                                <table className="min-w-full">
+                                  <thead className="bg-gray-50 dark:bg-gray-700">
+                                    <tr>
+                                      <th className="py-2 px-3 border-b dark:border-gray-600 text-left">
+                                        Category Value
+                                      </th>
+                                      <th className="py-2 px-3 border-b dark:border-gray-600 text-left">
+                                        Target Worksheet
+                                      </th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {categoryValues.map((value, index) => (
+                                      <tr key={index} className={index % 2 === 0 ? 'bg-white dark:bg-gray-800' : 'bg-gray-50 dark:bg-gray-700/30'}>
+                                        <td className="py-2 px-3 border-b dark:border-gray-600">
+                                          {value}
+                                        </td>
+                                        <td className="py-2 px-3 border-b dark:border-gray-600">
+                                          <select
+                                            value={categoryWorksheetMappings[value] || ''}
+                                            onChange={(e) => handleWorksheetMappingChange(value, e.target.value)}
+                                            className="block w-full p-1 text-sm border rounded bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                          >
+                                            {templateSheets.map((sheet, sheetIndex) => (
+                                              <option key={sheetIndex} value={sheet}>{sheet}</option>
+                                            ))}
+                                          </select>
+                                        </td>
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="mb-3">
+                            <div className="flex items-center">
+                              <input
+                                type="checkbox"
+                                id="useSharedMappings"
+                                checked={useSharedMappings}
+                                onChange={toggleSharedMappings}
+                                className="mr-2 h-4 w-4 rounded border-gray-300 text-excel-500 focus:ring-excel-500 dark:border-gray-600 dark:focus:ring-excel-600"
+                              />
+                              <label htmlFor="useSharedMappings" className="text-gray-700 dark:text-gray-300">
+                                Use the same column mappings for all worksheets
+                              </label>
+                            </div>
+                          </div>
+                          
+                          {!useSharedMappings && (
+                            <div className="mb-3">
+                              <label className="block mb-2 text-gray-700 dark:text-gray-300">
+                                Configure Mappings For:
+                              </label>
+                              <div className="tab-selector mb-3">
+                                {categoryValues.map((value, index) => (
+                                  <div
+                                    key={index}
+                                    className={`tab-item ${activeTab === value ? 'active' : ''}`}
+                                    onClick={() => setActiveTab(value)}
+                                  >
+                                    <div className="flex items-center">
+                                      <span>{value}</span>
+                                      <span className="badge worksheet-badge ml-2 text-xs">
+                                        {categoryWorksheetMappings[value] || 'None'}
+                                      </span>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
+                
                 {!suggestionsReviewed && Object.keys(suggestedMappings).length > 0 && (
                   <div className="mapping-suggestion-panel mb-6 dark:bg-blue-950/20">
                     <div className="flex items-center justify-between mb-3">
@@ -1791,6 +2319,16 @@
                   </div>
                 </div>
                 
+                {enableMultiTabMapping && !useSharedMappings && (
+                  <div className="py-2 px-4 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 mb-4 rounded-md">
+                    Currently configuring mappings for: 
+                    <span className="font-medium ml-2">{activeTab}</span>
+                    <span className="badge worksheet-badge ml-2">
+                      {activeTab && categoryWorksheetMappings[activeTab] ? categoryWorksheetMappings[activeTab] : 'None'}
+                    </span>
+                  </div>
+                )}
+                
                 <div className="overflow-x-auto mb-6">
                   <table className="min-w-full bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-md">
                     <thead className="bg-gray-50 dark:bg-gray-700">
@@ -1798,51 +2336,75 @@
                         <th className="py-2 px-4 border-b dark:border-gray-600 text-left">Template Column</th>
                         <th className="py-2 px-4 border-b dark:border-gray-600 text-left">Requirement</th>
                         <th className="py-2 px-4 border-b dark:border-gray-600 text-left">Data Column</th>
+                        {(!enableMultiTabMapping || useSharedMappings) && (
+                          <th className="py-2 px-4 border-b dark:border-gray-600 text-left w-16">Actions</th>
+                        )}
                       </tr>
                     </thead>
                     <tbody>
-                      {templateHeaders.filter(Boolean).map((header, index) => (
-                        <tr key={index} className={index % 2 === 0 ? 'bg-gray-50 dark:bg-gray-700/30' : 'dark:bg-gray-800'}>
-                          <td className="py-2 px-4 border-b dark:border-gray-600">
-                            <div className="tooltip flex items-center">
-                              <span className="has-notes">{header}</span>
-                              {headerHasNotes(header) && (
-                                <>
-                                  <span className="info-icon ml-1">i</span>
-                                  <span 
-                                    className={`tooltip-text ${isLargeNote(templateHeaderNotes[header]) ? 'large' : ''}`}
-                                    dangerouslySetInnerHTML={{ __html: templateHeaderNotes[header] }}
-                                  />
-                                </>
-                              )}
-                            </div>
-                          </td>
-                          <td className={`py-2 px-4 border-b dark:border-gray-600 ${
-                            fieldRequirements[header] === 'Required' 
-                              ? 'text-red-500 dark:text-red-400 font-medium' 
-                              : 'text-excel-500 dark:text-excel-400'
-                          }`}>
-                            {fieldRequirements[header] || 'Optional'}
-                          </td>
-                          <td className="py-2 px-4 border-b dark:border-gray-600">
-                            <CustomSelect
-                              options={[
-                                { value: '', label: '-- Not Mapped --' },
-                                ...dataHeaders.filter(Boolean).map(dataHeader => ({
-                                  value: dataHeader,
-                                  label: dataHeader
-                                }))
-                              ]}
-                              value={mappings[header] || ''}
-                              onChange={(value) => handleMappingChange(header, value)}
-                              isError={fieldRequirements[header] === 'Required' && (!mappings[header] || mappings[header] === '')}
-                              suggestedValue={suggestedMappings[header] || null}
-                              columnSamples={columnSamples}
-                              columnDescriptions={dataHeaderDescriptions}
-                            />
-                          </td>
-                        </tr>
-                      ))}
+                      {templateHeaders.filter(Boolean).map((header, index) => {
+                        const currentMappings = enableMultiTabMapping && !useSharedMappings && activeTab && tabSpecificMappings[activeTab]
+                          ? tabSpecificMappings[activeTab]
+                          : mappings;
+                          
+                        return (
+                          <tr key={index} className={index % 2 === 0 ? 'bg-gray-50 dark:bg-gray-700/30' : 'dark:bg-gray-800'}>
+                            <td className="py-2 px-4 border-b dark:border-gray-600">
+                              <div className="tooltip flex items-center">
+                                <span className="has-notes">{header}</span>
+                                {headerHasNotes(header) && (
+                                  <>
+                                    <span className="info-icon ml-1">i</span>
+                                    <span 
+                                      className={`tooltip-text ${isLargeNote(templateHeaderNotes[header]) ? 'large' : ''}`}
+                                      dangerouslySetInnerHTML={{ __html: templateHeaderNotes[header] }}
+                                    />
+                                  </>
+                                )}
+                              </div>
+                            </td>
+                            <td className={`py-2 px-4 border-b dark:border-gray-600 ${
+                              fieldRequirements[header] === 'Required' 
+                                ? 'text-red-500 dark:text-red-400 font-medium' 
+                                : 'text-excel-500 dark:text-excel-400'
+                            }`}>
+                              {fieldRequirements[header] || 'Optional'}
+                            </td>
+                            <td className="py-2 px-4 border-b dark:border-gray-600">
+                              <CustomSelect
+                                options={[
+                                  { value: '', label: '-- Not Mapped --' },
+                                  ...dataHeaders.filter(Boolean).map(dataHeader => ({
+                                    value: dataHeader,
+                                    label: dataHeader
+                                  }))
+                                ]}
+                                value={currentMappings[header] || ''}
+                                onChange={(value) => handleMappingChange(header, value, enableMultiTabMapping && !useSharedMappings ? activeTab : null)}
+                                isError={fieldRequirements[header] === 'Required' && (!currentMappings[header] || currentMappings[header] === '')}
+                                suggestedValue={suggestedMappings[header] || null}
+                                columnSamples={columnSamples}
+                                columnDescriptions={dataHeaderDescriptions}
+                              />
+                            </td>
+                            {(!enableMultiTabMapping || useSharedMappings) && (
+                              <td className="py-2 px-4 border-b dark:border-gray-600">
+                                {currentMappings[header] && (
+                                  <button
+                                    onClick={() => clearMapping(header)}
+                                    className="p-1 bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-900/50 text-red-700 dark:text-red-400 rounded"
+                                    title="Clear this mapping"
+                                  >
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                      <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                                    </svg>
+                                  </button>
+                                )}
+                              </td>
+                            )}
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>
@@ -1874,9 +2436,14 @@
                     ) : (
                       <>
                         Map Data
-                        {getUnmappedRequiredFieldsCount() > 0 && (
+                        {!enableMultiTabMapping && getUnmappedRequiredFieldsCount() > 0 && (
                           <span className="ml-2 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full">
                             {getUnmappedRequiredFieldsCount()} unmapped required
+                          </span>
+                        )}
+                        {enableMultiTabMapping && !useSharedMappings && activeTab && getUnmappedRequiredFieldsCount(activeTab) > 0 && (
+                          <span className="ml-2 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full">
+                            {getUnmappedRequiredFieldsCount(activeTab)} unmapped required
                           </span>
                         )}
                       </>
@@ -1895,52 +2462,154 @@
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
-                    Mapping complete for {mappedData.length - 1} rows of data!
+                    {enableMultiTabMapping ? (
+                      <>
+                        Mapping complete for {Object.keys(mappedData).length} categories across multiple worksheets
+                      </>
+                    ) : (
+                      <>
+                        Mapping complete for {mappedData.length - 1} rows of data
+                      </>
+                    )}
                   </p>
                   
-                  <div className="overflow-x-auto mt-4 mb-6">
-                    <table className="min-w-full bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-md">
-                      <thead className="bg-gray-50 dark:bg-gray-700">
-                        <tr>
-                          {mappedData[0].map((header, index) => (
-                            <th key={index} className="py-2 px-4 border-b dark:border-gray-600 text-left">
-                              <div className="tooltip flex items-center">
-                                <span className={header && headerHasNotes(header) ? "has-notes" : ""}>
-                                  {header || '(Empty Column)'}
-                                  {header && fieldRequirements[header] === 'Required' && (
-                                    <span className="ml-1 text-red-500 dark:text-red-400">*</span>
+                  {enableMultiTabMapping ? (
+                    <div className="mt-4 mb-6">
+                      <div className="tab-selector mb-3">
+                        {Object.keys(mappedData).map((categoryValue, index) => (
+                          <div
+                            key={index}
+                            className={`tab-item ${activeTab === categoryValue ? 'active' : ''}`}
+                            onClick={() => setActiveTab(categoryValue)}
+                          >
+                            <div className="flex items-center">
+                              <span>{categoryValue}</span>
+                              <span className="badge worksheet-badge ml-2 text-xs">
+                                {mappedData[categoryValue].worksheet}
+                              </span>
+                              <span className="ml-1 text-xs text-gray-500 dark:text-gray-400">
+                                ({mappedData[categoryValue].data.length - 1} rows)
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      
+                      {activeTab && mappedData[activeTab] && (
+                        <div className="overflow-x-auto">
+                          <table className="min-w-full bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-md">
+                            <thead className="bg-gray-50 dark:bg-gray-700">
+                              <tr>
+                                {mappedData[activeTab].data[0].map((header, index) => (
+                                  <th key={index} className="py-2 px-4 border-b dark:border-gray-600 text-left">
+                                    <div className="tooltip flex items-center">
+                                      <span className={header && headerHasNotes(header) ? "has-notes" : ""}>
+                                        {header || '(Empty Column)'}
+                                        {header && fieldRequirements[header] === 'Required' && (
+                                          <span className="ml-1 text-red-500 dark:text-red-400">*</span>
+                                        )}
+                                      </span>
+                                      {header && headerHasNotes(header) && (
+                                        <>
+                                          <span className="info-icon ml-1">i</span>
+                                          <span 
+                                            className={`tooltip-text ${isLargeNote(templateHeaderNotes[header]) ? 'large' : ''}`}
+                                            dangerouslySetInnerHTML={{ __html: templateHeaderNotes[header] }}
+                                          />
+                                        </>
+                                      )}
+                                    </div>
+                                  </th>
+                                ))}
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {mappedData[activeTab].data.slice(1, Math.min(6, mappedData[activeTab].data.length)).map((row, rowIndex) => (
+                                <tr key={rowIndex} className={rowIndex % 2 === 0 ? 'bg-gray-50 dark:bg-gray-700/30' : 'dark:bg-gray-800'}>
+                                  {row.map((cell, cellIndex) => (
+                                    <td key={cellIndex} className="py-2 px-4 border-b dark:border-gray-600">
+                                      {cell === undefined || cell === null ? '' : String(cell)}
+                                    </td>
+                                  ))}
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                          {mappedData[activeTab].data.length > 6 && (
+                            <p className="mt-2 text-gray-500 dark:text-gray-400 text-sm">
+                              Showing first 5 rows of {mappedData[activeTab].data.length - 1} total rows for category "{activeTab}"
+                            </p>
+                          )}
+                        </div>
+                      )}
+                      
+                      <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-900/30 rounded-md text-yellow-800 dark:text-yellow-200">
+                        <div className="flex">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 flex-shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                          </svg>
+                          <div>
+                            <p className="font-medium mb-1">Multi-tab mapping summary:</p>
+                            <ul className="list-disc list-inside text-sm ml-2">
+                              <li>
+                                {Object.keys(mappedData).length} categories will be mapped to {new Set(Object.values(mappedData).map(item => item.worksheet)).size} different worksheets
+                              </li>
+                              <li>
+                                Total rows to be exported: {Object.values(mappedData).reduce((total, item) => total + item.data.length - 1, 0)}
+                              </li>
+                              <li>
+                                Click on each category tab above to preview the data that will be exported to each worksheet
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="overflow-x-auto mt-4 mb-6">
+                      <table className="min-w-full bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-md">
+                        <thead className="bg-gray-50 dark:bg-gray-700">
+                          <tr>
+                            {mappedData[0].map((header, index) => (
+                              <th key={index} className="py-2 px-4 border-b dark:border-gray-600 text-left">
+                                <div className="tooltip flex items-center">
+                                  <span className={header && headerHasNotes(header) ? "has-notes" : ""}>
+                                    {header || '(Empty Column)'}
+                                    {header && fieldRequirements[header] === 'Required' && (
+                                      <span className="ml-1 text-red-500 dark:text-red-400">*</span>
+                                    )}
+                                  </span>
+                                  {header && headerHasNotes(header) && (
+                                    <>
+                                      <span className="info-icon ml-1">i</span>
+                                      <span 
+                                        className={`tooltip-text ${isLargeNote(templateHeaderNotes[header]) ? 'large' : ''}`}
+                                        dangerouslySetInnerHTML={{ __html: templateHeaderNotes[header] }}
+                                      />
+                                    </>
                                   )}
-                                </span>
-                                {header && headerHasNotes(header) && (
-                                  <>
-                                    <span className="info-icon ml-1">i</span>
-                                    <span 
-                                      className={`tooltip-text ${isLargeNote(templateHeaderNotes[header]) ? 'large' : ''}`}
-                                      dangerouslySetInnerHTML={{ __html: templateHeaderNotes[header] }}
-                                    />
-                                  </>
-                                )}
-                              </div>
-                            </th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {mappedData.slice(1, Math.min(6, mappedData.length)).map((row, rowIndex) => (
-                          <tr key={rowIndex} className={rowIndex % 2 === 0 ? 'bg-gray-50 dark:bg-gray-700/30' : 'dark:bg-gray-800'}>
-                            {row.map((cell, cellIndex) => (
-                              <td key={cellIndex} className="py-2 px-4 border-b dark:border-gray-600">
-                                {cell === undefined || cell === null ? '' : String(cell)}
-                              </td>
+                                </div>
+                              </th>
                             ))}
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                    {mappedData.length > 6 && (
-                      <p className="mt-2 text-gray-500 dark:text-gray-400 text-sm">Showing first 5 rows of {mappedData.length - 1} total rows</p>
-                    )}
-                  </div>
+                        </thead>
+                        <tbody>
+                          {mappedData.slice(1, Math.min(6, mappedData.length)).map((row, rowIndex) => (
+                            <tr key={rowIndex} className={rowIndex % 2 === 0 ? 'bg-gray-50 dark:bg-gray-700/30' : 'dark:bg-gray-800'}>
+                              {row.map((cell, cellIndex) => (
+                                <td key={cellIndex} className="py-2 px-4 border-b dark:border-gray-600">
+                                  {cell === undefined || cell === null ? '' : String(cell)}
+                                </td>
+                              ))}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                      {mappedData.length > 6 && (
+                        <p className="mt-2 text-gray-500 dark:text-gray-400 text-sm">Showing first 5 rows of {mappedData.length - 1} total rows</p>
+                      )}
+                    </div>
+                  )}
                 </div>
                 
                 <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
@@ -1957,7 +2626,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
-                    Download Mapped Excel File
+                    {enableMultiTabMapping ? 'Download Multi-Tab Mapped Excel File' : 'Download Mapped Excel File'}
                   </button>
                 </div>
               </div>
