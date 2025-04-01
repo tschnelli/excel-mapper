@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Excel Mapper</title>
+  <title>Excel Template Mapper</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
@@ -1266,7 +1266,8 @@
         preserveStyles: true,
         applyColumnFormats: true,
         preserveValidation: true,
-        includeMacros: false // Default to false
+        includeMacros: false, // Default to false
+        preserveExistingData: true // New option to keep all template data intact
       });
       
       // Listen for dark mode changes
@@ -2794,7 +2795,7 @@
                 }
               };
               
-              // Function to update worksheet with mapped data
+              // Function to update worksheet with mapped data while preserving all existing content
               const updateWorksheet = (worksheetName, mappedRows, headerRowIndex = 0) => {
                 // Get or create the worksheet
                 let worksheet = workbook.Sheets[worksheetName];
@@ -2809,19 +2810,13 @@
                 // Calculate start row where data should be inserted
                 const dataStartRow = headerRowIndex + 1; // Row after header
                 
-                // Clear existing data in the worksheet to prevent conflicts
-                // First find the existing range
+                // Store original range info before modifications
+                let originalRange = {s: {r: 0, c: 0}, e: {r: 0, c: 0}};
                 if (worksheet['!ref']) {
-                  const range = XLSX.utils.decode_range(worksheet['!ref']);
-                  
-                  // Clear cells after the header row (preserve header)
-                  for (let r = dataStartRow; r <= range.e.r; r++) {
-                    for (let c = range.s.c; c <= range.e.c; c++) {
-                      const cellRef = XLSX.utils.encode_cell({r, c});
-                      delete worksheet[cellRef];
-                    }
-                  }
+                  originalRange = XLSX.utils.decode_range(worksheet['!ref']);
                 }
+                
+                // *** KEY CHANGE: Don't clear existing data - keep it all and just overwrite specific cells ***
                 
                 // Now add the mapped data
                 // Start with row after header
@@ -2832,8 +2827,8 @@
                   for (let colIndex = 0; colIndex < dataRow.length; colIndex++) {
                     const value = dataRow[colIndex];
                     
-                    // Skip undefined or null values
-                    if (value === undefined || value === null) continue;
+                    // Skip empty values to preserve template content
+                    if (value === undefined || value === null || value === '') continue;
                     
                     // Calculate cell reference
                     const cellRef = XLSX.utils.encode_cell({r: targetRowIndex, c: colIndex});
@@ -2843,36 +2838,32 @@
                   }
                 }
                 
-                // Update the range to include all added data
-                const maxRow = dataStartRow + mappedRows.length - 2; // -2 to account for header skip
-                const maxCol = mappedRows[0].length - 1;
+                // Update the range to include all the data if needed
+                const lastDataRow = dataStartRow + mappedRows.length - 2; // -2 to account for header skip
+                const lastDataCol = mappedRows[0].length - 1;
                 
-                // Get current range or default to first cell
-                let rangeStart = {r: 0, c: 0};
-                let rangeEnd = {r: maxRow, c: maxCol};
+                // Calculate the new range, preserving the original range if it's larger
+                const newRange = {
+                  s: {
+                    r: Math.min(originalRange.s.r, 0),
+                    c: Math.min(originalRange.s.c, 0)
+                  },
+                  e: {
+                    r: Math.max(originalRange.e.r, lastDataRow),
+                    c: Math.max(originalRange.e.c, lastDataCol)
+                  }
+                };
                 
-                if (worksheet['!ref']) {
-                  const currentRange = XLSX.utils.decode_range(worksheet['!ref']);
-                  rangeStart = {r: currentRange.s.r, c: currentRange.s.c};
-                  rangeEnd = {
-                    r: Math.max(currentRange.e.r, maxRow),
-                    c: Math.max(currentRange.e.c, maxCol)
-                  };
-                }
+                worksheet['!ref'] = XLSX.utils.encode_range(newRange);
                 
-                worksheet['!ref'] = XLSX.utils.encode_range({
-                  s: rangeStart,
-                  e: rangeEnd
-                });
-                
-                // Restore merges if available and enabled
+                // Preserve the original merged cells
                 if (exportOptions.preserveStyles && templateInfo[worksheetName] && templateInfo[worksheetName].merges) {
-                  worksheet['!merges'] = [...templateInfo[worksheetName].merges];
+                  worksheet['!merges'] = templateInfo[worksheetName].merges;
                 }
                 
-                // Restore data validations if available and enabled
+                // Preserve data validations if enabled
                 if (exportOptions.preserveValidation && templateInfo[worksheetName] && templateInfo[worksheetName].validations) {
-                  worksheet['!dataValidations'] = [...templateInfo[worksheetName].validations];
+                  worksheet['!dataValidations'] = templateInfo[worksheetName].validations;
                 }
               };
               
@@ -2922,7 +2913,7 @@
                 URL.revokeObjectURL(url);
               }, 100);
               
-              alert("Export complete! The file will download with your template's formatting preserved.");
+              alert("Export complete! The file will download with all template content preserved.");
             } catch (error) {
               console.error('Error processing template for export:', error);
               setDebugInfo(`Error exporting: ${error.message}`);
@@ -3084,7 +3075,7 @@
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8 mr-2 text-excel-500">
                 <path d="M18.375 2.25c-1.035 0-1.875.84-1.875 1.875v15.75c0 1.035.84 1.875 1.875 1.875h.75c1.035 0 1.875-.84 1.875-1.875V4.125c0-1.036-.84-1.875-1.875-1.875h-.75zM9.75 8.625c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v11.25c0 1.035-.84 1.875-1.875 1.875h-.75a1.875 1.875 0 01-1.875-1.875V8.625zM3 13.125c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v6.75c0 1.035-.84 1.875-1.875 1.875h-.75A1.875 1.875 0 013 19.875v-6.75z" />
               </svg>
-              Excel Mapper
+              Excel Template Mapper
             </h1>
             
             <div className="mb-8 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm dark:text-gray-200">
@@ -4174,7 +4165,7 @@
                                 <span className="format-icon">✓</span> Hyperlinks and styles
                               </div>
                               <div className="format-item">
-                                <span className="format-icon">✓</span> Cell formatting and alignment
+                                <span className="format-icon">✓</span> All existing template content
                               </div>
                             </div>
                           </div>
@@ -4192,6 +4183,21 @@
                     </div>
                     
                     <div className="export-option-group">
+                      <div className="export-option-label">
+                        <input 
+                          type="checkbox" 
+                          id="preserveExistingData" 
+                          checked={exportOptions.preserveExistingData}
+                          onChange={(e) => handleExportOptionChange('preserveExistingData', e.target.checked)}
+                        />
+                        <div>
+                          <label htmlFor="preserveExistingData" className="font-medium">Preserve All Template Content</label>
+                          <p className="export-option-description">
+                            Only overwrite cells where mapped data exists, leave all other template cells intact
+                          </p>
+                        </div>
+                      </div>
+                    
                       <div className="export-option-label">
                         <input 
                           type="checkbox" 
@@ -4478,7 +4484,7 @@
             )}
             
             <div className="mt-6 text-center text-sm text-gray-500 dark:text-gray-400">
-              Excel Mapper | Use this tool to map data between different Excel formats
+              Excel Template Mapper | Use this tool to map data between different Excel formats
             </div>
           </div>
         </div>
