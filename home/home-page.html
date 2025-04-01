@@ -375,13 +375,31 @@
     }
 
     .dropdown-tooltip .tooltip-text {
+      /* Fixed positioning for dropdown tooltips to escape overflow constraints */
+      position: fixed;
+      z-index: 100; /* Higher z-index to appear above all dropdowns */
+      
+      /* Sizing and spacing */
+      width: 280px;
+      max-width: 90vw;
+      padding: 10px 12px;
+      
+      /* Remove standard positioning */
       left: auto;
-      right: 0;
+      right: auto;
+      top: auto;
+      bottom: auto;
+      
+      /* Will be positioned via JavaScript */
+      transform: none;
+      
+      /* Better shadow for dropdown tooltips */
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     }
 
+    /* Hide the standard arrow for dropdown tooltips */
     .dropdown-tooltip .tooltip-text::before {
-      left: auto;
-      right: 15px;
+      display: none;
     }
     
     /* Auto-mapping suggestion panel */
@@ -598,8 +616,29 @@
                   <div className="flex items-center">
                     <span className="mr-1">{option.label}</span>
                     {hasDescription(option.value) && (
-                      <div className="tooltip">
-                        <span className="info-icon text-xs">i</span>
+                      <div className="dropdown-tooltip tooltip">
+                        <span className="info-icon text-xs" 
+                          onMouseEnter={(e) => {
+                            // Get tooltip element (next sibling)
+                            const tooltip = e.target.nextSibling;
+                            if (tooltip) {
+                              // Calculate position - above the icon
+                              const rect = e.target.getBoundingClientRect();
+                              tooltip.style.top = `${rect.top - 10 - tooltip.offsetHeight}px`;
+                              tooltip.style.left = `${rect.left - tooltip.offsetWidth + 20}px`;
+                              tooltip.style.visibility = 'visible';
+                              tooltip.style.opacity = '1';
+                            }
+                          }}
+                          onMouseLeave={(e) => {
+                            // Hide tooltip on mouse leave
+                            const tooltip = e.target.nextSibling;
+                            if (tooltip) {
+                              tooltip.style.visibility = 'hidden';
+                              tooltip.style.opacity = '0';
+                            }
+                          }}
+                        >i</span>
                         <span 
                           className={`tooltip-text ${columnDescriptions[option.value] && columnDescriptions[option.value].length > 150 ? 'large' : ''}`}
                           dangerouslySetInnerHTML={{ __html: columnDescriptions[option.value] }}
