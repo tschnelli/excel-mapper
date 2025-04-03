@@ -724,6 +724,9 @@
       background-color: #f9fafb;
       border-bottom: 1px solid #e5e7eb;
       font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
     
     .dark .worksheet-preview-header {
@@ -972,6 +975,344 @@
     .dark .export-option-description {
       color: #9ca3af;
     }
+    
+    /* Warning notice styles */
+    .warning-notice {
+      display: flex;
+      align-items: flex-start;
+      margin-top: 16px;
+      padding: 12px;
+      background-color: #fff7ed;
+      border: 1px solid #ffedd5;
+      border-radius: 6px;
+    }
+    
+    .dark .warning-notice {
+      background-color: rgba(234, 88, 12, 0.1);
+      border-color: rgba(234, 88, 12, 0.2);
+    }
+    
+    .warning-icon {
+      color: #ea580c;
+      margin-right: 12px;
+      flex-shrink: 0;
+    }
+    
+    .dark .warning-icon {
+      color: #fb923c;
+    }
+
+    /* Loading animation */
+    .loader-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .loader-spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #217346;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin-bottom: 12px;
+    }
+
+    .dark .loader-spinner {
+      border: 3px solid #374151;
+      border-top: 3px solid #4fb06a;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Worksheet summary section */
+    .worksheet-summary {
+      background-color: #f9fafb;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+      margin: 16px 0;
+      padding: 16px;
+    }
+
+    .dark .worksheet-summary {
+      background-color: #1f2937;
+      border-color: #374151;
+    }
+
+    /* Status indicators */
+    .status-indicator {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 6px;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .status-success {
+      background-color: #dcfce7;
+      color: #166534;
+    }
+
+    .dark .status-success {
+      background-color: rgba(22, 101, 52, 0.3);
+      color: #4ade80;
+    }
+
+    .status-warning {
+      background-color: #fef9c3;
+      color: #854d0e;
+    }
+
+    .dark .status-warning {
+      background-color: rgba(133, 77, 14, 0.3);
+      color: #facc15;
+    }
+
+    .status-error {
+      background-color: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .dark .status-error {
+      background-color: rgba(185, 28, 28, 0.3);
+      color: #f87171;
+    }
+
+    /* Collapsible section */
+    .collapsible-section {
+      border: 1px solid #e5e7eb;
+      border-radius: 0.375rem;
+      overflow: hidden;
+      margin-bottom: 1rem;
+    }
+
+    .dark .collapsible-section {
+      border-color: #4b5563;
+    }
+
+    .collapsible-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      background-color: #f9fafb;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .dark .collapsible-header {
+      background-color: #374151;
+    }
+
+    .collapsible-header:hover {
+      background-color: #f3f4f6;
+    }
+
+    .dark .collapsible-header:hover {
+      background-color: #4b5563;
+    }
+
+    .collapsible-arrow {
+      transition: transform 0.3s ease;
+    }
+
+    .collapsible-arrow.open {
+      transform: rotate(180deg);
+    }
+
+    .collapsible-content {
+      height: 0;
+      overflow: hidden;
+      transition: height 0.3s ease;
+    }
+
+    .collapsible-content.open {
+      height: auto;
+      padding: 1rem;
+    }
+
+    /* Product info detection styles */
+    .product-info-container {
+      padding: 12px;
+      background-color: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 6px;
+    }
+
+    .dark .product-info-container {
+      background-color: rgba(34, 197, 94, 0.1);
+      border-color: rgba(34, 197, 94, 0.2);
+    }
+
+    .detected-field {
+      display: flex;
+      align-items: center;
+      margin-bottom: 4px;
+      padding: 4px 8px;
+      background-color: #dcfce7;
+      border-radius: 4px;
+    }
+
+    .dark .detected-field {
+      background-color: rgba(22, 101, 52, 0.2);
+    }
+
+    .detected-field-icon {
+      color: #15803d;
+      margin-right: 8px;
+    }
+
+    .dark .detected-field-icon {
+      color: #4ade80;
+    }
+    
+    /* Header preview styles */
+    .header-preview {
+      margin-top: 8px;
+      padding: 8px;
+      border-radius: 4px;
+      background-color: #f3f4f6;
+      font-family: monospace;
+      font-size: 0.875rem;
+      white-space: nowrap;
+      overflow-x: auto;
+      max-width: 100%;
+      scrollbar-width: thin;
+    }
+    
+    .dark .header-preview {
+      background-color: #1f2937;
+    }
+    
+    .header-preview-item {
+      display: inline-block;
+      padding: 2px 6px;
+      margin-right: 2px;
+      border-radius: 3px;
+      background-color: #e0f2fe;
+      color: #0369a1;
+    }
+    
+    .dark .header-preview-item {
+      background-color: rgba(14, 165, 233, 0.2);
+      color: #38bdf8;
+    }
+    
+    .no-headers {
+      color: #ef4444;
+      font-style: italic;
+    }
+    
+    .dark .no-headers {
+      color: #f87171;
+    }
+    
+    /* Refresh button style */
+    .refresh-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem 0.75rem;
+      font-weight: 500;
+      border-radius: 0.375rem;
+      transition-property: background-color, border-color, color;
+      transition-duration: 150ms;
+      transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .refresh-btn svg {
+      margin-right: 0.375rem;
+      width: 1rem;
+      height: 1rem;
+    }
+    
+    .refresh-btn-primary {
+      background-color: #217346;
+      color: white;
+    }
+    
+    .refresh-btn-primary:hover {
+      background-color: #1e6a40;
+    }
+    
+    .refresh-btn-primary:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(33, 115, 70, 0.5);
+    }
+    
+    .dark .refresh-btn-primary {
+      background-color: #4fb06a;
+    }
+    
+    .dark .refresh-btn-primary:hover {
+      background-color: #3c9d57;
+    }
+    
+    .dark .refresh-btn-primary:focus {
+      box-shadow: 0 0 0 2px rgba(79, 176, 106, 0.5);
+    }
+    
+    /* Expanded header preview styles */
+    .expanded-preview {
+      max-height: 200px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.375rem;
+      margin-top: 0.5rem;
+    }
+    
+    .dark .expanded-preview {
+      border-color: #4b5563;
+    }
+    
+    .preview-row {
+      display: flex;
+      border-bottom: 1px solid #e5e7eb;
+      overflow-x: auto;
+    }
+    
+    .dark .preview-row {
+      border-color: #4b5563;
+    }
+    
+    .preview-row:last-child {
+      border-bottom: none;
+    }
+    
+    .preview-cell {
+      flex: 1 0 120px;
+      min-width: 120px;
+      padding: 0.5rem;
+      border-right: 1px solid #e5e7eb;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .dark .preview-cell {
+      border-color: #4b5563;
+    }
+    
+    .preview-cell:last-child {
+      border-right: none;
+    }
+    
+    .preview-header {
+      font-weight: 600;
+      background-color: #f9fafb;
+    }
+    
+    .dark .preview-header {
+      background-color: #374151;
+    }
   </style>
 </head>
 <body>
@@ -1183,6 +1524,92 @@
       );
     };
 
+    // Collapsible Section Component
+    const CollapsibleSection = ({ title, children, statusIndicator = null, defaultOpen = false }) => {
+      const [isOpen, setIsOpen] = useState(defaultOpen);
+      const contentRef = useRef(null);
+      
+      const toggleOpen = () => {
+        setIsOpen(!isOpen);
+      };
+      
+      return (
+        <div className="collapsible-section">
+          <div className="collapsible-header" onClick={toggleOpen}>
+            <div className="flex items-center">
+              <h3 className="font-medium">{title}</h3>
+              {statusIndicator && (
+                <div className="ml-2">{statusIndicator}</div>
+              )}
+            </div>
+            <svg 
+              className={`w-5 h-5 collapsible-arrow ${isOpen ? 'open' : ''}`} 
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20" 
+              fill="currentColor"
+            >
+              <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+            </svg>
+          </div>
+          <div 
+            ref={contentRef}
+            className={`collapsible-content ${isOpen ? 'open' : ''}`}
+            style={{ height: isOpen ? contentRef.current?.scrollHeight + 'px' : '0' }}
+          >
+            {children}
+          </div>
+        </div>
+      );
+    };
+
+    // Header Preview Component
+    const HeaderPreview = ({ headers, label = "Headers Preview" }) => {
+      const [expanded, setExpanded] = useState(false);
+      
+      // Limit to first 10 headers for the compact preview
+      const previewHeaders = headers.slice(0, 10);
+      const hasMore = headers.length > 10;
+      
+      return (
+        <div>
+          <div className="flex items-center justify-between">
+            <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">{label}</p>
+            {headers.length > 0 && (
+              <button 
+                onClick={() => setExpanded(!expanded)} 
+                className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
+              >
+                {expanded ? "Collapse" : "Expand"}
+              </button>
+            )}
+          </div>
+          
+          {!expanded ? (
+            <div className="header-preview">
+              {headers.length > 0 ? (
+                <>
+                  {previewHeaders.map((header, index) => (
+                    <span key={index} className="header-preview-item">{header}</span>
+                  ))}
+                  {hasMore && <span className="text-gray-400 dark:text-gray-500 ml-1">... and {headers.length - 10} more</span>}
+                </>
+              ) : (
+                <span className="no-headers">No headers detected</span>
+              )}
+            </div>
+          ) : (
+            <div className="expanded-preview">
+              <div className="preview-row">
+                {headers.map((header, index) => (
+                  <div key={index} className="preview-cell preview-header">{header || '(empty)'}</div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    };
+
     const ExcelMapper = () => {
       const [template, setTemplate] = useState(null);
       const [data, setData] = useState(null);
@@ -1201,16 +1628,19 @@
         data: false,
         mapping: false,
         headerLoad: false,
-        export: false
+        export: false,
+        refreshing: false
       });
       
       // Sheet selection states
       const [templateSheets, setTemplateSheets] = useState([]);
       const [dataSheets, setDataSheets] = useState([]);
-      const [selectedTemplateSheet, setSelectedTemplateSheet] = useState('');
       const [selectedDataSheet, setSelectedDataSheet] = useState('');
       const [templateHeaderRow, setTemplateHeaderRow] = useState(1);
       const [dataHeaderRow, setDataHeaderRow] = useState(1);
+      
+      // State to track selected template worksheets
+      const [selectedTemplateSheets, setSelectedTemplateSheets] = useState({});
       
       // Required/Optional field states
       const [requirementRowAvailable, setRequirementRowAvailable] = useState(false);
@@ -1232,13 +1662,11 @@
       const [enableMultiTabMapping, setEnableMultiTabMapping] = useState(false);
       const [categoryColumn, setCategoryColumn] = useState('');
       const [categoryValues, setCategoryValues] = useState([]);
-      // Modified to store arrays of worksheets instead of single worksheet
       const [categoryWorksheetMappings, setCategoryWorksheetMappings] = useState({});
       const [activeTab, setActiveTab] = useState(null);
       const [activeWorksheet, setActiveWorksheet] = useState(null);
       
       // Enhanced tabSpecificMappings to store per-worksheet mappings within each category
-      // Format: { category1: { worksheet1: {templateHeader: dataHeader, ...}, worksheet2: {...} }, category2: {...} }
       const [worksheetMappings, setWorksheetMappings] = useState({});
       
       // Worksheet suggestions based on fuzzy matching
@@ -1248,8 +1676,6 @@
       const [mainTabSelection, setMainTabSelection] = useState("");
 
       // States for sheet-specific header mappings
-      const [useSheetSpecificHeaders, setUseSheetSpecificHeaders] = useState(true);
-      const [selectedWorksheets, setSelectedWorksheets] = useState([]);
       const [worksheetHeadersMap, setWorksheetHeadersMap] = useState({});
       const [worksheetRequirementsMap, setWorksheetRequirementsMap] = useState({});
       const [worksheetNotesMap, setWorksheetNotesMap] = useState({});
@@ -1259,6 +1685,9 @@
       const [worksheetHeaderRows, setWorksheetHeaderRows] = useState({});
       const [worksheetRequirementRows, setWorksheetRequirementRows] = useState({});
       
+      // States for storing worksheet data for preview
+      const [worksheetDataMap, setWorksheetDataMap] = useState({});
+      
       // Export options
       const [exportOptions, setExportOptions] = useState({
         preserveFormulas: true,
@@ -1267,8 +1696,16 @@
         applyColumnFormats: true,
         preserveValidation: true,
         includeMacros: false, // Default to false
-        preserveExistingData: true // New option to keep all template data intact
+        preserveExistingData: true, // New option to keep all template data intact
+        preserveHeaderRows: true, // New option to preserve rows above the header
+        dataRowOffset: 1 // New option to specify how many rows below the header to start inserting data
       });
+
+      // Product information detection
+      const [detectProductInfo, setDetectProductInfo] = useState(true);
+      const [productInfoDetected, setProductInfoDetected] = useState({});
+      const [productFields, setProductFields] = useState({});
+      const [worksheetStatus, setWorksheetStatus] = useState({});
       
       // Listen for dark mode changes
       useEffect(() => {
@@ -1288,6 +1725,50 @@
         return () => mediaQuery.removeEventListener('change', darkModeListener);
       }, []);
 
+      // Function to check if a header is likely a product information field
+      const identifyProductFields = (headers, sheetName) => {
+        // Common patterns for product-related headers
+        const productFieldPatterns = {
+          productId: /\b(product|item|sku)[-_\s]*(id|number|no|code|identifier)\b/i,
+          productName: /\b(product|item)[-_\s]*(name|title|label)\b/i,
+          description: /\b(product|item)?[-_\s]*(desc|description|details|narrative|features)\b/i,
+          price: /\b(price|cost|msrp|retail[-_\s]*price|sale[-_\s]*price|unit[-_\s]*price)\b/i,
+          quantity: /\b(qty|quantity|inventory|stock|level|count)\b/i,
+          category: /\b(category|dept|department|classification|type|group)\b/i,
+          brand: /\b(brand|manufacturer|vendor|supplier|make)\b/i,
+          upc: /\b(upc|ean|gtin|isbn|barcode)\b/i,
+          color: /\b(color|colour|shade|hue)\b/i,
+          size: /\b(size|dimension|measurement|width|height|length|weight)\b/i,
+          material: /\b(material|fabric|composition|made[-_\s]*of)\b/i,
+          images: /\b(image|img|photo|picture|thumbnail|url)\b/i
+        };
+
+        const productFields = {};
+        const matchedFields = new Set();
+        
+        // Check each header against the patterns
+        headers.forEach(header => {
+          if (!header) return;
+          
+          // Test against each pattern
+          for (const [fieldType, pattern] of Object.entries(productFieldPatterns)) {
+            if (pattern.test(header.toLowerCase()) && !matchedFields.has(fieldType)) {
+              if (!productFields[fieldType]) {
+                productFields[fieldType] = [];
+              }
+              productFields[fieldType].push({
+                header,
+                sheet: sheetName
+              });
+              matchedFields.add(fieldType);
+              break; // Match only one field type per header
+            }
+          }
+        });
+        
+        return productFields;
+      };
+
       // Function to handle file uploads
       const handleFileUpload = (e, fileType) => {
         const file = e.target.files[0];
@@ -1303,8 +1784,8 @@
             const workbook = XLSX.read(binaryString, { 
               type: 'binary', 
               cellFormula: true, 
+              cellDates: true,
               cellNF: true, 
-              cellDates: true, 
               cellStyles: true,
               bookVBA: true, // Preserve VBA and macros
               bookFiles: true // Preserve embedded files/objects
@@ -1313,29 +1794,43 @@
             if (fileType === 'template') {
               setTemplateFile(file);
               setTemplateSheets(workbook.SheetNames);
-              setSelectedTemplateSheet(workbook.SheetNames[0]);
               
               // Set the main tab to the first sheet by default
               if (workbook.SheetNames.length > 0) {
                 setMainTabSelection(workbook.SheetNames[0]);
               }
               
-              // Initialize selected worksheets with the first sheet
-              if (workbook.SheetNames.length > 0) {
-                setSelectedWorksheets([workbook.SheetNames[0]]);
-                
-                // Initialize header and requirement rows for each worksheet
-                const initialHeaderRows = {};
-                const initialRequirementRows = {};
-                
-                workbook.SheetNames.forEach(sheet => {
-                  initialHeaderRows[sheet] = templateHeaderRow;
-                  initialRequirementRows[sheet] = templateRequirementRow;
-                });
-                
-                setWorksheetHeaderRows(initialHeaderRows);
-                setWorksheetRequirementRows(initialRequirementRows);
-              }
+              // Initialize header and requirement rows for each worksheet
+              const initialHeaderRows = {};
+              const initialRequirementRows = {};
+              
+              workbook.SheetNames.forEach(sheet => {
+                initialHeaderRows[sheet] = 1; // Default to row 1 for headers
+                initialRequirementRows[sheet] = 2; // Default to row 2 for requirements
+              });
+              
+              setWorksheetHeaderRows(initialHeaderRows);
+              setWorksheetRequirementRows(initialRequirementRows);
+              
+              // Initialize selected worksheets - select all by default
+              const initialSelectedSheets = {};
+              workbook.SheetNames.forEach(sheet => {
+                initialSelectedSheets[sheet] = true;
+              });
+              setSelectedTemplateSheets(initialSelectedSheets);
+
+              // Save workbook to enable refreshing later
+              setTemplate({ 
+                workbook,
+                headers: [], 
+                data: [],
+                worksheetHeaders: {},
+                worksheetRequirements: {},
+                worksheetNotes: {}
+              });
+              
+              // Process worksheet data for preview
+              processWorksheetData(workbook);
             } else {
               setDataFile(file);
               setDataSheets(workbook.SheetNames);
@@ -1355,261 +1850,131 @@
         
         reader.readAsBinaryString(file);
       };
-
-      // Process the selected worksheet with headers and requirement info
-      const processSheet = (fileType) => {
-        const file = fileType === 'template' ? templateFile : dataFile;
-        if (!file) return;
+      
+      // Process worksheet data for preview
+      const processWorksheetData = (workbook) => {
+        if (!workbook || !workbook.SheetNames || workbook.SheetNames.length === 0) return;
         
-        setIsLoading(prev => ({ ...prev, [fileType]: true }));
+        const dataMap = {};
         
-        const reader = new FileReader();
-        
-        reader.onload = (evt) => {
+        // Process each worksheet to store sample data
+        workbook.SheetNames.forEach(sheetName => {
           try {
-            const binaryString = evt.target.result;
-            // Include cellStyles to access cell formatting information
-            const workbook = XLSX.read(binaryString, { 
-              type: 'binary', 
-              cellFormula: true,  // Get formulas
-              cellStyles: true,   // Get cell styles
-              cellDates: true,    // Get dates
-              cellNF: true,       // Get number formats
-              cellText: false,    // Don't get text
-              bookVBA: true,      // Preserve VBA and macros
-              bookFiles: true     // Preserve embedded files/objects
-            });
+            const worksheet = workbook.Sheets[sheetName];
             
-            if (fileType === 'template') {
-              if (useSheetSpecificHeaders && selectedWorksheets.length > 0) {
-                // Process each selected worksheet to get its headers
-                const headerMap = {};
-                const requirementsMap = {};
-                const notesMap = {};
+            // Convert worksheet to JSON data with header option
+            const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+            
+            // Store first few rows for preview
+            dataMap[sheetName] = jsonData.slice(0, 5); // Store just first 5 rows for preview
+          } catch (error) {
+            console.error(`Error processing worksheet ${sheetName}:`, error);
+            dataMap[sheetName] = [];
+          }
+        });
+        
+        setWorksheetDataMap(dataMap);
+      };
+      
+      // Refresh headers for a specific worksheet based on current row settings
+      const refreshWorksheetHeaders = () => {
+        if (!template || !template.workbook) return;
+        
+        setIsLoading(prev => ({ ...prev, refreshing: true }));
+        
+        try {
+          // Process each worksheet in the template
+          const headerMap = {};
+          const requirementsMap = {};
+          const notesMap = {};
+          const statusMap = {};
+          let detectedProductInfo = {};
+          
+          // Process each worksheet one at a time
+          for (let i = 0; i < template.workbook.SheetNames.length; i++) {
+            try {
+              const sheetName = template.workbook.SheetNames[i];
+              console.log(`Processing worksheet: ${sheetName}`);
+              
+              const worksheet = template.workbook.Sheets[sheetName];
+              // Use a try-catch for sheet_to_json in case a sheet has issues
+              let jsonData = [];
+              try {
+                jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+              } catch (sheetError) {
+                console.error(`Error converting sheet ${sheetName} to JSON:`, sheetError);
+                jsonData = []; // Use empty array if conversion fails
+              }
+              
+              // Safely determine the header row index with fallbacks
+              const headerRowIndex = Math.max(0, ((worksheetHeaderRows || {})[sheetName] || 1) - 1);
+              
+              // Safely get headers with fallback
+              const headers = (jsonData && jsonData.length > headerRowIndex) ? 
+                jsonData[headerRowIndex] || [] : [];
+              
+              // Initialize worksheet status
+              statusMap[sheetName] = {
+                headerCount: headers.filter(Boolean).length,
+                status: headers.length > 0 ? 'success' : 'error',
+                message: headers.length > 0 
+                  ? `${headers.filter(Boolean).length} headers detected` 
+                  : 'No headers found'
+              };
+              
+              // Process requirement row if enabled
+              let requirements = {};
+              if (requirementRowAvailable) {
+                const reqRowIndex = Math.max(0, ((worksheetRequirementRows || {})[sheetName] || 2) - 1);
+                const reqRow = (jsonData && jsonData.length > reqRowIndex) ? jsonData[reqRowIndex] || [] : [];
                 
-                // Set loading state for header loading
-                setIsLoading(prev => ({ ...prev, headerLoad: true }));
-                
-                selectedWorksheets.forEach(sheetName => {
-                  const worksheet = workbook.Sheets[sheetName];
-                  const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-                  
-                  // Extract headers from specified row (convert to 0-based index)
-                  const headerRowIndex = (worksheetHeaderRows[sheetName] || templateHeaderRow) - 1;
-                  const headers = jsonData[headerRowIndex] || [];
-                  
-                  // Process requirement row if enabled
-                  let requirements = {};
-                  if (requirementRowAvailable) {
-                    const reqRowIndex = (worksheetRequirementRows[sheetName] || templateRequirementRow) - 1;
-                    const reqRow = jsonData[reqRowIndex] || [];
-                    
-                    headers.forEach((header, index) => {
-                      if (header) {
-                        // Check if the requirement cell contains any indicator of being required
-                        const reqValue = reqRow[index];
-                        const isRequired = 
-                          reqValue && 
-                          String(reqValue).toLowerCase().match(/required|mandatory|req|r|yes|y|\*/i) !== null;
-                        
-                        requirements[header] = isRequired ? 'Required' : 'Optional';
-                      }
-                    });
-                  } else {
-                    // Default all fields to optional if no requirement row specified
-                    headers.forEach(header => {
-                      if (header) {
-                        requirements[header] = 'Optional';
-                      }
-                    });
-                  }
-                  
-                  // Extract notes and validation messages for this worksheet
-                  const notes = {};
-                  let validationCount = 0;
-                  let commentCount = 0;
-                  
-                  // Iterate over header cells to find validation messages or comments
-                  headers.forEach((header, index) => {
-                    if (!header) return;
-                    
-                    // Calculate the cell reference for this header
-                    const colLetter = XLSX.utils.encode_col(index);
-                    const cellRef = `${colLetter}${headerRowIndex + 1}`;
-                    
-                    let foundNote = "";
-                    
-                    // Try to get data validation input message
-                    if (worksheet['!dataValidations']) {
-                      const validations = worksheet['!dataValidations'];
-                      for (let i = 0; i < validations.length; i++) {
-                        const validation = validations[i];
-                        // Check if validation applies to this cell
-                        if (validation.sqref === cellRef || validation.sqref.includes(cellRef)) {
-                          if (validation.prompt) {
-                            foundNote = validation.prompt;
-                            validationCount++;
-                            break;
-                          }
-                        }
-                      }
-                    }
-                    
-                    // If validation message not found, try fallback methods
-                    if (!foundNote) {
-                      // Check for comments/notes as fallback
-                      if (worksheet[cellRef] && worksheet[cellRef].c && worksheet[cellRef].c.length > 0) {
-                        foundNote = worksheet[cellRef].c[0].t || "";
-                        commentCount++;
-                      }
-                      else if (worksheet[cellRef] && worksheet[cellRef].cm) {
-                        foundNote = typeof worksheet[cellRef].cm === 'string' ? 
-                          worksheet[cellRef].cm : 
-                          (worksheet[cellRef].cm.t || worksheet[cellRef].cm.text || "");
-                        commentCount++;
-                      }
-                      else if (worksheet.comments && worksheet.comments[cellRef]) {
-                        foundNote = worksheet.comments[cellRef].t || worksheet.comments[cellRef].text || "";
-                        commentCount++;
-                      }
-                    }
-                    
-                    // Store the note (empty string if none found)
-                    notes[header] = foundNote;
-                  });
-                  
-                  // Add fallback demo notes for demonstration if no real messages found
-                  if (validationCount === 0 && commentCount === 0) {
-                    headers.forEach((header, index) => {
-                      if (!header) return;
-                      
-                      // Add formatted demo notes with more detailed examples
-                      if (index % 4 === 0) {
-                        notes[header] = `<h4>Input Guidelines</h4><p>Enter data for <span class="highlight">${header}</span> in the correct format to ensure data integrity.</p>`;
-                      } else if (index % 4 === 1) {
-                        notes[header] = `<h4>${header}</h4><p>This field should contain ${header.toLowerCase()} information that follows these rules:</p><ul><li>Must be properly formatted</li><li>Should be accurate and verified</li></ul>`;
-                      } else if (index % 4 === 2) {
-                        notes[header] = `<h4>Format Required</h4><p>The <span class="highlight">${header}</span> field expects data in a specific format. Please ensure your data matches this expectation.</p>`;
-                      } else if (index % 4 === 3 && requirements[header] === 'Required') {
-                        notes[header] = `<h4>Required Field</h4><p>The <span class="highlight">${header}</span> field must be completed. Missing data will cause validation errors.</p>`;
-                      }
-                    });
-                  }
-                  
-                  // Store headers, requirements, and notes for this worksheet
-                  headerMap[sheetName] = headers;
-                  requirementsMap[sheetName] = requirements;
-                  notesMap[sheetName] = notes;
-                });
-                
-                // Store all worksheet-specific header information
-                setWorksheetHeadersMap(headerMap);
-                setWorksheetRequirementsMap(requirementsMap);
-                setWorksheetNotesMap(notesMap);
-                
-                // Use the headers from the first selected worksheet for single-sheet view
-                if (selectedWorksheets.length > 0) {
-                  const firstSheet = selectedWorksheets[0];
-                  setTemplateHeaders(headerMap[firstSheet] || []);
-                  setFieldRequirements(requirementsMap[firstSheet] || {});
-                  setTemplateHeaderNotes(notesMap[firstSheet] || {});
-                  
-                  // Combined dataset for the initially selected worksheet
-                  const worksheet = workbook.Sheets[firstSheet];
-                  const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-                  const headerRowIndex = (worksheetHeaderRows[firstSheet] || templateHeaderRow) - 1;
-                  const headers = jsonData[headerRowIndex] || [];
-                  const dataRows = jsonData.slice(headerRowIndex + 1);
-                  const fullData = [headers, ...dataRows];
-                  
-                  setTemplate({ 
-                    workbook, 
-                    sheet: firstSheet, 
-                    headers, 
-                    data: fullData,
-                    worksheetHeaders: headerMap,
-                    worksheetRequirements: requirementsMap,
-                    worksheetNotes: notesMap
-                  });
-                }
-                
-                // Create debug info summarizing what we found
-                let totalHeaderCount = 0;
-                Object.values(headerMap).forEach(headers => {
-                  totalHeaderCount += headers.filter(Boolean).length;
-                });
-                
-                setDebugInfo(`Loaded ${totalHeaderCount} columns across ${selectedWorksheets.length} worksheets.`);
-                setIsLoading(prev => ({ ...prev, headerLoad: false }));
-              } else {
-                // Process the traditional single selected worksheet
-                const selectedSheet = selectedTemplateSheet;
-                const worksheet = workbook.Sheets[selectedSheet];
-                
-                // Get all data as array of arrays
-                const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-                
-                // Extract headers from specified row (convert to 0-based index)
-                const headerRowIndex = templateHeaderRow - 1;
-                const headers = jsonData[headerRowIndex] || [];
-                
-                // Process requirement row if enabled
-                let requirements = {};
-                if (requirementRowAvailable) {
-                  const reqRowIndex = templateRequirementRow - 1;
-                  const reqRow = jsonData[reqRowIndex] || [];
-                  
-                  headers.forEach((header, index) => {
-                    if (header) {
-                      // Check if the requirement cell contains any indicator of being required
-                      const reqValue = reqRow[index];
-                      const isRequired = 
-                        reqValue && 
-                        String(reqValue).toLowerCase().match(/required|mandatory|req|r|yes|y|\*/i) !== null;
-                      
-                      requirements[header] = isRequired ? 'Required' : 'Optional';
-                    }
-                  });
-                } else {
-                  // Default all fields to optional if no requirement row specified
-                  headers.forEach(header => {
-                    if (header) {
-                      requirements[header] = 'Optional';
-                    }
-                  });
-                }
-                
-                setFieldRequirements(requirements);
-                
-                // This will hold all the notes/tooltips found for headers
-                const notes = {};
-                let validationCount = 0;
-                let commentCount = 0;
-                
-                // Try to extract validation input messages
-                // In SheetJS, data validations might be found in the dataValidation property
-                const hasValidations = worksheet['!dataValidations'] || 
-                                      (worksheet.Workbook && worksheet.Workbook.Sheets && 
-                                       worksheet.Workbook.Sheets[0] && 
-                                       worksheet.Workbook.Sheets[0].DataValidations);
-                
-                // Iterate over header cells to find validation messages or comments
                 headers.forEach((header, index) => {
                   if (!header) return;
                   
-                  // Calculate the cell reference for this header
-                  const colLetter = XLSX.utils.encode_col(index);
+                  // Check if the requirement cell contains any indicator of being required
+                  const reqValue = index < reqRow.length ? reqRow[index] : null;
+                  const reqString = reqValue ? String(reqValue) : '';
+                  const isRequired = reqString && 
+                    reqString.toLowerCase().match(/required|mandatory|req|r|yes|y|\*/i) !== null;
+                  
+                  requirements[header] = isRequired ? 'Required' : 'Optional';
+                });
+              } else {
+                // Default all fields to optional if no requirement row specified
+                headers.forEach(header => {
+                  if (header) {
+                    requirements[header] = 'Optional';
+                  }
+                });
+              }
+              
+              // Extract notes and validation messages for this worksheet - with simplified approach
+              const notes = {};
+              let validationCount = 0;
+              let commentCount = 0;
+              
+              // Only process notes for the first few columns to avoid excessive processing
+              const maxHeadersToProcess = Math.min(headers.length, 50); // Limit to first 50 headers
+              
+              for (let headerIndex = 0; headerIndex < maxHeadersToProcess; headerIndex++) {
+                const header = headers[headerIndex];
+                if (!header) continue;
+                
+                try {
+                  // Calculate the cell reference
+                  const colLetter = XLSX.utils.encode_col(headerIndex);
                   const cellRef = `${colLetter}${headerRowIndex + 1}`;
                   
                   let foundNote = "";
                   
-                  // Try to get data validation input message
-                  if (worksheet['!dataValidations']) {
+                  // Try simplified validation access (safer)
+                  if (worksheet['!dataValidations'] && Array.isArray(worksheet['!dataValidations'])) {
                     const validations = worksheet['!dataValidations'];
-                    for (let i = 0; i < validations.length; i++) {
+                    for (let i = 0; i < Math.min(validations.length, 50); i++) { // Limit validation checks
                       const validation = validations[i];
-                      // Check if validation applies to this cell
-                      if (validation.sqref === cellRef || validation.sqref.includes(cellRef)) {
+                      if (validation && validation.sqref && 
+                         (validation.sqref === cellRef || 
+                          (typeof validation.sqref === 'string' && validation.sqref.includes(cellRef)))) {
                         if (validation.prompt) {
                           foundNote = validation.prompt;
                           validationCount++;
@@ -1619,222 +1984,249 @@
                     }
                   }
                   
-                  // If validation message not found, try fallback methods
-                  if (!foundNote) {
-                    // Check for comments/notes as fallback
-                    if (worksheet[cellRef] && worksheet[cellRef].c && worksheet[cellRef].c.length > 0) {
-                      foundNote = worksheet[cellRef].c[0].t || "";
-                      commentCount++;
-                    }
-                    else if (worksheet[cellRef] && worksheet[cellRef].cm) {
-                      foundNote = typeof worksheet[cellRef].cm === 'string' ? 
-                        worksheet[cellRef].cm : 
-                        (worksheet[cellRef].cm.t || worksheet[cellRef].cm.text || "");
-                      commentCount++;
-                    }
-                    else if (worksheet.comments && worksheet.comments[cellRef]) {
-                      foundNote = worksheet.comments[cellRef].t || worksheet.comments[cellRef].text || "";
-                      commentCount++;
-                    }
-                  }
-                  
-                  // Store the note (empty string if none found)
+                  // Store the note
                   notes[header] = foundNote;
-                });
-                
-                // Create debug info
-                let debugText = `Found ${validationCount} validation input messages and ${commentCount} comments.`;
-                setDebugInfo(debugText);
-                
-                // Add fallback demo notes for demonstration if no real messages found
-                if (validationCount === 0 && commentCount === 0) {
-                  headers.forEach((header, index) => {
-                    if (!header) return;
+                  
+                } catch (noteError) {
+                  console.error(`Error processing notes for ${header}:`, noteError);
+                  notes[header] = ""; // Use empty note on error
+                }
+              }
+              
+              // Don't process product info for this sheet if it has too many headers or causes issues
+              if (detectProductInfo && headers.length > 0 && headers.length < 500) {
+                try {
+                  const detectedFields = identifyProductFields(headers, sheetName);
+                  
+                  // If product fields were found in this sheet, update status
+                  const fieldCount = Object.values(detectedFields).reduce((total, arr) => total + arr.length, 0);
+                  if (fieldCount > 0) {
+                    statusMap[sheetName].productFields = fieldCount;
+                    statusMap[sheetName].isProductSheet = fieldCount >= 3; // Consider it a product sheet if 3+ product fields
                     
-                    // Add formatted demo notes with more detailed examples
-                    if (index % 4 === 0) {
-                      notes[header] = `<h4>Input Guidelines</h4><p>Enter data for <span class="highlight">${header}</span> in the correct format to ensure data integrity.</p>`;
-                    } else if (index % 4 === 1) {
-                      notes[header] = `<h4>${header}</h4><p>This field should contain ${header.toLowerCase()} information that follows these rules:</p><ul><li>Must be properly formatted</li><li>Should be accurate and verified</li></ul>`;
-                    } else if (index % 4 === 2) {
-                      notes[header] = `<h4>Format Required</h4><p>The <span class="highlight">${header}</span> field expects data in a specific format. Please ensure your data matches this expectation.</p>`;
-                    } else if (index % 4 === 3 && requirements[header] === 'Required') {
-                      notes[header] = `<h4>Required Field</h4><p>The <span class="highlight">${header}</span> field must be completed. Missing data will cause validation errors.</p>`;
-                    }
-                  });
-                  setDebugInfo("Using demo validation messages for illustration (no real validation data found in Excel file).");
+                    // Merge with existing detected fields (safer approach)
+                    Object.entries(detectedFields).forEach(([fieldType, fields]) => {
+                      if (!detectedProductInfo[fieldType]) {
+                        detectedProductInfo[fieldType] = [];
+                      }
+                      detectedProductInfo[fieldType] = [
+                        ...detectedProductInfo[fieldType], 
+                        ...fields
+                      ].slice(0, 20); // Limit to prevent too many fields
+                    });
+                  }
+                } catch (productError) {
+                  console.error(`Error detecting product fields in ${sheetName}:`, productError);
                 }
-                
-                setTemplateHeaderNotes(notes);
-                
-                // Get data rows (all rows after the header row)
-                const dataRows = jsonData.slice(headerRowIndex + 1);
-                
-                // Combine headers with dataRows for complete dataset
-                const fullData = [headers, ...dataRows];
-                
-                setTemplate({ workbook, sheet: selectedSheet, headers, data: fullData });
-                setTemplateHeaders(headers);
               }
               
-              // Reset suggestions reviewed state when loading a new template
-              setSuggestionsReviewed(false);
+              // Store headers, requirements, and notes for this worksheet
+              headerMap[sheetName] = headers;
+              requirementsMap[sheetName] = requirements;
+              notesMap[sheetName] = notes;
+            } catch (worksheetError) {
+              console.error(`Error processing worksheet ${template.workbook.SheetNames[i]}:`, worksheetError);
+              // Create empty data for this worksheet to prevent the app from crashing
+              const sheetName = template.workbook.SheetNames[i];
+              headerMap[sheetName] = [];
+              requirementsMap[sheetName] = {};
+              notesMap[sheetName] = {};
+              statusMap[sheetName] = {
+                headerCount: 0,
+                status: 'error',
+                message: `Error: ${worksheetError.message}`
+              };
+            }
+          }
+          
+          // Store all worksheet-specific header information
+          setWorksheetHeadersMap(headerMap);
+          setWorksheetRequirementsMap(requirementsMap);
+          setWorksheetNotesMap(notesMap);
+          setWorksheetStatus(statusMap);
+          
+          // Store detected product information (limiting the size to prevent UI issues)
+          if (detectProductInfo) {
+            // Limit the number of fields stored to prevent performance issues
+            Object.keys(detectedProductInfo).forEach(key => {
+              if (detectedProductInfo[key].length > 10) {
+                detectedProductInfo[key] = detectedProductInfo[key].slice(0, 10);
+              }
+            });
+            
+            setProductInfoDetected(detectedProductInfo);
+            setProductFields(detectedProductInfo);
+          }
+          
+          // Use the headers from the first worksheet for default view
+          if (template.workbook.SheetNames.length > 0) {
+            const firstSheet = template.workbook.SheetNames[0];
+            setTemplateHeaders(headerMap[firstSheet] || []);
+            setFieldRequirements(requirementsMap[firstSheet] || {});
+            setTemplateHeaderNotes(notesMap[firstSheet] || {});
+            
+            // Update template with new info
+            setTemplate(prev => ({ 
+              ...prev,
+              headers: headerMap[firstSheet] || [], 
+              data: [headerMap[firstSheet] || []],
+              worksheetHeaders: headerMap,
+              worksheetRequirements: requirementsMap,
+              worksheetNotes: notesMap
+            }));
+          }
+          
+          // Create debug info summarizing what we found
+          let totalHeaderCount = 0;
+          Object.values(headerMap).forEach(headers => {
+            if (headers && Array.isArray(headers)) {
+              totalHeaderCount += headers.filter(Boolean).length;
+            }
+          });
+          
+          const productFieldCount = Object.values(detectedProductInfo)
+            .reduce((total, arr) => total + (Array.isArray(arr) ? arr.length : 0), 0);
+          
+          setDebugInfo(
+            `Loaded ${totalHeaderCount} columns from ${template.workbook.SheetNames.length} worksheets. ` +
+            (productFieldCount > 0 ? `Detected ${productFieldCount} product-related fields.` : '')
+          );
+          
+          // Reset suggestions reviewed state when refreshing
+          setSuggestionsReviewed(false);
+        } catch (error) {
+          console.error('Error refreshing template headers:', error);
+          setDebugInfo(`Error: ${error.message}`);
+        } finally {
+          setIsLoading(prev => ({ ...prev, refreshing: false }));
+        }
+      };
+
+      // Process the selected data worksheet
+      const processDataSheet = () => {
+        if (!dataFile) return;
+        
+        setIsLoading(prev => ({ ...prev, data: true }));
+        
+        const reader = new FileReader();
+        
+        reader.onload = (evt) => {
+          try {
+            const binaryString = evt.target.result;
+            const workbook = XLSX.read(binaryString, { 
+              type: 'binary', 
+              cellFormula: true,
+              cellStyles: true,
+              cellDates: true,
+              cellNF: true,
+              bookVBA: true,
+              bookFiles: true
+            });
+            
+            // Process the selected data worksheet
+            const selectedSheet = selectedDataSheet;
+            const worksheet = workbook.Sheets[selectedSheet];
+            
+            // Get all data as array of arrays
+            const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+            
+            const headerRowIndex = dataHeaderRow - 1;
+            const headers = jsonData[headerRowIndex] || [];
+            
+            // Generate demo descriptions for data headers
+            const descriptions = {};
+            headers.forEach((header, index) => {
+              if (!header) return;
               
-              // Reset multi-tab mapping settings
-              setEnableMultiTabMapping(false);
-              setCategoryColumn('');
-              setCategoryValues([]);
-              setCategoryWorksheetMappings({});
-              setActiveTab(null);
-              setActiveWorksheet(null);
-              setWorksheetMappings({});
-            } else {
-              // Process data file normally (unchanged)
-              const selectedSheet = selectedDataSheet;
-              const worksheet = workbook.Sheets[selectedSheet];
+              // Create descriptive text based on header name
+              const words = header.split(/[\s_.-]+/);
+              const formattedHeader = words.map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
               
-              // Get all data as array of arrays
-              const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+              if (index % 5 === 0) {
+                descriptions[header] = `<h4>${formattedHeader}</h4><p>Contains unique identifier values for each record. Use this for reference or linking to other systems.</p>`;
+              } else if (index % 5 === 1) {
+                descriptions[header] = `<h4>${formattedHeader}</h4><p>This column stores ${formattedHeader.toLowerCase()} values from the source system. <span class="highlight">Important for data integrity</span>.</p>`;
+              } else if (index % 5 === 2) {
+                descriptions[header] = `<h4>About ${formattedHeader}</h4><p>Contains formatted text data with ${formattedHeader.toLowerCase()} information. This data is used for reporting and analytics.</p>`;
+              } else if (index % 5 === 3) {
+                descriptions[header] = `<h4>${formattedHeader} Details</h4><p>This column provides metadata about each record, including things like:</p><ul><li>Source system information</li><li>Last update timestamp</li><li>Validation status</li></ul>`;
+              } else {
+                descriptions[header] = `<h4>${formattedHeader} Column</h4><p>This field contains supplementary information that may be useful for specific reporting needs. The content is <span class="highlight">variable in format</span>.</p>`;
+              }
+            });
+            
+            setDataHeaderDescriptions(descriptions);
+            
+            // Get data rows (all rows after the header row)
+            const dataRows = jsonData.slice(headerRowIndex + 1);
+            
+            // Combine headers with dataRows for complete dataset
+            const fullData = [headers, ...dataRows];
+            
+            setData({ workbook, sheet: selectedSheet, headers, data: fullData });
+            setDataHeaders(headers);
+            
+            // Extract sample data for each column (up to 5 unique non-empty values)
+            const samples = {};
+            headers.forEach((header, colIndex) => {
+              if (!header) return;
               
-              const headerRowIndex = dataHeaderRow - 1;
-              const headers = jsonData[headerRowIndex] || [];
-              
-              // Generate demo descriptions for data headers
-              const descriptions = {};
-              headers.forEach((header, index) => {
-                if (!header) return;
-                
-                // Create descriptive text based on header name
-                const words = header.split(/[\s_.-]+/);
-                const formattedHeader = words.map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
-                
-                if (index % 5 === 0) {
-                  descriptions[header] = `<h4>${formattedHeader}</h4><p>Contains unique identifier values for each record. Use this for reference or linking to other systems.</p>`;
-                } else if (index % 5 === 1) {
-                  descriptions[header] = `<h4>${formattedHeader}</h4><p>This column stores ${formattedHeader.toLowerCase()} values from the source system. <span class="highlight">Important for data integrity</span>.</p>`;
-                } else if (index % 5 === 2) {
-                  descriptions[header] = `<h4>About ${formattedHeader}</h4><p>Contains formatted text data with ${formattedHeader.toLowerCase()} information. This data is used for reporting and analytics.</p>`;
-                } else if (index % 5 === 3) {
-                  descriptions[header] = `<h4>${formattedHeader} Details</h4><p>This column provides metadata about each record, including things like:</p><ul><li>Source system information</li><li>Last update timestamp</li><li>Validation status</li></ul>`;
-                } else {
-                  descriptions[header] = `<h4>${formattedHeader} Column</h4><p>This field contains supplementary information that may be useful for specific reporting needs. The content is <span class="highlight">variable in format</span>.</p>`;
+              const columnData = new Set();
+              // Loop through the first 20 rows to find samples
+              for (let rowIndex = 0; rowIndex < Math.min(dataRows.length, 20); rowIndex++) {
+                const row = dataRows[rowIndex];
+                if (row && colIndex < row.length && row[colIndex] !== undefined && row[colIndex] !== null && row[colIndex] !== '') {
+                  columnData.add(row[colIndex]);
+                  if (columnData.size >= 5) break; // Collect up to 5 samples
                 }
-              });
+              }
               
-              setDataHeaderDescriptions(descriptions);
+              // Convert Set to Array
+              samples[header] = Array.from(columnData);
               
-              // Get data rows (all rows after the header row)
-              const dataRows = jsonData.slice(headerRowIndex + 1);
-              
-              // Combine headers with dataRows for complete dataset
-              const fullData = [headers, ...dataRows];
-              
-              setData({ workbook, sheet: selectedSheet, headers, data: fullData });
-              setDataHeaders(headers);
-              
-              // Extract sample data for each column (up to 5 unique non-empty values)
-              const samples = {};
-              headers.forEach((header, colIndex) => {
-                if (!header) return;
-                
-                const columnData = new Set();
-                // Loop through the first 20 rows to find samples
-                for (let rowIndex = 0; rowIndex < Math.min(dataRows.length, 20); rowIndex++) {
+              // If we don't have enough samples, try to get more including empty values
+              if (samples[header].length < 3 && dataRows.length > 0) {
+                samples[header] = [];
+                for (let rowIndex = 0; rowIndex < Math.min(dataRows.length, 5); rowIndex++) {
                   const row = dataRows[rowIndex];
-                  if (row && colIndex < row.length && row[colIndex] !== undefined && row[colIndex] !== null && row[colIndex] !== '') {
-                    columnData.add(row[colIndex]);
-                    if (columnData.size >= 5) break; // Collect up to 5 samples
+                  if (row && colIndex < row.length) {
+                    samples[header].push(row[colIndex]);
                   }
                 }
-                
-                // Convert Set to Array
-                samples[header] = Array.from(columnData);
-                
-                // If we don't have enough samples, try to get more including empty values
-                if (samples[header].length < 3 && dataRows.length > 0) {
-                  samples[header] = [];
-                  for (let rowIndex = 0; rowIndex < Math.min(dataRows.length, 5); rowIndex++) {
-                    const row = dataRows[rowIndex];
-                    if (row && colIndex < row.length) {
-                      samples[header].push(row[colIndex]);
-                    }
-                  }
-                }
-              });
-              
-              setColumnSamples(samples);
-              
-              // If template headers already exist, generate suggested mappings
-              if (templateHeaders.length > 0) {
-                const { suggestions, scores } = generateFuzzyMappings(templateHeaders, headers);
-                setSuggestedMappings(suggestions);
-                setMappingScores(scores);
-                setMappings(suggestions);
-                
-                // Reset suggestions reviewed state when loading new data
-                setSuggestionsReviewed(false);
               }
+            });
+            
+            setColumnSamples(samples);
+            
+            // If template headers already exist, generate suggested mappings
+            if (templateHeaders.length > 0) {
+              const { suggestions, scores } = generateFuzzyMappings(templateHeaders, headers);
+              setSuggestedMappings(suggestions);
+              setMappingScores(scores);
+              setMappings(suggestions);
               
-              // Get unique values for category column if one is selected
-              if (enableMultiTabMapping && categoryColumn) {
-                updateCategoryValues(headers, dataRows, categoryColumn);
-              }
+              // Reset suggestions reviewed state when loading new data
+              setSuggestionsReviewed(false);
+            }
+            
+            // Get unique values for category column if one is selected
+            if (enableMultiTabMapping && categoryColumn) {
+              updateCategoryValues(headers, dataRows, categoryColumn);
             }
           } catch (error) {
-            console.error(`Error processing ${fileType} sheet:`, error);
+            console.error('Error processing data sheet:', error);
             setDebugInfo(`Error: ${error.message}`);
           } finally {
-            setIsLoading(prev => ({ ...prev, [fileType]: false }));
+            setIsLoading(prev => ({ ...prev, data: false }));
           }
         };
         
         reader.onerror = () => {
-          console.error(`Error reading ${fileType} file for processing`);
-          setIsLoading(prev => ({ ...prev, [fileType]: false }));
+          console.error('Error reading data file for processing');
+          setIsLoading(prev => ({ ...prev, data: false }));
         };
         
-        reader.readAsBinaryString(file);
-      };
-
-      // Handle worksheet selection for multi-sheet processing
-      const handleWorksheetSelection = (worksheet) => {
-        setSelectedWorksheets(prev => {
-          if (prev.includes(worksheet)) {
-            // If already selected, remove it (unselect)
-            return prev.filter(sheet => sheet !== worksheet);
-          } else {
-            // If not selected, add it
-            return [...prev, worksheet];
-          }
-        });
-      };
-
-      // Select all worksheets
-      const selectAllWorksheets = () => {
-        setSelectedWorksheets(templateSheets);
-      };
-
-      // Clear all worksheet selections
-      const clearWorksheetSelections = () => {
-        setSelectedWorksheets([]);
-      };
-      
-      // Handle changing header row for a specific worksheet
-      const handleWorksheetHeaderRowChange = (worksheet, value) => {
-        const newValue = Math.max(1, parseInt(value) || 1);
-        setWorksheetHeaderRows(prev => ({
-          ...prev,
-          [worksheet]: newValue
-        }));
-      };
-      
-      // Handle changing requirement row for a specific worksheet
-      const handleWorksheetRequirementRowChange = (worksheet, value) => {
-        const newValue = Math.max(1, parseInt(value) || 1);
-        setWorksheetRequirementRows(prev => ({
-          ...prev,
-          [worksheet]: newValue
-        }));
+        reader.readAsBinaryString(dataFile);
       };
 
       // Enhanced fuzzy matching function
@@ -1950,8 +2342,51 @@
               newMappings[category][worksheet] = {};
             }
             
-            // Update the mapping
+            // Update the mapping for the current category/worksheet
             newMappings[category][worksheet][templateHeader] = dataHeader;
+            
+            // If this is the main tab, sync this mapping to all categories that use the main tab
+            if (worksheet === mainTabSelection) {
+              // Find all categories that use the main tab
+              Object.keys(categoryWorksheetMappings).forEach(otherCategory => {
+                if (otherCategory !== category && 
+                    categoryWorksheetMappings[otherCategory] && 
+                    categoryWorksheetMappings[otherCategory].includes(mainTabSelection)) {
+                  
+                  // Initialize if needed
+                  if (!newMappings[otherCategory]) {
+                    newMappings[otherCategory] = {};
+                  }
+                  if (!newMappings[otherCategory][mainTabSelection]) {
+                    newMappings[otherCategory][mainTabSelection] = {};
+                  }
+                  
+                  // Copy the mapping to the main tab in this category
+                  newMappings[otherCategory][mainTabSelection][templateHeader] = dataHeader;
+                }
+              });
+            } else {
+              // For non-main tabs, try to sync with same-named worksheets in other categories
+              // Find other categories that use the same worksheet name
+              Object.keys(categoryWorksheetMappings).forEach(otherCategory => {
+                if (otherCategory !== category && 
+                    categoryWorksheetMappings[otherCategory] && 
+                    categoryWorksheetMappings[otherCategory].includes(worksheet)) {
+                  
+                  // Initialize if needed
+                  if (!newMappings[otherCategory]) {
+                    newMappings[otherCategory] = {};
+                  }
+                  if (!newMappings[otherCategory][worksheet]) {
+                    newMappings[otherCategory][worksheet] = {};
+                  }
+                  
+                  // Copy the mapping to the same worksheet in this category
+                  newMappings[otherCategory][worksheet][templateHeader] = dataHeader;
+                }
+              });
+            }
+            
             return newMappings;
           });
         } else {
@@ -2262,6 +2697,11 @@
         }
       };
 
+      // Toggle product information detection
+      const toggleProductInfoDetection = (e) => {
+        setDetectProductInfo(e.target.checked);
+      };
+
       // Accept all suggestions for the current worksheet mapping
       const acceptAllSuggestions = () => {
         if (enableMultiTabMapping && activeTab && activeWorksheet) {
@@ -2350,7 +2790,7 @@
         // Get the relevant headers and requirements for this worksheet
         let headers, requirements;
         
-        if (worksheet && useSheetSpecificHeaders && worksheetHeadersMap[worksheet]) {
+        if (worksheet && worksheetHeadersMap[worksheet]) {
           headers = worksheetHeadersMap[worksheet] || [];
           requirements = worksheetRequirementsMap[worksheet] || {};
         } else {
@@ -2398,22 +2838,21 @@
             
             // Check if we should map all data to the main tab
             if (includeMainTab && mainTabSelection) {
-              // Get the correct headers for the main tab
-              const mainTabHeaders = useSheetSpecificHeaders 
-                ? worksheetHeadersMap[mainTabSelection] || template.headers
-                : template.headers;
+              // IMPORTANT: Always get the specific template headers for the main tab
+              // This ensures we use the actual headers from this worksheet
+              const mainTabHeaders = worksheetHeadersMap[mainTabSelection] || templateHeaders;
               
               const mainTabMappedRows = [mainTabHeaders]; // Start with main tab headers
               
               // Create a mapping key for the main tab (use "ALL" as category to distinguish)
               const mainTabKey = `ALL:${mainTabSelection}`;
               
-              // Get the main tab mappings from any category that uses it, or fall back to default mappings
+              // Get the main tab mappings for applying to data
               let mainTabMappings = {}; 
               
-              // Find the first category that uses the main tab
+              // Find any category that uses the main tab for mappings
               const categoryWithMainTab = Object.keys(categoryWorksheetMappings).find(
-                catKey => categoryWorksheetMappings[catKey].includes(mainTabSelection)
+                catKey => categoryWorksheetMappings[catKey]?.includes(mainTabSelection)
               );
               
               if (categoryWithMainTab && 
@@ -2429,10 +2868,11 @@
               allDataRows.forEach(dataRow => {
                 const mappedRow = new Array(mainTabHeaders.length).fill('');
                 
-                // For each template header
+                // For each template header in this specific worksheet
                 mainTabHeaders.forEach((templateHeader, templateColIndex) => {
                   if (!templateHeader) return;
                   
+                  // Look up the data column mapped to this template header
                   const dataHeader = mainTabMappings[templateHeader];
                   
                   if (dataHeader) {
@@ -2455,12 +2895,8 @@
                 data: mainTabMappedRows,
                 isMainTab: true,
                 headers: mainTabHeaders,
-                requirements: useSheetSpecificHeaders 
-                  ? worksheetRequirementsMap[mainTabSelection] || {}
-                  : fieldRequirements,
-                headerRow: useSheetSpecificHeaders
-                  ? worksheetHeaderRows[mainTabSelection] || templateHeaderRow
-                  : templateHeaderRow
+                requirements: worksheetRequirementsMap[mainTabSelection] || fieldRequirements,
+                headerRow: worksheetHeaderRows[mainTabSelection] || templateHeaderRow
               };
             }
             
@@ -2501,14 +2937,13 @@
                   return;
                 }
                 
-                // Get the correct headers for this worksheet
-                const templateHeadersArr = useSheetSpecificHeaders 
-                  ? worksheetHeadersMap[targetWorksheet] || template.headers
-                  : template.headers;
+                // IMPORTANT: Always get the specific headers for this particular worksheet
+                // This ensures we never share headers across worksheets, only mappings
+                const templateHeadersArr = worksheetHeadersMap[targetWorksheet] || templateHeaders;
                 
-                const mappedRows = [templateHeadersArr]; // Start with template headers
+                const mappedRows = [templateHeadersArr]; // Start with this worksheet's unique headers
                 
-                // Get the correct mappings for this category/worksheet
+                // Get the mappings for this category/worksheet
                 let currentMappings;
                 
                 // Use worksheet-specific mappings if available
@@ -2523,10 +2958,11 @@
                 rows.forEach(dataRow => {
                   const mappedRow = new Array(templateHeadersArr.length).fill('');
                   
-                  // For each template header
+                  // For each template header in this specific worksheet
                   templateHeadersArr.forEach((templateHeader, templateColIndex) => {
                     if (!templateHeader) return;
                     
+                    // Look up the data column mapped to this template header
                     const dataHeader = currentMappings[templateHeader];
                     
                     if (dataHeader) {
@@ -2551,14 +2987,10 @@
                   worksheet: targetWorksheet,
                   data: mappedRows,
                   // Store info about headers and requirements for validation
-                  headers: templateHeadersArr,
-                  requirements: useSheetSpecificHeaders 
-                    ? worksheetRequirementsMap[targetWorksheet] || {}
-                    : fieldRequirements,
+                  headers: templateHeadersArr, // These are specific to this worksheet
+                  requirements: worksheetRequirementsMap[targetWorksheet] || fieldRequirements,
                   // Store the header row information for the target worksheet
-                  headerRow: useSheetSpecificHeaders
-                    ? worksheetHeaderRows[targetWorksheet] || templateHeaderRow
-                    : templateHeaderRow
+                  headerRow: worksheetHeaderRows[targetWorksheet] || templateHeaderRow
                 };
               });
             });
@@ -2568,18 +3000,30 @@
           } else {
             // Standard single-worksheet mapping
             const mappedRows = [];
-            const templateHeadersArr = template.headers;
+            
+            // Get headers from selected worksheets only
+            const selectedSheets = Object.keys(selectedTemplateSheets).filter(sheet => selectedTemplateSheets[sheet]);
+            
+            // If no worksheets are selected, use the default template headers
+            let templateHeadersToUse = [];
+            if (selectedSheets.length > 0) {
+              // Use the first selected sheet as the default
+              const firstSelectedSheet = selectedSheets[0];
+              templateHeadersToUse = worksheetHeadersMap[firstSelectedSheet] || [];
+            } else {
+              templateHeadersToUse = templateHeaders;
+            }
             
             // Start with a row containing template headers
-            mappedRows.push(templateHeadersArr);
+            mappedRows.push(templateHeadersToUse);
             
             // For each data row (skip header)
             for (let i = 1; i < data.data.length; i++) {
               const dataRow = data.data[i];
-              const mappedRow = new Array(templateHeadersArr.length).fill('');
+              const mappedRow = new Array(templateHeadersToUse.length).fill('');
               
               // For each template header
-              templateHeadersArr.forEach((templateHeader, templateColIndex) => {
+              templateHeadersToUse.forEach((templateHeader, templateColIndex) => {
                 if (!templateHeader) return;
                 
                 const dataHeader = mappings[templateHeader];
@@ -2614,6 +3058,17 @@
         setExportOptions(prev => ({
           ...prev,
           [option]: value
+        }));
+      };
+
+      // Handle data row offset change
+      const handleDataRowOffsetChange = (e) => {
+        const value = parseInt(e.target.value) || 0;
+        // Ensure offset is at least 0
+        const newOffset = Math.max(0, value);
+        setExportOptions(prev => ({
+          ...prev,
+          dataRowOffset: newOffset
         }));
       };
 
@@ -2794,7 +3249,7 @@
                   }
                 }
               };
-              
+
               // Function to update worksheet with mapped data while preserving all existing content
               const updateWorksheet = (worksheetName, mappedRows, headerRowIndex = 0) => {
                 // Get or create the worksheet
@@ -2808,7 +3263,8 @@
                 }
                 
                 // Calculate start row where data should be inserted
-                const dataStartRow = headerRowIndex + 1; // Row after header
+                // With the new dataRowOffset option, we can add more rows after the header
+                const dataStartRow = headerRowIndex + 1 + exportOptions.dataRowOffset; // Row after header + offset
                 
                 // Store original range info before modifications
                 let originalRange = {s: {r: 0, c: 0}, e: {r: 0, c: 0}};
@@ -2819,22 +3275,48 @@
                 // *** KEY CHANGE: Don't clear existing data - keep it all and just overwrite specific cells ***
                 
                 // Now add the mapped data
-                // Start with row after header
-                for (let rowIndex = 1; rowIndex < mappedRows.length; rowIndex++) {
-                  const dataRow = mappedRows[rowIndex];
-                  const targetRowIndex = dataStartRow + (rowIndex - 1); // -1 because we skip header
-                  
-                  for (let colIndex = 0; colIndex < dataRow.length; colIndex++) {
-                    const value = dataRow[colIndex];
+                // Determine if we should preserve header rows from the template
+                if (exportOptions.preserveHeaderRows) {
+                  // Skip the header row from mappedRows and only copy data rows
+                  // Start with row after header (accounting for the offset)
+                  for (let rowIndex = 1; rowIndex < mappedRows.length; rowIndex++) {
+                    const dataRow = mappedRows[rowIndex];
+                    const targetRowIndex = dataStartRow + (rowIndex - 1); // -1 because we skip header
                     
-                    // Skip empty values to preserve template content
-                    if (value === undefined || value === null || value === '') continue;
+                    for (let colIndex = 0; colIndex < dataRow.length; colIndex++) {
+                      const value = dataRow[colIndex];
+                      
+                      // Skip empty values to preserve template content
+                      if (value === undefined || value === null || value === '') continue;
+                      
+                      // Calculate cell reference
+                      const cellRef = XLSX.utils.encode_cell({r: targetRowIndex, c: colIndex});
+                      
+                      // Add cell with styles from template
+                      applyTemplateStyles(worksheetName, worksheet, cellRef, value, targetRowIndex - dataStartRow);
+                    }
+                  }
+                } else {
+                  // If not preserving headers, copy both header and data rows
+                  for (let rowIndex = 0; rowIndex < mappedRows.length; rowIndex++) {
+                    const dataRow = mappedRows[rowIndex];
+                    // For header row (rowIndex=0), put at headerRowIndex
+                    // For data rows, put at dataStartRow + (rowIndex-1)
+                    const targetRowIndex = rowIndex === 0 ? headerRowIndex : dataStartRow + (rowIndex - 1);
                     
-                    // Calculate cell reference
-                    const cellRef = XLSX.utils.encode_cell({r: targetRowIndex, c: colIndex});
-                    
-                    // Add cell with styles from template
-                    applyTemplateStyles(worksheetName, worksheet, cellRef, value, targetRowIndex - dataStartRow);
+                    for (let colIndex = 0; colIndex < dataRow.length; colIndex++) {
+                      const value = dataRow[colIndex];
+                      
+                      // Skip empty values to preserve template content
+                      if (value === undefined || value === null || value === '') continue;
+                      
+                      // Calculate cell reference
+                      const cellRef = XLSX.utils.encode_cell({r: targetRowIndex, c: colIndex});
+                      
+                      // Add cell with styles from template
+                      applyTemplateStyles(worksheetName, worksheet, cellRef, value, 
+                                         rowIndex === 0 ? 0 : targetRowIndex - dataStartRow);
+                    }
                   }
                 }
                 
@@ -2877,8 +3359,19 @@
                   updateWorksheet(worksheetName, mappedRows, headerRow - 1); // Convert to 0-based
                 });
               } else {
-                // Single worksheet export
-                updateWorksheet(template.sheet, mappedData, templateHeaderRow - 1); // Convert to 0-based
+                // Only update worksheets that are selected
+                const selectedSheets = Object.keys(selectedTemplateSheets).filter(sheet => selectedTemplateSheets[sheet]);
+                
+                if (selectedSheets.length > 0) {
+                  // Use the first selected sheet as the target
+                  const targetWorksheet = selectedSheets[0];
+                  const headerRow = worksheetHeaderRows[targetWorksheet] || templateHeaderRow;
+                  updateWorksheet(targetWorksheet, mappedData, headerRow - 1); // Convert to 0-based
+                } else {
+                  // Fall back to the main tab if it's set, or the first available worksheet
+                  const targetWorksheet = mainTabSelection || templateSheets[0];
+                  updateWorksheet(targetWorksheet, mappedData, templateHeaderRow - 1); // Convert to 0-based
+                }
               }
               
               // Clean up options to minimize compatibility issues
@@ -2938,6 +3431,21 @@
       // Continue to mapping step
       const proceedToMapping = () => {
         if (template && data) {
+          // If no worksheets are selected, select the first one by default
+          const selectedSheets = Object.keys(selectedTemplateSheets).filter(sheet => selectedTemplateSheets[sheet]);
+          if (selectedSheets.length === 0 && templateSheets.length > 0) {
+            setSelectedTemplateSheets({
+              [templateSheets[0]]: true
+            });
+          }
+          
+          // Update template headers based on selected worksheet
+          if (selectedSheets.length > 0) {
+            setTemplateHeaders(worksheetHeadersMap[selectedSheets[0]] || []);
+            setFieldRequirements(worksheetRequirementsMap[selectedSheets[0]] || {});
+            setTemplateHeaderNotes(worksheetNotesMap[selectedSheets[0]] || {});
+          }
+          
           setStep(2);
         }
       };
@@ -2963,11 +3471,6 @@
         }
       };
       
-      // Toggle sheet-specific headers
-      const toggleSheetSpecificHeaders = (e) => {
-        setUseSheetSpecificHeaders(e.target.checked);
-      };
-      
       // Toggle format preservation
       const toggleFormatPreservation = (e) => {
         setPreserveFormatting(e.target.checked);
@@ -2975,7 +3478,7 @@
 
       // Helper function to check if a header has notes
       const headerHasNotes = (header, sheetName = null) => {
-        if (sheetName && useSheetSpecificHeaders && worksheetNotesMap[sheetName]) {
+        if (sheetName && worksheetNotesMap[sheetName]) {
           return worksheetNotesMap[sheetName][header] && worksheetNotesMap[sheetName][header].trim() !== '';
         }
         
@@ -2984,7 +3487,7 @@
 
       // Helper to get the header note text for a specific header
       const getHeaderNote = (header, sheetName = null) => {
-        if (sheetName && useSheetSpecificHeaders && worksheetNotesMap[sheetName]) {
+        if (sheetName && worksheetNotesMap[sheetName]) {
           return worksheetNotesMap[sheetName][header] || '';
         }
         
@@ -2993,7 +3496,7 @@
 
       // Helper to get the requirement for a specific header
       const getHeaderRequirement = (header, sheetName = null) => {
-        if (sheetName && useSheetSpecificHeaders && worksheetRequirementsMap[sheetName]) {
+        if (sheetName && worksheetRequirementsMap[sheetName]) {
           return worksheetRequirementsMap[sheetName][header] || 'Optional';
         }
         
@@ -3042,7 +3545,7 @@
         // Get the headers and requirements for this worksheet
         let headers, requirements;
         
-        if (worksheet && useSheetSpecificHeaders && worksheetHeadersMap[worksheet]) {
+        if (worksheet && worksheetHeadersMap[worksheet]) {
           headers = worksheetHeadersMap[worksheet];
           requirements = worksheetRequirementsMap[worksheet] || {};
         } else {
@@ -3068,6 +3571,30 @@
         return mappings;
       };
 
+      // Calculate total columns across all worksheets
+      const getTotalTemplateColumns = () => {
+        let total = 0;
+        Object.values(worksheetHeadersMap).forEach(headers => {
+          total += headers.filter(Boolean).length;
+        });
+        return total;
+      };
+
+      // Get total product fields detected
+      const getTotalProductFields = () => {
+        return Object.values(productInfoDetected).flat().length;
+      };
+
+      // Get product-related worksheets count
+      const getProductWorksheetCount = () => {
+        return Object.values(worksheetStatus).filter(status => status.isProductSheet).length;
+      };
+      
+      // Get all selected template worksheet names
+      const getSelectedTemplateWorksheets = () => {
+        return Object.keys(selectedTemplateSheets).filter(sheet => selectedTemplateSheets[sheet]);
+      };
+
       return (
         <div className={`min-h-screen transition-colors duration-200 ${isDarkMode ? 'dark bg-gray-900' : 'bg-gray-50'}`}>
           <div className="p-4 md:p-6 max-w-5xl mx-auto">
@@ -3081,9 +3608,9 @@
             <div className="mb-8 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm dark:text-gray-200">
               <h2 className="text-lg md:text-xl font-semibold mb-2 text-excel-600 dark:text-excel-400">How it works:</h2>
               <ol className="list-decimal pl-6">
-                <li className="mb-1">Upload your Excel template file and select the worksheet(s), header row, and required fields row (if available)</li>
+                <li className="mb-1">Upload your Excel template file and configure worksheet settings</li>
                 <li className="mb-1">Upload your data Excel file and select the worksheet and header row</li>
-                <li className="mb-1">Review and adjust the column mappings if needed</li>
+                <li className="mb-1">Review and adjust the column mappings to desired template destinations</li>
                 <li className="mb-1">Generate your mapped Excel file with all formatting preserved</li>
               </ol>
             </div>
@@ -3103,7 +3630,7 @@
             {step === 1 && (
               <div className="bg-white dark:bg-gray-800 p-4 md:p-6 rounded-lg shadow dark:text-white">
                 <div className="mb-8 border-b pb-6 dark:border-gray-700">
-                  <h2 className="text-lg font-medium mb-4 text-excel-600 dark:text-excel-400">1. Template Excel File</h2>
+                  <h2 className="text-lg font-medium mb-4 text-excel-600 dark:text-excel-400">1. Vendor Template</h2>
                   
                   <div className="mb-4">
                     <label className="block mb-2 text-gray-700 dark:text-gray-300">Upload Template File</label>
@@ -3131,22 +3658,9 @@
                   {templateSheets.length > 0 && (
                     <>
                       <div className="mb-4 p-4 border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20 rounded-md">
-                        <h3 className="font-medium text-blue-800 dark:text-blue-300 mb-2">Template Worksheets</h3>
+                        <h3 className="font-medium text-blue-800 dark:text-blue-300 mb-2">Template Configuration</h3>
                         
-                        <div className="flex items-center mb-3 space-x-2">
-                          <div className="flex items-center">
-                            <input
-                              type="checkbox"
-                              id="useSheetSpecificHeaders"
-                              checked={useSheetSpecificHeaders}
-                              onChange={toggleSheetSpecificHeaders}
-                              className="mr-2 h-4 w-4 rounded border-gray-300 text-excel-500 focus:ring-excel-500 dark:border-gray-600 dark:focus:ring-excel-600"
-                            />
-                            <label htmlFor="useSheetSpecificHeaders" className="text-gray-700 dark:text-gray-300 font-medium">
-                              Map using worksheet-specific headers
-                            </label>
-                          </div>
-                          
+                        <div className="flex items-center mb-3 space-x-4">
                           <div className="flex items-center">
                             <input
                               type="checkbox"
@@ -3159,275 +3673,317 @@
                               Preserve template formatting
                             </label>
                           </div>
+                          
+                          <div className="flex items-center">
+                            <input
+                              type="checkbox"
+                              id="detectProductInfo"
+                              checked={detectProductInfo}
+                              onChange={toggleProductInfoDetection}
+                              className="mr-2 h-4 w-4 rounded border-gray-300 text-excel-500 focus:ring-excel-500 dark:border-gray-600 dark:focus:ring-excel-600"
+                            />
+                            <label htmlFor="detectProductInfo" className="text-gray-700 dark:text-gray-300 font-medium">
+                              Auto-detect product fields
+                            </label>
+                          </div>
+                          
+                          <div className="flex items-center">
+                            <input
+                              type="checkbox"
+                              id="requirementRow"
+                              checked={requirementRowAvailable}
+                              onChange={toggleRequirementRow}
+                              className="mr-2 h-4 w-4 rounded border-gray-300 text-excel-500 focus:ring-excel-500 dark:border-gray-600 dark:focus:ring-excel-600"
+                            />
+                            <label htmlFor="requirementRow" className="text-gray-700 dark:text-gray-300 font-medium">
+                              Has required fields row
+                            </label>
+                          </div>
                         </div>
                         
-                        {useSheetSpecificHeaders && (
-                          <div className="mb-3">
-                            <div className="flex justify-between mb-2">
-                              <label className="text-gray-700 dark:text-gray-300">Select worksheets to use:</label>
-                              <div className="flex space-x-2">
-                                <button
-                                  onClick={selectAllWorksheets}
-                                  className="text-xs px-2 py-1 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded"
-                                >
-                                  Select All
-                                </button>
-                                <button
-                                  onClick={clearWorksheetSelections}
-                                  className="text-xs px-2 py-1 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded"
-                                >
-                                  Clear All
-                                </button>
-                              </div>
+                        <div className="mt-4">
+                          <div className="flex justify-between items-center mb-2">
+                            <h4 className="font-medium text-blue-800 dark:text-blue-300">Select Worksheets & Configure Headers</h4>
+                            <button 
+                              className="refresh-btn refresh-btn-primary text-sm"
+                              onClick={refreshWorksheetHeaders}
+                              disabled={isLoading.refreshing}
+                            >
+                              {isLoading.refreshing ? (
+                                <span className="flex items-center">
+                                  <svg className="animate-spin mr-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                  </svg>
+                                  Refreshing...
+                                </span>
+                              ) : (
+                                <>
+                                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                  </svg>
+                                  Refresh Headers
+                                </>
+                              )}
+                            </button>
+                          </div>
+                          
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                            Select worksheets to include and configure their header rows. Click Refresh to update headers.
+                          </p>
+                          
+                          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md p-3">
+                            <div className="mb-2 flex justify-between">
+                              <button 
+                                className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+                                onClick={() => {
+                                  const allSelected = {};
+                                  templateSheets.forEach(sheet => {
+                                    allSelected[sheet] = true;
+                                  });
+                                  setSelectedTemplateSheets(allSelected);
+                                }}
+                              >
+                                Select All
+                              </button>
+                              <button 
+                                className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+                                onClick={() => setSelectedTemplateSheets({})}
+                              >
+                                Clear All
+                              </button>
                             </div>
                             
-                            <div className="sheet-selection-group">
-                              {templateSheets.map((sheet, index) => (
-                                <div
-                                  key={index}
-                                  className={`sheet-selection-item ${selectedWorksheets.includes(sheet) ? 'selected' : ''}`}
-                                  onClick={() => handleWorksheetSelection(sheet)}
-                                >
-                                  <input
-                                    type="checkbox"
-                                    checked={selectedWorksheets.includes(sheet)}
-                                    onChange={() => {}} // Handled by the div click handler
-                                    className="sheet-checkbox"
-                                  />
-                                  <span>{sheet}</span>
-                                </div>
-                              ))}
-                            </div>
-                            
-                            {selectedWorksheets.length > 0 && (
-                              <div className="mt-4">
-                                <h4 className="text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                                  Configure header rows for each worksheet:
-                                </h4>
-                                <div className="overflow-x-auto">
-                                  <table className="worksheet-config-table">
-                                    <thead>
-                                      <tr>
-                                        <th>Worksheet</th>
-                                        <th>Header Row</th>
-                                        {requirementRowAvailable && <th>Requirement Row</th>}
-                                      </tr>
-                                    </thead>
-                                    <tbody>
-                                      {selectedWorksheets.map((sheet, index) => (
-                                        <tr key={index}>
-                                          <td>{sheet}</td>
-                                          <td>
+                            <div className="max-h-80 overflow-y-auto border-t border-gray-200 dark:border-gray-700 pt-2">
+                              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                <thead className="bg-gray-50 dark:bg-gray-700">
+                                  <tr>
+                                    <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                      Select
+                                    </th>
+                                    <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                      Worksheet
+                                    </th>
+                                    <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                      Header Row
+                                    </th>
+                                    {requirementRowAvailable && (
+                                      <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                        Required Fields Row
+                                      </th>
+                                    )}
+                                    <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                      Status
+                                    </th>
+                                  </tr>
+                                </thead>
+                                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                  {templateSheets.map((sheet, index) => {
+                                    const status = worksheetStatus[sheet] || {};
+                                    const headerCount = (worksheetHeadersMap[sheet] || []).filter(Boolean).length;
+                                    const sheetData = worksheetDataMap[sheet] || [];
+                                    
+                                    // Get headers based on current row settings (for preview)
+                                    const headerRowIndex = Math.max(0, (worksheetHeaderRows[sheet] || 1) - 1);
+                                    const previewHeaders = sheetData.length > headerRowIndex ? 
+                                      sheetData[headerRowIndex] || [] : [];
+                                    
+                                    return (
+                                      <tr key={index} className={index % 2 === 0 ? 'bg-gray-50 dark:bg-gray-700/30' : ''}>
+                                        <td className="px-3 py-2 whitespace-nowrap">
+                                          <input
+                                            type="checkbox"
+                                            checked={!!selectedTemplateSheets[sheet]}
+                                            onChange={(e) => {
+                                              setSelectedTemplateSheets(prev => ({
+                                                ...prev,
+                                                [sheet]: e.target.checked
+                                              }));
+                                            }}
+                                            className="h-4 w-4 rounded border-gray-300 text-excel-500 focus:ring-excel-500 dark:border-gray-600 dark:focus:ring-excel-600"
+                                          />
+                                        </td>
+                                        <td className="px-3 py-2 whitespace-nowrap font-medium text-gray-700 dark:text-gray-300">
+                                          {sheet}
+                                        </td>
+                                        <td className="px-3 py-2 whitespace-nowrap">
+                                          <input
+                                            type="number"
+                                            min="1"
+                                            value={worksheetHeaderRows[sheet] || 1}
+                                            onChange={(e) => {
+                                              const value = Math.max(1, parseInt(e.target.value) || 1);
+                                              setWorksheetHeaderRows(prev => ({
+                                                ...prev,
+                                                [sheet]: value
+                                              }));
+                                            }}
+                                            className="w-16 p-1 text-sm border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                          />
+                                        </td>
+                                        {requirementRowAvailable && (
+                                          <td className="px-3 py-2 whitespace-nowrap">
                                             <input
                                               type="number"
                                               min="1"
-                                              value={worksheetHeaderRows[sheet] || templateHeaderRow}
-                                              onChange={(e) => handleWorksheetHeaderRowChange(sheet, e.target.value)}
-                                              className="text-base"
+                                              value={worksheetRequirementRows[sheet] || 2}
+                                              onChange={(e) => {
+                                                const value = Math.max(1, parseInt(e.target.value) || 1);
+                                                setWorksheetRequirementRows(prev => ({
+                                                  ...prev,
+                                                  [sheet]: value
+                                                }));
+                                              }}
+                                              className="w-16 p-1 text-sm border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                                             />
                                           </td>
-                                          {requirementRowAvailable && (
-                                            <td>
-                                              <input
-                                                type="number"
-                                                min="1"
-                                                value={worksheetRequirementRows[sheet] || templateRequirementRow}
-                                                onChange={(e) => handleWorksheetRequirementRowChange(sheet, e.target.value)}
-                                                className="text-base"
-                                              />
-                                            </td>
-                                          )}
-                                        </tr>
-                                      ))}
-                                    </tbody>
-                                  </table>
-                                </div>
-                                <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                                  Note: Different worksheets can have headers on different rows. Configure each one accurately.
-                                </p>
-                              </div>
-                            )}
-                          </div>
-                        )}
-                        
-                        {!useSheetSpecificHeaders && (
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                            <div>
-                              <label className="block mb-2 text-gray-700 dark:text-gray-300">Select Primary Worksheet</label>
-                              <select
-                                value={selectedTemplateSheet}
-                                onChange={(e) => setSelectedTemplateSheet(e.target.value)}
-                                className="block w-full p-2 text-base border rounded bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                              >
-                                {templateSheets.map((sheet, index) => (
-                                  <option key={index} value={sheet}>{sheet}</option>
-                                ))}
-                              </select>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        {!useSheetSpecificHeaders && (
-                          <>
-                            <div>
-                              <label className="block mb-2 text-gray-700 dark:text-gray-300">Header Row Number</label>
-                              <input
-                                type="number"
-                                min="1"
-                                value={templateHeaderRow}
-                                onChange={(e) => setTemplateHeaderRow(Math.max(1, parseInt(e.target.value) || 1))}
-                                className="block w-full p-2 text-base border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                              />
-                            </div>
-
-                            <div>
-                              <div className="flex items-center mb-2">
-                                <input
-                                  type="checkbox"
-                                  id="requirementRow"
-                                  checked={requirementRowAvailable}
-                                  onChange={toggleRequirementRow}
-                                  className="mr-2 h-4 w-4 rounded border-gray-300 text-excel-500 focus:ring-excel-500 dark:border-gray-600 dark:focus:ring-excel-600"
-                                />
-                                <label htmlFor="requirementRow" className="text-gray-700 dark:text-gray-300">
-                                  Template includes a row indicating required fields
-                                </label>
-                              </div>
-                              
-                              {requirementRowAvailable && (
-                                <div>
-                                  <label className="block mb-2 text-gray-700 dark:text-gray-300">Required Fields Row Number</label>
-                                  <input
-                                    type="number"
-                                    min="1"
-                                    value={templateRequirementRow}
-                                    onChange={(e) => setTemplateRequirementRow(Math.max(1, parseInt(e.target.value) || 1))}
-                                    className="block w-full p-2 text-base border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                                  />
-                                  <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                                    This row should contain indicators like "Required", "Optional", "R", "O", "*", etc.
-                                  </p>
-                                </div>
-                              )}
-                            </div>
-                          </>
-                        )}
-                        
-                        {useSheetSpecificHeaders && requirementRowAvailable && (
-                          <div>
-                            <div className="flex items-center mb-2">
-                              <input
-                                type="checkbox"
-                                id="requirementRow"
-                                checked={requirementRowAvailable}
-                                onChange={toggleRequirementRow}
-                                className="mr-2 h-4 w-4 rounded border-gray-300 text-excel-500 focus:ring-excel-500 dark:border-gray-600 dark:focus:ring-excel-600"
-                              />
-                              <label htmlFor="requirementRow" className="text-gray-700 dark:text-gray-300">
-                                Templates include rows indicating required fields
-                              </label>
-                            </div>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">
-                              Configure requirement row numbers for each worksheet in the table above.
-                            </p>
-                          </div>
-                        )}
-                        
-                        {useSheetSpecificHeaders && !requirementRowAvailable && (
-                          <div>
-                            <div className="flex items-center mb-2">
-                              <input
-                                type="checkbox"
-                                id="requirementRow"
-                                checked={requirementRowAvailable}
-                                onChange={toggleRequirementRow}
-                                className="mr-2 h-4 w-4 rounded border-gray-300 text-excel-500 focus:ring-excel-500 dark:border-gray-600 dark:focus:ring-excel-600"
-                              />
-                              <label htmlFor="requirementRow" className="text-gray-700 dark:text-gray-300">
-                                Templates include rows indicating required fields
-                              </label>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </>
-                  )}
-                  
-                  {templateSheets.length > 0 && (
-                    <button
-                      onClick={() => processSheet('template')}
-                      disabled={isLoading.template || isLoading.headerLoad || (useSheetSpecificHeaders && selectedWorksheets.length === 0)}
-                      className={`px-4 py-2 rounded transition-colors ${
-                        isLoading.template || isLoading.headerLoad || (useSheetSpecificHeaders && selectedWorksheets.length === 0)
-                          ? 'bg-gray-400 dark:bg-gray-600 cursor-not-allowed' 
-                          : 'bg-excel-500 hover:bg-excel-600 text-white'
-                      }`}
-                    >
-                      {isLoading.template || isLoading.headerLoad ? (
-                        <span className="flex items-center">
-                          <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                          </svg>
-                          {isLoading.headerLoad ? 'Loading Headers...' : 'Processing...'}
-                        </span>
-                      ) : (
-                        useSheetSpecificHeaders 
-                          ? `Load Headers from ${selectedWorksheets.length} ${selectedWorksheets.length === 1 ? 'Worksheet' : 'Worksheets'}`
-                          : 'Load Template Headers'
-                      )}
-                    </button>
-                  )}
-                  
-                  {templateHeaders.length > 0 && debugInfo && (
-                    <div className="mt-2 mb-2 text-gray-500 dark:text-gray-400 text-sm italic">
-                      Note: {debugInfo}
-                    </div>
-                  )}
-                  
-                  {templateHeaders.length > 0 && (
-                    <div className="mt-4">
-                      <p className="text-excel-600 dark:text-excel-400">✓ Template loaded with {templateHeaders.filter(Boolean).length} columns</p>
-                      
-                      {useSheetSpecificHeaders && Object.keys(worksheetHeadersMap).length > 0 && (
-                        <div className="mt-2 mb-4">
-                          <div className="worksheet-preview">
-                            <div className="worksheet-preview-header">
-                              Worksheet Header Summary
-                            </div>
-                            <div className="worksheet-preview-content">
-                              {Object.entries(worksheetHeadersMap).map(([sheetName, headers], index) => (
-                                <div key={index} className="mb-3">
-                                  <h4 className="font-medium mb-1 text-excel-600 dark:text-excel-400">
-                                    {sheetName} (Header Row: {worksheetHeaderRows[sheetName] || templateHeaderRow})
-                                  </h4>
-                                  <div className="text-sm text-gray-600 dark:text-gray-300 mb-2">
-                                    {headers.filter(Boolean).length} columns detected
-                                  </div>
-                                  <div className="flex flex-wrap gap-2">
-                                    {headers.filter(Boolean).slice(0, 5).map((header, i) => (
-                                      <div key={i} className="worksheet-header-item">
-                                        <span>{header}</span>
-                                        {getHeaderRequirement(header, sheetName) === 'Required' && (
-                                          <span className="ml-1 text-red-500 dark:text-red-400">*</span>
                                         )}
-                                      </div>
-                                    ))}
-                                    {headers.filter(Boolean).length > 5 && (
-                                      <div className="worksheet-header-item opacity-60">
-                                        +{headers.filter(Boolean).length - 5} more
-                                      </div>
-                                    )}
-                                  </div>
-                                </div>
-                              ))}
+                                        <td className="px-3 py-2">
+                                          <div className="flex flex-col">
+                                            <span className={`status-indicator ${headerCount > 0 ? 'status-success' : 'status-error'} text-xs mb-1`}>
+                                              {headerCount > 0 ? `${headerCount} headers` : 'No headers'}
+                                            </span>
+                                            
+                                            <HeaderPreview 
+                                              headers={previewHeaders || []}
+                                              label={`Row ${worksheetHeaderRows[sheet] || 1} Preview`}
+                                            />
+                                          </div>
+                                        </td>
+                                      </tr>
+                                    );
+                                  })}
+                                </tbody>
+                              </table>
                             </div>
                           </div>
                         </div>
+                      </div>
+
+                      {isLoading.headerLoad ? (
+                        <div className="loader-container py-8">
+                          <div className="loader-spinner"></div>
+                          <p className="text-gray-600 dark:text-gray-300">
+                            Analyzing worksheets and loading headers...
+                          </p>
+                        </div>
+                      ) : (
+                        Object.keys(worksheetHeadersMap).length > 0 && (
+                          <div className="worksheet-summary">
+                            <h3 className="font-semibold text-excel-600 dark:text-excel-400 mb-3">
+                              Template Structure Summary
+                            </h3>
+                            
+                            <div className="flex flex-wrap gap-2 items-center mb-3">
+                              <div className="badge worksheet-badge">
+                                {templateSheets.length} worksheets
+                              </div>
+                              <div className="badge worksheet-badge">
+                                {getTotalTemplateColumns()} total columns
+                              </div>
+                              {getTotalProductFields() > 0 && (
+                                <div className="badge worksheet-badge">
+                                  {getTotalProductFields()} product fields detected
+                                </div>
+                              )}
+                              {getProductWorksheetCount() > 0 && (
+                                <div className="badge worksheet-badge">
+                                  {getProductWorksheetCount()} product-related worksheets
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Product Information Section */}
+                            {detectProductInfo && getTotalProductFields() > 0 && (
+                              <div className="mb-4">
+                                <CollapsibleSection 
+                                  title="Detected Product Information Fields" 
+                                  defaultOpen={true}
+                                  statusIndicator={
+                                    <span className="status-indicator status-success">
+                                      {getTotalProductFields()} fields
+                                    </span>
+                                  }
+                                >
+                                  <div className="product-info-container">
+                                    <p className="mb-2 text-gray-700 dark:text-gray-300">
+                                      These product-related fields were automatically detected in your template:
+                                    </p>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-3">
+                                      {Object.entries(productInfoDetected).map(([fieldType, fields], index) => (
+                                        <div key={index} className="mb-2">
+                                          <h4 className="font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                            {fieldType.charAt(0).toUpperCase() + fieldType.slice(1)}:
+                                          </h4>
+                                          <div className="pl-2">
+                                            {fields.map((field, i) => (
+                                              <div key={i} className="detected-field">
+                                                <span className="detected-field-icon">✓</span>
+                                                <span className="text-sm">{field.header}</span>
+                                                <span className="text-xs text-gray-500 dark:text-gray-400 ml-1">
+                                                  ({field.sheet})
+                                                </span>
+                                              </div>
+                                            ))}
+                                          </div>
+                                        </div>
+                                      ))}
+                                    </div>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 italic">
+                                      These fields will be suggested for automatic mapping later in the process.
+                                    </p>
+                                  </div>
+                                </CollapsibleSection>
+                              </div>
+                            )}
+                            
+                            <div className="h-48 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-md p-2">
+                              {Object.entries(worksheetHeadersMap)
+                                .sort(([,a], [,b]) => b.filter(Boolean).length - a.filter(Boolean).length)
+                                .map(([sheetName, headers], index) => {
+                                const status = worksheetStatus[sheetName] || {};
+                                const headerCount = headers.filter(Boolean).length;
+                                const isProductSheet = status.isProductSheet;
+                                
+                                return (
+                                  <div key={index} className="mb-3 pb-3 border-b border-gray-200 dark:border-gray-700 last:border-b-0 last:mb-0 last:pb-0">
+                                    <div className="flex items-center justify-between">
+                                      <h4 className="font-medium text-blue-700 dark:text-blue-300 flex items-center">
+                                        {sheetName}
+                                        {isProductSheet && (
+                                          <span className="status-indicator status-success ml-2 text-xs">
+                                            Product Sheet
+                                          </span>
+                                        )}
+                                      </h4>
+                                      <div className="flex items-center">
+                                        <span className={`status-indicator ${headerCount > 0 ? 'status-success' : 'status-error'} text-xs`}>
+                                          {headerCount} columns
+                                        </span>
+                                        {status.productFields > 0 && (
+                                          <span className="status-indicator status-success ml-2 text-xs">
+                                            {status.productFields} product fields
+                                          </span>
+                                        )}
+                                      </div>
+                                    </div>
+                                    <div className="mt-1 text-sm text-gray-600 dark:text-gray-400 max-h-20 overflow-y-auto">
+                                      <span className="italic mr-1">Sample headers:</span>
+                                      {headers.filter(Boolean).slice(0, 5).join(', ')}
+                                      {headers.filter(Boolean).length > 5 && '...'}
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                            
+                            {debugInfo && (
+                              <p className="mt-3 text-sm text-gray-500 dark:text-gray-400 italic">{debugInfo}</p>
+                            )}
+                          </div>
+                        )
                       )}
-                      
+                  
                       {preserveFormatting && (
                         <div className="format-preservation-notice mb-4">
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3 flex-shrink-0 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
@@ -3455,54 +4011,12 @@
                           </div>
                         </div>
                       )}
-                      
-                      <div className="mt-2 overflow-x-auto">
-                        <table className="min-w-full bg-white dark:bg-gray-800 border dark:border-gray-700 text-sm rounded-md">
-                          <thead>
-                            <tr className="bg-gray-50 dark:bg-gray-700">
-                              <th className="py-2 px-3 border-b dark:border-gray-600 text-left">Column Name</th>
-                              <th className="py-2 px-3 border-b dark:border-gray-600 text-left">Requirement</th>
-                              <th className="py-2 px-3 border-b dark:border-gray-600 text-left">Has Validation Message</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {templateHeaders.filter(Boolean).map((header, index) => (
-                              <tr key={index} className={index % 2 === 0 ? 'bg-gray-50 dark:bg-gray-700/30' : 'dark:bg-gray-800'}>
-                                <td className="py-1 px-3 border-b dark:border-gray-600">
-                                  <div className="tooltip flex items-center">
-                                    <span className="has-notes">{header}</span>
-                                    {headerHasNotes(header) && (
-                                      <>
-                                        <span className="info-icon ml-1">i</span>
-                                        <span 
-                                          className={`tooltip-text ${isLargeNote(templateHeaderNotes[header]) ? 'large' : ''}`}
-                                          dangerouslySetInnerHTML={{ __html: templateHeaderNotes[header] }}
-                                        />
-                                      </>
-                                    )}
-                                  </div>
-                                </td>
-                                <td className={`py-1 px-3 border-b dark:border-gray-600 ${fieldRequirements[header] === 'Required' ? 'text-red-500 dark:text-red-400 font-medium' : 'text-excel-500 dark:text-excel-400'}`}>
-                                  {fieldRequirements[header] || 'Optional'}
-                                </td>
-                                <td className="py-1 px-3 border-b dark:border-gray-600">
-                                  {headerHasNotes(header) ? (
-                                    <span className="text-excel-500 dark:text-excel-400">Yes</span>
-                                  ) : (
-                                    <span className="text-gray-400 dark:text-gray-500">No</span>
-                                  )}
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
+                    </>
                   )}
                 </div>
                 
                 <div className="mb-6">
-                  <h2 className="text-lg font-medium mb-4 text-excel-600 dark:text-excel-400">2. Data Excel File</h2>
+                  <h2 className="text-lg font-medium mb-4 text-excel-600 dark:text-excel-400">2. Manufacturer Data</h2>
                   
                   <div className="mb-4">
                     <label className="block mb-2 text-gray-700 dark:text-gray-300">Upload Data File</label>
@@ -3557,7 +4071,7 @@
                   
                   {dataSheets.length > 0 && (
                     <button
-                      onClick={() => processSheet('data')}
+                      onClick={processDataSheet}
                       disabled={isLoading.data}
                       className={`px-4 py-2 rounded transition-colors ${
                         isLoading.data 
@@ -3604,6 +4118,24 @@
             {step === 2 && (
               <div className="bg-white dark:bg-gray-800 p-4 md:p-6 rounded-lg shadow dark:text-white">
                 <h2 className="text-lg font-medium mb-4 text-excel-600 dark:text-excel-400">Map Template Columns to Data Columns</h2>
+                
+                {/* Show selected worksheets info */}
+                <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-md">
+                  <h3 className="font-medium text-blue-800 dark:text-blue-300 mb-2">Selected Template Worksheets</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {getSelectedTemplateWorksheets().map((sheet, i) => (
+                      <div key={i} className="px-2 py-1 bg-blue-100 dark:bg-blue-800/30 text-blue-700 dark:text-blue-300 rounded">
+                        {sheet}
+                      </div>
+                    ))}
+                    {getSelectedTemplateWorksheets().length === 0 && (
+                      <p className="text-sm text-blue-600 dark:text-blue-400">
+                        No worksheets selected. Please go back and select at least one worksheet.
+                      </p>
+                    )}
+                  </div>
+                </div>
+                
                 <p className="mb-4 text-gray-600 dark:text-gray-300">
                   We've automatically matched columns based on name similarity. Please review and adjust as needed.
                   <span className="text-red-500 dark:text-red-400 ml-2 font-medium">Required fields must be mapped.</span>
@@ -3627,221 +4159,178 @@
                   {enableMultiTabMapping && (
                     <div className="pl-6">
                       <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                        Map your data to different worksheets in the template based on a category column.
-                        Each worksheet can have its own column mappings.
+                        Map your data to different worksheets in the template based on worksheet categories.
+                        Each template category can have its own column mappings.
                       </p>
                       
-                      <div className="mb-3">
-                        <label className="block mb-2 text-gray-700 dark:text-gray-300">Select Category Column</label>
-                        <CustomSelect
-                          options={[
-                            { value: '', label: '-- Select a column --' },
-                            ...dataHeaders.filter(Boolean).map(header => ({
-                              value: header,
-                              label: header
-                            }))
-                          ]}
-                          value={categoryColumn}
-                          onChange={handleCategoryColumnChange}
-                          columnSamples={columnSamples}
-                          columnDescriptions={dataHeaderDescriptions}
-                        />
+                      <div className="mb-4">
+                        <div className="flex items-center mb-2">
+                          <input
+                            type="checkbox"
+                            id="includeMainTab"
+                            checked={includeMainTab}
+                            onChange={toggleIncludeMainTab}
+                            className="mr-2 h-4 w-4 rounded border-gray-300 text-excel-500 focus:ring-excel-500 dark:border-gray-600 dark:focus:ring-excel-600"
+                          />
+                          <label htmlFor="includeMainTab" className="text-gray-700 dark:text-gray-300 font-medium">
+                            Include Main Tab for all categories
+                          </label>
+                        </div>
+                        
+                        {includeMainTab && (
+                          <div className="ml-6 mt-2">
+                            <label className="block mb-1 text-gray-700 dark:text-gray-300">Select Main Tab</label>
+                            <select
+                              value={mainTabSelection}
+                              onChange={(e) => handleMainTabChange(e.target.value)}
+                              className="block w-full p-2 text-base border rounded bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                            >
+                              {getSelectedTemplateWorksheets().map((sheet, index) => (
+                                <option key={index} value={sheet}>{sheet}</option>
+                              ))}
+                            </select>
+                            <p className="text-xs mt-1 text-gray-500 dark:text-gray-400">
+                              Data from all categories will be copied to this tab in addition to category-specific tabs
+                            </p>
+                          </div>
+                        )}
                       </div>
                       
-                      {categoryColumn && (
-                        <div className="mb-4">
-                          <div className="flex items-center mb-2">
-                            <input
-                              type="checkbox"
-                              id="includeMainTab"
-                              checked={includeMainTab}
-                              onChange={toggleIncludeMainTab}
-                              className="mr-2 h-4 w-4 rounded border-gray-300 text-excel-500 focus:ring-excel-500 dark:border-gray-600 dark:focus:ring-excel-600"
-                            />
-                            <label htmlFor="includeMainTab" className="text-gray-700 dark:text-gray-300 font-medium">
-                              Include Main Tab for all categories
-                            </label>
-                          </div>
-                          
-                          {includeMainTab && (
-                            <div className="ml-6 mt-2">
-                              <label className="block mb-1 text-gray-700 dark:text-gray-300">Select Main Tab</label>
-                              <select
-                                value={mainTabSelection}
-                                onChange={(e) => handleMainTabChange(e.target.value)}
-                                className="block w-full p-2 text-base border rounded bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                              >
-                                {templateSheets.map((sheet, index) => (
-                                  <option key={index} value={sheet}>{sheet}</option>
-                                ))}
-                              </select>
-                              <p className="text-xs mt-1 text-gray-500 dark:text-gray-400">
-                                Data from all categories will be copied to this tab in addition to category-specific tabs
-                              </p>
-                            </div>
-                          )}
+                      <div className="mb-3">
+                        <div className="flex items-center justify-between mb-2">
+                          <label className="text-gray-700 dark:text-gray-300">Template Categories</label>
+                          <span className="text-sm text-gray-500 dark:text-gray-400">
+                            {getSelectedTemplateWorksheets().length} worksheets available
+                          </span>
                         </div>
-                      )}
-                      
-                      {categoryColumn && categoryValues.length > 0 && (
-                        <>
-                          <div className="mb-3">
-                            <div className="flex items-center justify-between mb-2">
-                              <label className="text-gray-700 dark:text-gray-300">Category to Worksheet Mapping</label>
-                              <span className="text-sm text-gray-500 dark:text-gray-400">
-                                {categoryValues.length} unique values found
-                              </span>
-                            </div>
-                            
-                            <div className="border dark:border-gray-700 rounded overflow-hidden">
-                              <div className="overflow-y-auto max-h-96">
-                                <div className="p-4 divide-y dark:divide-gray-700 space-y-4">
-                                  {categoryValues.map((value, index) => {
-                                    // Get worksheet suggestions for this category
-                                    const suggestions = worksheetSuggestions[value] || [];
-                                    
-                                    return (
-                                      <div key={index} className="pt-4 first:pt-0">
-                                        <div className="flex justify-between items-center mb-2">
-                                          <span className="font-medium text-gray-800 dark:text-gray-200">{value}</span>
-                                          <span className="text-sm text-gray-500 dark:text-gray-400">
-                                            {categoryWorksheetMappings[value]?.length || 0} target {(categoryWorksheetMappings[value]?.length || 0) === 1 ? 'worksheet' : 'worksheets'}
-                                          </span>
-                                        </div>
-                                        
-                                        {/* Display selected worksheets as tags */}
-                                        <div className="flex flex-wrap mb-2">
-                                          {categoryWorksheetMappings[value]?.map((sheet, sheetIndex) => (
-                                            <div 
-                                              key={sheetIndex} 
-                                              className={`sheet-tag ${sheet === mainTabSelection ? 'sheet-tag-main' : ''}`}
-                                            >
-                                              <span>{sheet}</span>
-                                              {(sheet !== mainTabSelection || !includeMainTab) && (
-                                                <button 
-                                                  className="remove-btn" 
-                                                  onClick={() => removeWorksheetFromCategory(value, sheet)}
-                                                  title="Remove worksheet"
-                                                >
-                                                  ×
-                                                </button>
-                                              )}
-                                              {sheet === mainTabSelection && includeMainTab && (
-                                                <span className="text-xs ml-1">(main)</span>
-                                              )}
-                                            </div>
-                                          ))}
-                                        </div>
-                                        
-                                        {/* Display suggestions with scores */}
-                                        {suggestions.length > 0 && (
-                                          <div className="sheet-suggestions">
-                                            <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">
-                                              Suggested worksheets:
-                                            </div>
-                                            {suggestions.map((suggestion, sugIndex) => {
-                                              // Skip if already selected
-                                              if (categoryWorksheetMappings[value]?.includes(suggestion.sheet)) {
-                                                return null;
-                                              }
-                                              
-                                              return (
-                                                <div 
-                                                  key={sugIndex} 
-                                                  className="sheet-suggestion-item"
-                                                  onClick={() => addWorksheetToCategory(value, suggestion.sheet)}
-                                                  title="Add this worksheet"
-                                                >
-                                                  <span>{suggestion.sheet}</span>
-                                                  <span className="sheet-suggestion-score">
-                                                    {Math.round(suggestion.score * 100)}%
-                                                  </span>
-                                                </div>
-                                              );
-                                            })}
-                                          </div>
-                                        )}
-                                        
-                                        {/* Add more worksheets dropdown */}
-                                        <div className="mt-2">
-                                          <select
-                                            value=""
-                                            onChange={(e) => {
-                                              if (e.target.value) {
-                                                addWorksheetToCategory(value, e.target.value);
-                                                e.target.value = "";
-                                              }
-                                            }}
-                                            className="block w-full p-2 text-sm border rounded bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                                          >
-                                            <option value="">+ Add another worksheet</option>
-                                            {templateSheets
-                                              .filter(sheet => !categoryWorksheetMappings[value]?.includes(sheet))
-                                              .map((sheet, sheetIndex) => (
-                                                <option key={sheetIndex} value={sheet}>{sheet}</option>
-                                              ))
-                                            }
-                                          </select>
-                                        </div>
-                                      </div>
-                                    );
-                                  })}
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                          
-                          {/* Category tabs */}
-                          <div className="mb-3">
-                            <label className="block mb-2 text-gray-700 dark:text-gray-300">
-                              Configure Mappings For Category:
-                            </label>
-                            <div className="tab-selector mb-3">
-                              {categoryValues.map((value, index) => (
-                                <div
-                                  key={index}
-                                  className={`tab-item ${activeTab === value ? 'active' : ''}`}
-                                  onClick={() => {
-                                    setActiveTab(value);
-                                    // Also set active worksheet to the first worksheet of this category
-                                    if (categoryWorksheetMappings[value] && categoryWorksheetMappings[value].length > 0) {
-                                      setActiveWorksheet(categoryWorksheetMappings[value][0]);
-                                    }
-                                  }}
-                                >
-                                  <div className="flex items-center">
-                                    <span>{value}</span>
-                                    <span className="badge worksheet-badge ml-2 text-xs">
-                                      {categoryWorksheetMappings[value]?.length || 0} sheet{(categoryWorksheetMappings[value]?.length || 0) !== 1 ? 's' : ''}
+                        
+                        <div className="border dark:border-gray-700 rounded overflow-hidden">
+                          <div className="overflow-y-auto max-h-96">
+                            <div className="p-4 divide-y dark:divide-gray-700 space-y-4">
+                              {getSelectedTemplateWorksheets().map((sheet, index) => (
+                                <div key={index} className="pt-4 first:pt-0">
+                                  <div className="flex justify-between items-center mb-2">
+                                    <span className="font-medium text-gray-800 dark:text-gray-200">{sheet}</span>
+                                    <span className={`badge ${sheet === mainTabSelection ? 'worksheet-badge' : ''} ml-2 text-xs`}>
+                                      {sheet === mainTabSelection ? "Main Tab" : "Template Worksheet"}
                                     </span>
                                   </div>
+                                  
+                                  <div className="mb-2">
+                                    <label className="block mb-1 text-gray-700 dark:text-gray-300 text-sm">
+                                      Map data categories using column:
+                                    </label>
+                                    <CustomSelect
+                                      options={[
+                                        { value: '', label: '-- Select a data column --' },
+                                        ...dataHeaders.filter(Boolean).map(header => ({
+                                          value: header,
+                                          label: header
+                                        }))
+                                      ]}
+                                      value={categoryColumn || ''}
+                                      onChange={(value) => handleCategoryColumnChange(value)}
+                                      columnSamples={columnSamples}
+                                      columnDescriptions={dataHeaderDescriptions}
+                                    />
+                                  </div>
+                                  
+                                  {categoryColumn && categoryValues && categoryValues.length > 0 && (
+                                    <div className="mt-3">
+                                      <label className="block mb-1 text-sm text-gray-700 dark:text-gray-300">
+                                        Data categories that will map to this worksheet:
+                                      </label>
+                                      <div className="flex flex-wrap gap-2 mt-1">
+                                        {categoryValues.map((value, valueIndex) => {
+                                          // Check if this category is mapped to this worksheet
+                                          const isMapped = categoryWorksheetMappings[value]?.includes(sheet);
+                                          return (
+                                            <div 
+                                              key={valueIndex}
+                                              className={`px-2 py-1 text-sm rounded-full cursor-pointer border
+                                                ${isMapped 
+                                                  ? 'bg-excel-100 border-excel-400 text-excel-700 dark:bg-excel-900/20 dark:border-excel-600 dark:text-excel-400' 
+                                                  : 'bg-gray-100 border-gray-300 text-gray-600 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300'
+                                                }`}
+                                              onClick={() => {
+                                                if (isMapped) {
+                                                  removeWorksheetFromCategory(value, sheet);
+                                                } else {
+                                                  addWorksheetToCategory(value, sheet);
+                                                }
+                                              }}
+                                            >
+                                              {value}
+                                              {isMapped && <span className="ml-1">✓</span>}
+                                            </div>
+                                          );
+                                        })}
+                                      </div>
+                                    </div>
+                                  )}
                                 </div>
                               ))}
                             </div>
-                            
-                            {/* Worksheet tabs for the active category */}
-                            {activeTab && categoryWorksheetMappings[activeTab] && categoryWorksheetMappings[activeTab].length > 0 && (
-                              <div className="worksheet-tab-selector">
-                                <div className="text-sm text-gray-500 dark:text-gray-400 mr-3 self-center">
-                                  Worksheet:
-                                </div>
-                                {categoryWorksheetMappings[activeTab].map((worksheet, wsIndex) => (
-                                  <div
-                                    key={wsIndex}
-                                    className={`worksheet-tab-item ${activeWorksheet === worksheet ? 'active' : ''} ${worksheet === mainTabSelection ? 'main' : ''}`}
-                                    onClick={() => handleWorksheetTabChange(worksheet)}
-                                  >
-                                    {worksheet}
-                                    {worksheet === mainTabSelection && (
-                                      <span className="text-xs ml-1">(main)</span>
-                                    )}
-                                  </div>
-                                ))}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Template worksheet tabs */}
+                      <div className="mb-3">
+                        <label className="block mb-2 text-gray-700 dark:text-gray-300">
+                          Configure Mappings For Worksheet:
+                        </label>
+                        <div className="tab-selector mb-3">
+                          {getSelectedTemplateWorksheets().map((sheet, index) => (
+                            <div
+                              key={index}
+                              className={`tab-item ${activeWorksheet === sheet ? 'active' : ''}`}
+                              onClick={() => {
+                                setActiveWorksheet(sheet);
+                                // Find a category that uses this worksheet
+                                const firstCategory = Object.keys(categoryWorksheetMappings).find(
+                                  cat => categoryWorksheetMappings[cat]?.includes(sheet)
+                                );
+                                if (firstCategory) {
+                                  setActiveTab(firstCategory);
+                                }
+                              }}
+                            >
+                              <div className="flex items-center">
+                                <span>{sheet}</span>
+                                {sheet === mainTabSelection && (
+                                  <span className="badge worksheet-badge ml-2 text-xs">Main</span>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        
+                        {/* Category tabs for the active worksheet */}
+                        {activeWorksheet && categoryColumn && categoryValues && categoryValues.length > 0 && (
+                          <div className="worksheet-tab-selector">
+                            <div className="text-sm text-gray-500 dark:text-gray-400 mr-3 self-center">
+                              Category:
+                            </div>
+                            {categoryValues.filter(value => 
+                              categoryWorksheetMappings[value]?.includes(activeWorksheet)
+                            ).map((category, catIndex) => (
+                              <div
+                                key={catIndex}
+                                className={`worksheet-tab-item ${activeTab === category ? 'active' : ''}`}
+                                onClick={() => setActiveTab(category)}
+                              >
+                                {category}
+                              </div>
+                            ))}
+                            {!categoryValues.some(value => categoryWorksheetMappings[value]?.includes(activeWorksheet)) && (
+                              <div className="text-sm text-gray-500 dark:text-gray-400 italic">
+                                No categories mapped to this worksheet yet
                               </div>
                             )}
                           </div>
-                        </>
-                      )}
+                        )}
+                      </div>
                     </div>
                   )}
                 </div>
@@ -4000,9 +4489,14 @@
                         // Get the appropriate headers based on the context
                         let headers, requirements;
                         
-                        if (enableMultiTabMapping && activeWorksheet && useSheetSpecificHeaders && worksheetHeadersMap[activeWorksheet]) {
+                        if (enableMultiTabMapping && activeWorksheet && worksheetHeadersMap[activeWorksheet]) {
                           headers = worksheetHeadersMap[activeWorksheet];
                           requirements = worksheetRequirementsMap[activeWorksheet] || {};
+                        } else if (getSelectedTemplateWorksheets().length > 0) {
+                          // Use the first selected worksheet for single-tab mapping
+                          const firstSelectedSheet = getSelectedTemplateWorksheets()[0];
+                          headers = worksheetHeadersMap[firstSelectedSheet] || [];
+                          requirements = worksheetRequirementsMap[firstSelectedSheet] || {};
                         } else {
                           headers = templateHeaders;
                           requirements = fieldRequirements;
@@ -4136,6 +4630,18 @@
                     )}
                   </p>
                   
+                  <div className="warning-notice mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="warning-icon h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                    <div>
+                      <h4 className="font-medium text-orange-800 dark:text-orange-300 mb-1">Header Row Protection</h4>
+                      <p className="text-orange-700 dark:text-orange-400 text-sm">
+                        Your export may include special rows above the header that contain retailer platform information. Use the Data Row Offset option below to skip those rows when inserting your data.
+                      </p>
+                    </div>
+                  </div>
+                  
                   {preserveFormatting && (
                     <div className="format-preservation-notice mb-4">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3 flex-shrink-0 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
@@ -4183,6 +4689,48 @@
                     </div>
                     
                     <div className="export-option-group">
+                      {/* Row offset option */}
+                      <div className="mb-4 border-b pb-4 border-gray-200 dark:border-gray-700">
+                        <h3 className="font-medium text-gray-700 dark:text-gray-300 mb-2">Data Insertion Options</h3>
+                        
+                        <div className="flex items-center mb-3">
+                          <input 
+                            type="checkbox" 
+                            id="preserveHeaderRows" 
+                            checked={exportOptions.preserveHeaderRows}
+                            onChange={(e) => handleExportOptionChange('preserveHeaderRows', e.target.checked)}
+                            className="mr-2 h-4 w-4 rounded border-gray-300 text-excel-500 focus:ring-excel-500 dark:border-gray-600 dark:focus:ring-excel-600"
+                          />
+                          <label htmlFor="preserveHeaderRows" className="text-gray-700 dark:text-gray-300">
+                            Preserve header rows
+                          </label>
+                        </div>
+                        
+                        <div className="mb-2">
+                          <label htmlFor="dataRowOffset" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            Data row offset (rows to skip after header before inserting data)
+                          </label>
+                          <div className="flex items-center">
+                            <input
+                              type="number"
+                              id="dataRowOffset"
+                              min="0"
+                              value={exportOptions.dataRowOffset}
+                              onChange={handleDataRowOffsetChange}
+                              className="mt-1 block w-24 px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-base focus:outline-none focus:ring-excel-500 focus:border-excel-500 dark:text-white"
+                            />
+                            <span className="ml-2 text-sm text-gray-500 dark:text-gray-400">
+                              rows
+                            </span>
+                          </div>
+                          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                            Increase this value to skip more rows after the header row before inserting data.
+                            This helps when your template has metadata, validation, or retailer-specific rows.
+                          </p>
+                        </div>
+                      </div>
+                      
+                      {/* Existing export options */}
                       <div className="export-option-label">
                         <input 
                           type="checkbox" 
@@ -4364,7 +4912,7 @@
                             </p>
                           )}
                           <p className="mt-2 text-sm text-blue-600 dark:text-blue-400">
-                            Will be inserted in worksheet "{mappedData[activeTab].worksheet}" starting at row {mappedData[activeTab].headerRow || templateHeaderRow}
+                            Will be inserted in worksheet "{mappedData[activeTab].worksheet}" starting at row {mappedData[activeTab].headerRow + exportOptions.dataRowOffset}
                             {mappedData[activeTab].isMainTab && (
                               <span className="ml-2 font-medium">(Main tab with ALL data)</span>
                             )}
@@ -4446,6 +4994,9 @@
                       {mappedData.length > 6 && (
                         <p className="mt-2 text-gray-500 dark:text-gray-400 text-sm">Showing first 5 rows of {mappedData.length - 1} total rows</p>
                       )}
+                      <p className="mt-2 text-sm text-blue-600 dark:text-blue-400">
+                        Data will be inserted after row {templateHeaderRow + exportOptions.dataRowOffset} (Header row + offset)
+                      </p>
                     </div>
                   )}
                 </div>
