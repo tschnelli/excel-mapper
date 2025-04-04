@@ -638,5 +638,35 @@
     }
     checkHomePage();
   </script>
+
+  <button id="test-stripe-button" style="margin-top: 20px; background-color: #6772e5;">Test Stripe API</button>
+
+<script>
+  // Add this to your existing JavaScript
+  document.getElementById('test-stripe-button').addEventListener('click', async () => {
+    try {
+      const errorContainer = document.getElementById('error-container');
+      errorContainer.textContent = 'Testing Stripe API...';
+      errorContainer.style.opacity = '1';
+      
+      const response = await fetch('/api/test-stripe', {
+        method: 'GET'
+      });
+      
+      const data = await response.json();
+      console.log('Stripe test response:', data);
+      
+      if (data.status === 'success') {
+        errorContainer.textContent = `Stripe connected successfully! Environment: ${data.account.environment}`;
+      } else {
+        errorContainer.textContent = `Stripe error: ${data.message}`;
+      }
+    } catch (error) {
+      console.error('Error testing Stripe:', error);
+      errorContainer.textContent = `Error testing Stripe: ${error.message}`;
+      errorContainer.style.opacity = '1';
+    }
+  });
+</script>
 </body>
 </html>
