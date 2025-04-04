@@ -7,41 +7,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Subscription Required</title>
 
-<script>
-  // Track Clerk loading status
-  let clerkLoaded = false;
-  
-  function initClerk() {
-    console.log("Initializing Clerk");
-    const script = document.createElement('script');
-    script.src = "https://smart-mastodon-88.clerk.accounts.dev";
-    script.async = true;
-    script.crossOrigin = "anonymous";
-    script.dataset.clerkPublishableKey = "pk_test_c21hcnQtbWFzdG9kb24tODguY2xlcmsuYWNjb3VudHMuZGV2JA";
-    
-    script.onload = function() {
-      console.log("Clerk script loaded successfully");
-      clerkLoaded = true;
-      window.dispatchEvent(new Event('clerkLoaded'));
-    };
-    
-    script.onerror = function() {
-      console.error("Error loading Clerk script");
-    };
-    
-    document.head.appendChild(script);
-  }
-  
-  // Initialize Clerk
-  initClerk();
-  
-  // Fallback check if Clerk doesn't load
-  setTimeout(() => {
-    if (!clerkLoaded) {
-      console.error("Clerk failed to load, retrying...");
-      initClerk();
-    }
-  }, 5000);
+<script
+  async
+  crossorigin="anonymous"
+  data-clerk-publishable-key="pk_test_c21hcnQtbWFzdG9kb24tODguY2xlcmsuYWNjb3VudHMuZGV2JA"
+  src="https://smart-mastodon-88.clerk.accounts.dev">
+type="text/javascript">
 </script>
 
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
