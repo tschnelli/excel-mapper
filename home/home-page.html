@@ -1313,6 +1313,363 @@
     .dark .preview-header {
       background-color: #374151;
     }
+    
+    /* Preset modal styles */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 40;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .modal-content {
+      background-color: white;
+      border-radius: 0.5rem;
+      width: 90%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      position: relative;
+    }
+    
+    .dark .modal-content {
+      background-color: #1f2937;
+    }
+    
+    .modal-header {
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .dark .modal-header {
+      border-color: #374151;
+    }
+    
+    .modal-body {
+      padding: 1.5rem;
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+    
+    .modal-footer {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5rem;
+    }
+    
+    .dark .modal-footer {
+      border-color: #374151;
+    }
+    
+    .preset-item {
+      padding: 0.75rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.375rem;
+      margin-bottom: 0.75rem;
+      transition: all 0.2s;
+    }
+    
+    .dark .preset-item {
+      border-color: #374151;
+    }
+    
+    .preset-item:hover {
+      background-color: #f9fafb;
+    }
+    
+    .dark .preset-item:hover {
+      background-color: #374151;
+    }
+    
+    .preset-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.5rem;
+    }
+    
+    .preset-title {
+      font-weight: 600;
+      font-size: 1rem;
+    }
+    
+    .preset-description {
+      font-size: 0.875rem;
+      color: #6b7280;
+      margin-top: 0.25rem;
+    }
+    
+    .dark .preset-description {
+      color: #9ca3af;
+    }
+    
+    .preset-details {
+      font-size: 0.875rem;
+      color: #4b5563;
+      margin-top: 0.5rem;
+    }
+    
+    .dark .preset-details {
+      color: #9ca3af;
+    }
+    
+    .preset-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+    
+    .preset-btn {
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.25rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      transition: all 0.15s;
+    }
+    
+    .preset-btn-load {
+      background-color: #4fb06a;
+      color: white;
+    }
+    
+    .preset-btn-load:hover {
+      background-color: #3c9d57;
+    }
+    
+    .preset-btn-delete {
+      background-color: #ef4444;
+      color: white;
+    }
+    
+    .preset-btn-delete:hover {
+      background-color: #dc2626;
+    }
+    
+    /* Preset save form */
+    .preset-form-group {
+      margin-bottom: 1rem;
+    }
+    
+    .preset-form-label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 0.375rem;
+    }
+    
+    .preset-form-input {
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+    }
+    
+    .dark .preset-form-input {
+      background-color: #374151;
+      border-color: #4b5563;
+      color: white;
+    }
+    
+    .preset-form-textarea {
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      min-height: 80px;
+      resize: vertical;
+    }
+    
+    .dark .preset-form-textarea {
+      background-color: #374151;
+      border-color: #4b5563;
+      color: white;
+    }
+    
+    /* Preset dropdown menu */
+    .preset-menu-container {
+      position: relative;
+      display: inline-block;
+    }
+    
+    .preset-menu-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      width: 200px;
+      background-color: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.25rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      z-index: 30;
+      margin-top: 0.25rem;
+      display: none;
+    }
+    
+    .dark .preset-menu-dropdown {
+      background-color: #1f2937;
+      border-color: #374151;
+    }
+    
+    .preset-menu-dropdown.open {
+      display: block;
+    }
+    
+    .preset-menu-item {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.875rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+    
+    .preset-menu-item:hover {
+      background-color: #f3f4f6;
+    }
+    
+    .dark .preset-menu-item:hover {
+      background-color: #374151;
+    }
+    
+    .preset-menu-item svg {
+      margin-right: 0.5rem;
+      width: 1rem;
+      height: 1rem;
+    }
+    
+    .preset-menu-divider {
+      height: 1px;
+      background-color: #e5e7eb;
+      margin: 0.25rem 0;
+    }
+    
+    .dark .preset-menu-divider {
+      background-color: #4b5563;
+    }
+    
+    /* Preset select dropdown */
+    .preset-select-container {
+      position: relative;
+      display: inline-block;
+      margin-right: 1rem;
+    }
+    
+    .preset-select {
+      display: flex;
+      align-items: center;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.375rem;
+      background-color: white;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    
+    .dark .preset-select {
+      background-color: #374151;
+      border-color: #4b5563;
+      color: white;
+    }
+    
+    .preset-select:hover {
+      background-color: #f9fafb;
+      border-color: #d1d5db;
+    }
+    
+    .dark .preset-select:hover {
+      background-color: #4b5563;
+      border-color: #6b7280;
+    }
+    
+    .preset-select svg {
+      margin-right: 0.5rem;
+      width: 1rem;
+      height: 1rem;
+    }
+    
+    .preset-select-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 240px;
+      background-color: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.25rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      z-index: 30;
+      margin-top: 0.25rem;
+      max-height: 300px;
+      overflow-y: auto;
+      display: none;
+    }
+    
+    .dark .preset-select-dropdown {
+      background-color: #1f2937;
+      border-color: #374151;
+    }
+    
+    .preset-select-dropdown.open {
+      display: block;
+    }
+    
+    .preset-option {
+      padding: 0.5rem 0.75rem;
+      border-bottom: 1px solid #f3f4f6;
+      cursor: pointer;
+    }
+    
+    .dark .preset-option {
+      border-color: #374151;
+    }
+    
+    .preset-option:last-child {
+      border-bottom: none;
+    }
+    
+    .preset-option:hover {
+      background-color: #f3f4f6;
+    }
+    
+    .dark .preset-option:hover {
+      background-color: #374151;
+    }
+    
+    .preset-option-title {
+      font-weight: 500;
+      margin-bottom: 0.25rem;
+    }
+    
+    .preset-option-desc {
+      font-size: 0.75rem;
+      color: #6b7280;
+    }
+    
+    .dark .preset-option-desc {
+      color: #9ca3af;
+    }
+    
+    .preset-empty {
+      padding: 1rem;
+      text-align: center;
+      color: #6b7280;
+      font-style: italic;
+    }
+    
+    .dark .preset-empty {
+      color: #9ca3af;
+    }
   </style>
 </head>
 <body>
@@ -1328,6 +1685,37 @@
         return true;
       }
       return false;
+    };
+
+    // Modal component for presets
+    const Modal = ({ isOpen, onClose, title, children, footer }) => {
+      if (!isOpen) return null;
+      
+      return (
+        <div className="modal-backdrop" onClick={onClose}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2 className="text-lg font-semibold">{title}</h2>
+              <button 
+                onClick={onClose}
+                className="text-gray-400 hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="modal-body">
+              {children}
+            </div>
+            {footer && (
+              <div className="modal-footer">
+                {footer}
+              </div>
+            )}
+          </div>
+        </div>
+      );
     };
 
     // Custom Select Component with hover preview support and descriptions
@@ -1610,6 +1998,230 @@
       );
     };
 
+    // Preset Manager component
+    const PresetManager = ({ 
+      presets,
+      savePreset,
+      loadPreset,
+      deletePreset,
+      currentConfig
+    }) => {
+      const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+      const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
+      const [isLoadModalOpen, setIsLoadModalOpen] = useState(false);
+      const [presetName, setPresetName] = useState('');
+      const [presetDescription, setPresetDescription] = useState('');
+      const dropdownRef = useRef(null);
+      
+      // Close dropdown when clicking outside
+      useEffect(() => {
+        const handleClickOutside = (event) => {
+          if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+            setIsDropdownOpen(false);
+          }
+        };
+        
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+          document.removeEventListener('mousedown', handleClickOutside);
+        };
+      }, []);
+      
+      // Format date for display
+      const formatDate = (timestamp) => {
+        return new Date(timestamp).toLocaleString();
+      };
+      
+      // Handle save preset
+      const handleSavePreset = () => {
+        if (!presetName.trim()) {
+          alert('Please enter a preset name');
+          return;
+        }
+        
+        savePreset({
+          name: presetName,
+          description: presetDescription,
+          ...currentConfig
+        });
+        
+        setPresetName('');
+        setPresetDescription('');
+        setIsSaveModalOpen(false);
+      };
+      
+      // Handle load preset
+      const handleLoadPreset = (preset) => {
+        loadPreset(preset);
+        setIsLoadModalOpen(false);
+      };
+      
+      return (
+        <>
+          <div className="preset-menu-container" ref={dropdownRef}>
+            <button 
+              className="preset-select flex items-center"
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 3.464V16a1 1 0 102 0v-1.268a2 2 0 000-3.464V4zM11 4a1 1 0 10-2 0v1.268a2 2 0 000 3.464V16a1 1 0 102 0V8.732a2 2 0 000-3.464V4zM16 3a1 1 0 011 1v7.268a2 2 0 010 3.464V16a1 1 0 11-2 0v-1.268a2 2 0 010-3.464V4a1 1 0 011-1z" />
+              </svg>
+              Presets
+            </button>
+            
+            <div className={`preset-menu-dropdown ${isDropdownOpen ? 'open' : ''}`}>
+              <div 
+                className="preset-menu-item"
+                onClick={() => {
+                  setIsDropdownOpen(false);
+                  setIsSaveModalOpen(true);
+                }}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+                </svg>
+                Save Current Setup
+              </div>
+              
+              <div 
+                className="preset-menu-item"
+                onClick={() => {
+                  setIsDropdownOpen(false);
+                  setIsLoadModalOpen(true);
+                }}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+                </svg>
+                Load Preset
+              </div>
+            </div>
+          </div>
+          
+          {/* Save Preset Modal */}
+          <Modal
+            isOpen={isSaveModalOpen}
+            onClose={() => setIsSaveModalOpen(false)}
+            title="Save Current Setup as Preset"
+            footer={
+              <>
+                <button 
+                  className="px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-white rounded"
+                  onClick={() => setIsSaveModalOpen(false)}
+                >
+                  Cancel
+                </button>
+                <button 
+                  className="px-4 py-2 bg-excel-500 hover:bg-excel-600 text-white rounded"
+                  onClick={handleSavePreset}
+                >
+                  Save Preset
+                </button>
+              </>
+            }
+          >
+            <div className="preset-form-group">
+              <label className="preset-form-label">Preset Name</label>
+              <input
+                type="text"
+                className="preset-form-input"
+                value={presetName}
+                onChange={(e) => setPresetName(e.target.value)}
+                placeholder="Enter a name for this preset"
+              />
+            </div>
+            
+            <div className="preset-form-group">
+              <label className="preset-form-label">Description (optional)</label>
+              <textarea
+                className="preset-form-textarea"
+                value={presetDescription}
+                onChange={(e) => setPresetDescription(e.target.value)}
+                placeholder="Enter a description for this preset"
+              />
+            </div>
+            
+            <div className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+              <p>This preset will save:</p>
+              <ul className="list-disc ml-6 mt-1">
+                <li>All selected worksheets and their header row settings</li>
+                <li>All column mappings between template and data</li>
+                <li>Multi-tab mapping configuration (if enabled)</li>
+              </ul>
+            </div>
+          </Modal>
+          
+          {/* Load Preset Modal */}
+          <Modal
+            isOpen={isLoadModalOpen}
+            onClose={() => setIsLoadModalOpen(false)}
+            title="Load Saved Preset"
+            footer={
+              <button 
+                className="px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-white rounded"
+                onClick={() => setIsLoadModalOpen(false)}
+              >
+                Close
+              </button>
+            }
+          >
+            {presets.length > 0 ? (
+              <div className="space-y-3">
+                {presets.map((preset, index) => (
+                  <div key={index} className="preset-item">
+                    <div className="preset-header">
+                      <div>
+                        <div className="preset-title">{preset.name}</div>
+                        {preset.description && (
+                          <div className="preset-description">{preset.description}</div>
+                        )}
+                      </div>
+                      
+                      <div className="preset-actions">
+                        <button 
+                          className="preset-btn preset-btn-load"
+                          onClick={() => handleLoadPreset(preset)}
+                        >
+                          Load
+                        </button>
+                        <button 
+                          className="preset-btn preset-btn-delete"
+                          onClick={() => {
+                            if (confirm(`Are you sure you want to delete the preset "${preset.name}"?`)) {
+                              deletePreset(preset.id);
+                            }
+                          }}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                    
+                    <div className="preset-details">
+                      <div className="flex justify-between">
+                        <span>Created: {formatDate(preset.createdAt)}</span>
+                        <span>{Object.keys(preset.selectedTemplateSheets || {}).filter(sheet => preset.selectedTemplateSheets[sheet]).length} worksheets</span>
+                      </div>
+                      
+                      {preset.enableMultiTabMapping ? (
+                        <div className="mt-1">Multi-tab mapping enabled with {Object.keys(preset.categoryWorksheetMappings || {}).length} categories</div>
+                      ) : (
+                        <div className="mt-1">Single tab mapping with {Object.keys(preset.mappings || {}).length} column mappings</div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="preset-empty">
+                <p>No saved presets yet. Create one by saving your current configuration.</p>
+              </div>
+            )}
+          </Modal>
+        </>
+      );
+    };
+
     const ExcelMapper = () => {
       const [template, setTemplate] = useState(null);
       const [data, setData] = useState(null);
@@ -1707,6 +2319,28 @@
       const [productFields, setProductFields] = useState({});
       const [worksheetStatus, setWorksheetStatus] = useState({});
       
+      // Preset states
+      const [presets, setPresets] = useState([]);
+
+      // Load presets from localStorage on mount
+      useEffect(() => {
+        try {
+          const savedPresets = localStorage.getItem('excelMapperPresets');
+          if (savedPresets) {
+            setPresets(JSON.parse(savedPresets));
+          }
+        } catch (error) {
+          console.error('Error loading presets:', error);
+          // Initialize with empty array if error
+          setPresets([]);
+        }
+      }, []);
+      
+      // Update localStorage when presets change
+      useEffect(() => {
+        localStorage.setItem('excelMapperPresets', JSON.stringify(presets));
+      }, [presets]);
+      
       // Listen for dark mode changes
       useEffect(() => {
         const darkModeListener = (e) => {
@@ -1724,6 +2358,76 @@
         
         return () => mediaQuery.removeEventListener('change', darkModeListener);
       }, []);
+
+      // Function to save current configuration as a preset
+      const savePreset = (presetData) => {
+        const newPreset = {
+          id: Date.now().toString(),
+          createdAt: Date.now(),
+          name: presetData.name,
+          description: presetData.description || '',
+          
+          // Template settings
+          selectedTemplateSheets,
+          worksheetHeaderRows,
+          worksheetRequirementRows,
+          requirementRowAvailable,
+          
+          // Mapping settings
+          mappings,
+          
+          // Multi-tab mapping settings
+          enableMultiTabMapping,
+          categoryColumn,
+          includeMainTab,
+          mainTabSelection,
+          categoryWorksheetMappings,
+          worksheetMappings
+        };
+        
+        setPresets(prev => [...prev, newPreset]);
+      };
+      
+      // Function to load a preset
+      const loadPreset = (preset) => {
+        // Loading template settings
+        setSelectedTemplateSheets(preset.selectedTemplateSheets || {});
+        setWorksheetHeaderRows(preset.worksheetHeaderRows || {});
+        setWorksheetRequirementRows(preset.worksheetRequirementRows || {});
+        setRequirementRowAvailable(preset.requirementRowAvailable || false);
+        
+        // Loading mapping settings
+        setMappings(preset.mappings || {});
+        
+        // Loading multi-tab mapping settings
+        setEnableMultiTabMapping(preset.enableMultiTabMapping || false);
+        setCategoryColumn(preset.categoryColumn || '');
+        setIncludeMainTab(preset.includeMainTab || true);
+        setMainTabSelection(preset.mainTabSelection || '');
+        setCategoryWorksheetMappings(preset.categoryWorksheetMappings || {});
+        setWorksheetMappings(preset.worksheetMappings || {});
+        
+        // If data is already loaded, we need to reset certain states
+        if (data) {
+          // If multi-tab mapping is enabled, refresh category values
+          if (preset.enableMultiTabMapping && preset.categoryColumn) {
+            if (data.data && data.data.length > 1) {
+              const dataRows = data.data.slice(1);
+              updateCategoryValues(data.headers, dataRows, preset.categoryColumn);
+            }
+          }
+        }
+        
+        // Refresh worksheet headers after loading preset
+        if (template) {
+          refreshWorksheetHeaders();
+        }
+      };
+      
+      // Function to delete a preset
+      const deletePreset = (presetId) => {
+        setPresets(prev => prev.filter(preset => preset.id !== presetId));
+      };
 
       // Function to check if a header is likely a product information field
       const identifyProductFields = (headers, sheetName) => {
@@ -2307,26 +3011,6 @@
         return { suggestions, scores };
       };
 
-      // Find worksheet suggestions for category values
-      const findWorksheetSuggestions = (categoryValue) => {
-        if (!categoryValue || !templateSheets.length) return [];
-        
-        // Get fuzzy matches between the category value and worksheet names
-        const suggestions = [];
-        
-        templateSheets.forEach(sheet => {
-          const score = fuzzyMatch(categoryValue, sheet);
-          if (score > 0.3) { // Consider any match above 30% similarity
-            suggestions.push({ sheet, score });
-          }
-        });
-        
-        // Sort by score (highest first)
-        suggestions.sort((a, b) => b.score - a.score);
-        
-        return suggestions;
-      };
-
       // Handle mapping change with enhanced for per-worksheet mapping
       const handleMappingChange = (templateHeader, dataHeader, category = null, worksheet = null) => {
         if (enableMultiTabMapping && category && worksheet) {
@@ -2487,6 +3171,26 @@
         });
         
         setWorksheetMappings(initialWorksheetMappings);
+      };
+
+      // Find worksheet suggestions for category values
+      const findWorksheetSuggestions = (categoryValue) => {
+        if (!categoryValue || !templateSheets.length) return [];
+        
+        // Get fuzzy matches between the category value and worksheet names
+        const suggestions = [];
+        
+        templateSheets.forEach(sheet => {
+          const score = fuzzyMatch(categoryValue, sheet);
+          if (score > 0.3) { // Consider any match above 30% similarity
+            suggestions.push({ sheet, score });
+          }
+        });
+        
+        // Sort by score (highest first)
+        suggestions.sort((a, b) => b.score - a.score);
+        
+        return suggestions;
       };
 
       // Handle category column change
@@ -3594,16 +4298,49 @@
       const getSelectedTemplateWorksheets = () => {
         return Object.keys(selectedTemplateSheets).filter(sheet => selectedTemplateSheets[sheet]);
       };
+      
+      // Get current configuration for presets
+      const getCurrentConfig = () => {
+        return {
+          // Template settings
+          selectedTemplateSheets,
+          worksheetHeaderRows,
+          worksheetRequirementRows,
+          requirementRowAvailable,
+          
+          // Mapping settings
+          mappings,
+          
+          // Multi-tab mapping settings
+          enableMultiTabMapping,
+          categoryColumn,
+          includeMainTab,
+          mainTabSelection,
+          categoryWorksheetMappings,
+          worksheetMappings
+        };
+      };
 
       return (
         <div className={`min-h-screen transition-colors duration-200 ${isDarkMode ? 'dark bg-gray-900' : 'bg-gray-50'}`}>
           <div className="p-4 md:p-6 max-w-5xl mx-auto">
-            <h1 className="text-2xl md:text-3xl font-bold mb-6 text-center dark:text-white flex justify-center items-center">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8 mr-2 text-excel-500">
-                <path d="M18.375 2.25c-1.035 0-1.875.84-1.875 1.875v15.75c0 1.035.84 1.875 1.875 1.875h.75c1.035 0 1.875-.84 1.875-1.875V4.125c0-1.036-.84-1.875-1.875-1.875h-.75zM9.75 8.625c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v11.25c0 1.035-.84 1.875-1.875 1.875h-.75a1.875 1.875 0 01-1.875-1.875V8.625zM3 13.125c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v6.75c0 1.035-.84 1.875-1.875 1.875h-.75A1.875 1.875 0 013 19.875v-6.75z" />
-              </svg>
-              Excel Mapper
-            </h1>
+            <div className="flex justify-between items-center mb-6">
+              <h1 className="text-2xl md:text-3xl font-bold text-center dark:text-white flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8 mr-2 text-excel-500">
+                  <path d="M18.375 2.25c-1.035 0-1.875.84-1.875 1.875v15.75c0 1.035.84 1.875 1.875 1.875h.75c1.035 0 1.875-.84 1.875-1.875V4.125c0-1.036-.84-1.875-1.875-1.875h-.75zM9.75 8.625c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v11.25c0 1.035-.84 1.875-1.875 1.875h-.75a1.875 1.875 0 01-1.875-1.875V8.625zM3 13.125c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v6.75c0 1.035-.84 1.875-1.875 1.875h-.75A1.875 1.875 0 013 19.875v-6.75z" />
+                </svg>
+                Excel Mapper
+              </h1>
+              
+              {/* Preset Manager */}
+              <PresetManager 
+                presets={presets}
+                savePreset={savePreset}
+                loadPreset={loadPreset}
+                deletePreset={deletePreset}
+                currentConfig={getCurrentConfig()}
+              />
+            </div>
             
             <div className="mb-8 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm dark:text-gray-200">
               <h2 className="text-lg md:text-xl font-semibold mb-2 text-excel-600 dark:text-excel-400">How it works:</h2>
@@ -3860,130 +4597,15 @@
                         </div>
                       </div>
 
-                      {isLoading.headerLoad ? (
+                      {isLoading.headerLoad && (
                         <div className="loader-container py-8">
                           <div className="loader-spinner"></div>
                           <p className="text-gray-600 dark:text-gray-300">
                             Analyzing worksheets and loading headers...
                           </p>
                         </div>
-                      ) : (
-                        Object.keys(worksheetHeadersMap).length > 0 && (
-                          <div className="worksheet-summary">
-                            <h3 className="font-semibold text-excel-600 dark:text-excel-400 mb-3">
-                              Template Structure Summary
-                            </h3>
-                            
-                            <div className="flex flex-wrap gap-2 items-center mb-3">
-                              <div className="badge worksheet-badge">
-                                {templateSheets.length} worksheets
-                              </div>
-                              <div className="badge worksheet-badge">
-                                {getTotalTemplateColumns()} total columns
-                              </div>
-                              {getTotalProductFields() > 0 && (
-                                <div className="badge worksheet-badge">
-                                  {getTotalProductFields()} product fields detected
-                                </div>
-                              )}
-                              {getProductWorksheetCount() > 0 && (
-                                <div className="badge worksheet-badge">
-                                  {getProductWorksheetCount()} product-related worksheets
-                                </div>
-                              )}
-                            </div>
-
-                            {/* Product Information Section */}
-                            {detectProductInfo && getTotalProductFields() > 0 && (
-                              <div className="mb-4">
-                                <CollapsibleSection 
-                                  title="Detected Product Information Fields" 
-                                  defaultOpen={true}
-                                  statusIndicator={
-                                    <span className="status-indicator status-success">
-                                      {getTotalProductFields()} fields
-                                    </span>
-                                  }
-                                >
-                                  <div className="product-info-container">
-                                    <p className="mb-2 text-gray-700 dark:text-gray-300">
-                                      These product-related fields were automatically detected in your template:
-                                    </p>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-3">
-                                      {Object.entries(productInfoDetected).map(([fieldType, fields], index) => (
-                                        <div key={index} className="mb-2">
-                                          <h4 className="font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                            {fieldType.charAt(0).toUpperCase() + fieldType.slice(1)}:
-                                          </h4>
-                                          <div className="pl-2">
-                                            {fields.map((field, i) => (
-                                              <div key={i} className="detected-field">
-                                                <span className="detected-field-icon">✓</span>
-                                                <span className="text-sm">{field.header}</span>
-                                                <span className="text-xs text-gray-500 dark:text-gray-400 ml-1">
-                                                  ({field.sheet})
-                                                </span>
-                                              </div>
-                                            ))}
-                                          </div>
-                                        </div>
-                                      ))}
-                                    </div>
-                                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 italic">
-                                      These fields will be suggested for automatic mapping later in the process.
-                                    </p>
-                                  </div>
-                                </CollapsibleSection>
-                              </div>
-                            )}
-                            
-                            <div className="h-48 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-md p-2">
-                              {Object.entries(worksheetHeadersMap)
-                                .sort(([,a], [,b]) => b.filter(Boolean).length - a.filter(Boolean).length)
-                                .map(([sheetName, headers], index) => {
-                                const status = worksheetStatus[sheetName] || {};
-                                const headerCount = headers.filter(Boolean).length;
-                                const isProductSheet = status.isProductSheet;
-                                
-                                return (
-                                  <div key={index} className="mb-3 pb-3 border-b border-gray-200 dark:border-gray-700 last:border-b-0 last:mb-0 last:pb-0">
-                                    <div className="flex items-center justify-between">
-                                      <h4 className="font-medium text-blue-700 dark:text-blue-300 flex items-center">
-                                        {sheetName}
-                                        {isProductSheet && (
-                                          <span className="status-indicator status-success ml-2 text-xs">
-                                            Product Sheet
-                                          </span>
-                                        )}
-                                      </h4>
-                                      <div className="flex items-center">
-                                        <span className={`status-indicator ${headerCount > 0 ? 'status-success' : 'status-error'} text-xs`}>
-                                          {headerCount} columns
-                                        </span>
-                                        {status.productFields > 0 && (
-                                          <span className="status-indicator status-success ml-2 text-xs">
-                                            {status.productFields} product fields
-                                          </span>
-                                        )}
-                                      </div>
-                                    </div>
-                                    <div className="mt-1 text-sm text-gray-600 dark:text-gray-400 max-h-20 overflow-y-auto">
-                                      <span className="italic mr-1">Sample headers:</span>
-                                      {headers.filter(Boolean).slice(0, 5).join(', ')}
-                                      {headers.filter(Boolean).length > 5 && '...'}
-                                    </div>
-                                  </div>
-                                );
-                              })}
-                            </div>
-                            
-                            {debugInfo && (
-                              <p className="mt-3 text-sm text-gray-500 dark:text-gray-400 italic">{debugInfo}</p>
-                            )}
-                          </div>
-                        )
                       )}
-                  
+                      
                       {preserveFormatting && (
                         <div className="format-preservation-notice mb-4">
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3 flex-shrink-0 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
@@ -3992,20 +4614,23 @@
                           <div>
                             <h4 className="font-medium text-blue-800 dark:text-blue-300 mb-1">Template formatting will be preserved</h4>
                             <div className="text-blue-700 dark:text-blue-400 text-sm">
-                              <div className="format-item">
-                                <span className="format-icon">✓</span> Colors, fonts, and borders
-                              </div>
-                              <div className="format-item">
-                                <span className="format-icon">✓</span> Formulas and calculations
-                              </div>
-                              <div className="format-item">
-                                <span className="format-icon">✓</span> Conditional formatting
-                              </div>
-                              <div className="format-item">
-                                <span className="format-icon">✓</span> Data validation rules
-                              </div>
-                              <div className="format-item">
-                                <span className="format-icon">✓</span> Hyperlinks and styles
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 mt-2">
+                                <div>
+                                  <div className="format-item">
+                                    <span className="format-icon">✓</span> Colors, fonts, and borders
+                                  </div>
+                                  <div className="format-item">
+                                    <span className="format-icon">✓</span> Formulas and calculations
+                                  </div>
+                                </div>
+                                <div>
+                                  <div className="format-item">
+                                    <span className="format-icon">✓</span> Data validation rules
+                                  </div>
+                                  <div className="format-item">
+                                    <span className="format-icon">✓</span> Conditional formatting
+                                  </div>
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -4102,10 +4727,10 @@
                 </div>
                 
                 <button
-                  disabled={!template || !data}
+                  disabled={!template || !data || Object.keys(selectedTemplateSheets).length === 0}
                   onClick={proceedToMapping}
                   className={`w-full md:w-auto px-4 py-2 rounded transition-colors ${
-                    !template || !data 
+                    !template || !data || Object.keys(selectedTemplateSheets).length === 0
                       ? 'bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed' 
                       : 'bg-excel-500 text-white hover:bg-excel-600'
                   }`}
