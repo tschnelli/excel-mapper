@@ -7,13 +7,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Subscription Required</title>
 
-<script
-  async
-  crossorigin="anonymous"
-  data-clerk-publishable-key="pk_test_c21hcnQtbWFzdG9kb24tODguY2xlcmsuYWNjb3VudHMuZGV2JA"
-  src="https://smart-mastodon-88.clerk.accounts.dev/npm/@clerk/clerk-js@5/dist/clerk.browser.js"
-  type="text/javascript">
-</script>
+  <script
+    async
+    crossorigin="anonymous"
+    data-clerk-publishable-key="pk_test_c21hcnQtbWFzdG9kb24tODguY2xlcmsuYWNjb3VudHMuZGV2JA"
+    src="https://smart-mastodon-88.clerk.accounts.dev/npm/@clerk/clerk-js@5/dist/clerk.browser.js"
+    type="text/javascript">
+  </script>
 
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
@@ -177,9 +177,28 @@
       75% { transform: translateX(-10px); }
       100% { transform: translateX(0); }
     }
+
+    /* Added debug panel */
+    .debug-panel {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0,0,0,0.8);
+      color: #fff;
+      padding: 10px;
+      font-family: monospace;
+      font-size: 12px;
+      max-height: 100px;
+      overflow-y: auto;
+      z-index: 9999;
+    }
   </style>
 </head>
 <body>
+
+  <!-- Debug panel for troubleshooting -->
+  <div id="debug-panel" class="debug-panel" style="display: none;"></div>
 
   <div class="paywall-container">
     <!-- User info section -->
@@ -222,44 +241,124 @@
   </div>
 
   <script>
-    const CORRECT_PASSWORD = 'EasyWork2025!';
-    function getStripe() {
-  if (!window.stripe) {
-    window.stripe = Stripe('pk_live_51R7Ka5L8VVJU7H2uOZnrNwZkxlBia3ShFXZju3w2aECLc1e9oc3DlL68QbYrtFUQzrmOkTBOcWGpjXpjqD7EkE9c00JbFRiLeE');
-  }
-  return window.stripe;
-}
+    // Enable debug mode for troubleshooting
+    const DEBUG_MODE = true;
     
+    function debug(message) {
+      if (!DEBUG_MODE) return;
+      
+      console.log(message);
+      
+      // Add to debug panel
+      const debugPanel = document.getElementById('debug-panel');
+      if (debugPanel) {
+        debugPanel.style.display = 'block';
+        const line = document.createElement('div');
+        line.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+        debugPanel.appendChild(line);
+        debugPanel.scrollTop = debugPanel.scrollHeight;
+      }
+    }
+    
+    debug("Script started");
+    
+    const CORRECT_PASSWORD = 'EasyWork2025!';
+    
+    // Store DOM elements
     const authButtons = document.getElementById('auth-buttons');
     const userInfo = document.getElementById('user-info');
     const passwordForm = document.getElementById('password-form');
     const errorContainer = document.getElementById('error-container');
     const subscriptionStatus = document.getElementById('subscription-status');
     
-    // Basic password form functionality 
-    document.getElementById('password-form').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const passwordInput = document.getElementById('password-input');
-
-      if (passwordInput.value === CORRECT_PASSWORD) {
+    // Initialize Stripe
+    let stripeInstance = null;
+    function getStripe() {
+      debug("Getting Stripe instance");
+      if (!stripeInstance) {
+        try {
+          debug("Initializing Stripe");
+          stripeInstance = Stripe('pk_live_51R7Ka5L8VVJU7H2uOZnrNwZkxlBia3ShFXZju3w2aECLc1e9oc3DlL68QbYrtFUQzrmOkTBOcWGpjXpjqD7EkE9c00JbFRiLeE');
+          debug("Stripe initialized successfully");
+        } catch (error) {
+          debug("Error initializing Stripe: " + error.message);
+          errorContainer.textContent = "Error initializing payment system. Please refresh.";
+          errorContainer.style.opacity = '1';
+        }
+      }
+      return stripeInstance;
+    }
+    
+    // Check password and unlock content
+    function checkPassword(password) {
+      debug("Checking password: " + password);
+      
+      if (password === CORRECT_PASSWORD) {
+        debug("Password correct!");
+        // Store access token
         localStorage.setItem('siteAccess', 'granted');
-        window.location.href = '/home/home-page.html';
+        try {
+          // Redirect to content
+          debug("Redirecting to home page");
+          window.location.href = '/home/home-page.html';
+        } catch (e) {
+          debug("Redirect error: " + e.message);
+          errorContainer.textContent = "Navigation error: " + e.message;
+          errorContainer.style.opacity = '1';
+        }
+        return true;
       } else {
+        debug("Password incorrect");
         const container = document.querySelector('.paywall-container');
         container.style.animation = 'shake 0.5s';
-
+        
         errorContainer.textContent = 'Incorrect Password. Please try again.';
         errorContainer.style.opacity = '1';
-
+        
         setTimeout(() => {
           container.style.animation = '';
-          passwordInput.value = '';
+          document.getElementById('password-input').value = '';
         }, 500);
+        return false;
       }
+    }
+    
+    // Password form submit handler
+    passwordForm.addEventListener('submit', function(e) {
+      debug("Password form submitted");
+      e.preventDefault();
+      const passwordInput = document.getElementById('password-input');
+      checkPassword(passwordInput.value);
     });
-
+    
+    // Set up a separate direct "Unlock with Password" button
+    function createDirectPasswordButton() {
+      debug("Creating direct password button");
+      const directButton = document.createElement('button');
+      directButton.textContent = "Unlock with Password";
+      directButton.className = "unlock-button";
+      directButton.style.marginTop = "10px";
+      directButton.addEventListener('click', function() {
+        const password = prompt("Enter access password:");
+        if (password) {
+          checkPassword(password);
+        }
+      });
+      
+      // Add after the form
+      const container = document.querySelector('.paywall-container');
+      container.insertBefore(directButton, document.querySelector('.subscription-info'));
+    }
+    
+    // Uncomment this line to add an emergency password unlock button
+    // createDirectPasswordButton();
+    
     // === CLERK AUTHENTICATION INTEGRATION ===
+    debug("Setting up Clerk event listener");
+    
     window.addEventListener("clerkLoaded", async () => {
+      debug("Clerk loaded event fired");
+      
       try {
         // Initialize UI based on auth state
         updateAuthUI();
@@ -269,11 +368,14 @@
         
         async function updateAuthUI() {
           try {
+            debug("Updating auth UI");
             const isSignedIn = await Clerk.isSignedIn();
+            debug("User signed in: " + isSignedIn);
             
             // Update auth buttons based on sign-in state
             if (isSignedIn) {
               const user = await Clerk.user;
+              debug("User email: " + user.emailAddresses[0].emailAddress);
               
               // Update user info
               userInfo.innerHTML = `
@@ -287,6 +389,7 @@
               
               // Add click handler for sign out
               document.getElementById('signout-button').addEventListener('click', () => {
+                debug("Sign out clicked");
                 Clerk.signOut().then(() => window.location.reload());
               });
               
@@ -294,6 +397,7 @@
               checkSubscriptionStatus();
             } else {
               // User not signed in - show sign in/up buttons
+              debug("User not signed in");
               userInfo.innerHTML = `<p>Not signed in</p>`;
               
               authButtons.innerHTML = `
@@ -303,131 +407,236 @@
               
               // Add click handlers
               document.getElementById('signin-button').addEventListener('click', () => {
+                debug("Sign in clicked");
                 Clerk.openSignIn();
               });
               
               document.getElementById('signup-button').addEventListener('click', () => {
+                debug("Sign up clicked");
                 Clerk.openSignUp();
               });
               
               // Update the form to encourage sign-in first
+              debug("Updating form to show sign-in button");
+              
+              // Keep password option but add sign-in button
               passwordForm.innerHTML = `
-                <button id="main-signin-button" class="unlock-button">Sign In to Subscribe</button>
+                <input 
+                  type="password" 
+                  id="password-input" 
+                  class="password-input" 
+                  placeholder="Enter Access Password" 
+                  required
+                >
+                <button type="submit" class="unlock-button">Unlock Content</button>
+                <button id="main-signin-button" style="margin-top: 10px;" class="unlock-button">Sign In to Subscribe</button>
               `;
               
+              // Re-attach event listener to new form
+              passwordForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const passwordInput = document.getElementById('password-input');
+                checkPassword(passwordInput.value);
+              });
+              
+              // Add sign-in button listener
               document.getElementById('main-signin-button').addEventListener('click', (e) => {
                 e.preventDefault();
+                debug("Main sign-in button clicked");
                 Clerk.openSignIn();
               });
             }
           } catch (error) {
+            debug("Error updating auth UI: " + error.message);
             console.error("Error updating auth UI:", error);
           }
         }
         
         async function checkSubscriptionStatus() {
           try {
+            debug("Getting Clerk token");
             const token = await Clerk.session.getToken();
-            const response = await fetch('/api/check-subscription', {
-              method: 'GET',
-              headers: {
-                'Authorization': `Bearer ${token}`
-              }
-            });
+            debug("Token obtained, checking subscription");
             
-            const data = await response.json();
-            
-            if (data.hasActiveSubscription) {
-              // User has active subscription, grant access
-              subscriptionStatus.textContent = "You have an active subscription!";
-              subscriptionStatus.style.color = "#4CAF50";
-              localStorage.setItem('siteAccess', 'granted');
-              
-              // Replace form with access button
-              passwordForm.innerHTML = `
-                <button id="access-button" class="unlock-button">Access Your Content</button>
-              `;
-              
-              document.getElementById('access-button').addEventListener('click', () => {
-                window.location.href = '/home/home-page.html';
+            try {
+              const response = await fetch('/api/check-subscription', {
+                method: 'GET',
+                headers: {
+                  'Authorization': `Bearer ${token}`
+                }
               });
-            } else {
-              // No active subscription, show subscription button
-              subscriptionStatus.textContent = "No active subscription found";
+              
+              debug("Subscription check response received");
+              const data = await response.json();
+              debug("Subscription status: " + (data.hasActiveSubscription ? "Active" : "Inactive"));
+              
+              if (data.hasActiveSubscription) {
+                // User has active subscription, grant access
+                subscriptionStatus.textContent = "You have an active subscription!";
+                subscriptionStatus.style.color = "#4CAF50";
+                localStorage.setItem('siteAccess', 'granted');
+                
+                // Replace form with access button
+                debug("Showing access button");
+                passwordForm.innerHTML = `
+                  <button id="access-button" class="unlock-button">Access Your Content</button>
+                `;
+                
+                document.getElementById('access-button').addEventListener('click', () => {
+                  window.location.href = '/home/home-page.html';
+                });
+              } else {
+                // No active subscription, show subscription button
+                subscriptionStatus.textContent = "No active subscription found";
+                
+                debug("Showing checkout button");
+                passwordForm.innerHTML = `
+                  <button id="checkout-button" class="unlock-button">Subscribe Now - $75/month</button>
+                `;
+                
+                // Set up checkout button
+                document.getElementById('checkout-button').addEventListener('click', async (e) => {
+                  e.preventDefault();
+                  debug("Checkout button clicked");
+                  createCheckoutSession();
+                });
+              }
+            } catch (error) {
+              debug("API error checking subscription: " + error.message);
+              
+              // Show subscription button anyway with error message
+              errorContainer.textContent = "Error checking subscription. You can still try to subscribe.";
+              errorContainer.style.opacity = '1';
               
               passwordForm.innerHTML = `
                 <button id="checkout-button" class="unlock-button">Subscribe Now - $75/month</button>
               `;
               
-              // Set up checkout button
               document.getElementById('checkout-button').addEventListener('click', async (e) => {
                 e.preventDefault();
                 createCheckoutSession();
               });
             }
           } catch (error) {
+            debug("Error checking subscription: " + error.message);
             console.error('Error checking subscription:', error);
-            errorContainer.textContent = 'Error checking subscription status';
+            errorContainer.textContent = 'Error checking subscription status: ' + error.message;
             errorContainer.style.opacity = '1';
           }
         }
         
         async function createCheckoutSession() {
           try {
+            debug("Creating checkout session");
             // Get JWT token from Clerk for authorization
             const token = await Clerk.session.getToken();
+            debug("Token obtained for checkout");
             
-            // Call backend API to create a Stripe checkout session
-            const response = await fetch('/api/create-checkout-session', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-              },
-              body: JSON.stringify({
-                priceId: 'prod_S4QyOGqvqXGYnN' // Your price ID
-              })
-            });
-            
-            const session = await response.json();
-            
-            if (session.error) {
-              throw new Error(session.error);
+            // Initialize Stripe
+            const stripe = getStripe();
+            if (!stripe) {
+              throw new Error("Stripe failed to initialize");
             }
             
-            // Redirect to Stripe Checkout
-            const result = await stripe.redirectToCheckout({
-              sessionId: session.id
-            });
-            
-            if (result.error) {
-              throw new Error(result.error.message);
+            try {
+              // Call backend API to create a Stripe checkout session
+              debug("Fetching checkout session from API");
+              const response = await fetch('/api/create-checkout-session', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                  priceId: 'prod_S4QyOGqvqXGYnN' // Your price ID
+                })
+              });
+              
+              debug("Checkout response received");
+              const session = await response.json();
+              
+              if (session.error) {
+                throw new Error(session.error);
+              }
+              
+              debug("Redirecting to Stripe Checkout: " + session.id);
+              // Redirect to Stripe Checkout
+              const result = await stripe.redirectToCheckout({
+                sessionId: session.id
+              });
+              
+              if (result.error) {
+                throw new Error(result.error.message);
+              }
+            } catch (error) {
+              debug("API error creating checkout: " + error.message);
+              throw new Error("API error: " + error.message);
             }
           } catch (error) {
+            debug("Error creating checkout session: " + error.message);
+            console.error('Error creating checkout session:', error);
             errorContainer.textContent = error.message;
             errorContainer.style.opacity = '1';
           }
         }
       } catch (error) {
+        debug("Authentication initialization error: " + error.message);
         console.error("Authentication initialization error:", error);
         errorContainer.textContent = "Authentication error. Please refresh the page.";
         errorContainer.style.opacity = '1';
       }
     });
-
-    // Add this at the bottom of your script
-console.log("Setting up Clerk event listener");
-
-// Check if Clerk fails to load
-setTimeout(() => {
-  console.log("Checking if Clerk loaded...");
-  if (typeof Clerk === 'undefined') {
-    console.error("Clerk failed to load after timeout");
-    // Show error in UI
-    errorContainer.textContent = "Failed to load authentication. Please refresh the page.";
-    errorContainer.style.opacity = '1';
-  }
-}, 5000);
+    
+    // Check if Clerk fails to load
+    setTimeout(() => {
+      debug("Checking if Clerk loaded...");
+      if (typeof Clerk === 'undefined') {
+        debug("Clerk failed to load after timeout");
+        // Show error in UI
+        errorContainer.textContent = "Failed to load authentication. Please retry.";
+        errorContainer.style.opacity = '1';
+        
+        // Ensure password form is intact
+        passwordForm.innerHTML = `
+          <input 
+            type="password" 
+            id="password-input" 
+            class="password-input" 
+            placeholder="Enter Access Password" 
+            required
+          >
+          <button type="submit" class="unlock-button">Unlock Content</button>
+          <button id="refresh-button" style="margin-top: 10px;" class="unlock-button">Refresh Page</button>
+        `;
+        
+        // Re-attach event listener
+        passwordForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          const passwordInput = document.getElementById('password-input');
+          checkPassword(passwordInput.value);
+        });
+        
+        // Add refresh button
+        document.getElementById('refresh-button').addEventListener('click', () => {
+          window.location.reload();
+        });
+      }
+    }, 5000);
+    
+    // Extra safety measure - check if home page exists
+    async function checkHomePage() {
+      try {
+        const response = await fetch('/home/home-page.html', { method: 'HEAD' });
+        if (!response.ok) {
+          debug("Warning: home-page.html not found (" + response.status + ")");
+        } else {
+          debug("home-page.html exists");
+        }
+      } catch (e) {
+        debug("Error checking home page: " + e.message);
+      }
+    }
+    checkHomePage();
   </script>
 </body>
 </html>
