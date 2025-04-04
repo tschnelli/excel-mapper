@@ -223,7 +223,12 @@
 
   <script>
     const CORRECT_PASSWORD = 'EasyWork2025!';
-    const stripe = Stripe('pk_live_51R7Ka5L8VVJU7H2uOZnrNwZkxlBia3ShFXZju3w2aECLc1e9oc3DlL68QbYrtFUQzrmOkTBOcWGpjXpjqD7EkE9c00JbFRiLeE');
+    function getStripe() {
+  if (!window.stripe) {
+    window.stripe = Stripe('pk_live_51R7Ka5L8VVJU7H2uOZnrNwZkxlBia3ShFXZju3w2aECLc1e9oc3DlL68QbYrtFUQzrmOkTBOcWGpjXpjqD7EkE9c00JbFRiLeE');
+  }
+  return window.stripe;
+}
     
     const authButtons = document.getElementById('auth-buttons');
     const userInfo = document.getElementById('user-info');
@@ -409,6 +414,20 @@
         errorContainer.style.opacity = '1';
       }
     });
+
+    // Add this at the bottom of your script
+console.log("Setting up Clerk event listener");
+
+// Check if Clerk fails to load
+setTimeout(() => {
+  console.log("Checking if Clerk loaded...");
+  if (typeof Clerk === 'undefined') {
+    console.error("Clerk failed to load after timeout");
+    // Show error in UI
+    errorContainer.textContent = "Failed to load authentication. Please refresh the page.";
+    errorContainer.style.opacity = '1';
+  }
+}, 5000);
   </script>
 </body>
 </html>
