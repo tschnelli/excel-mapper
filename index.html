@@ -1,9 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Subscription Required</title>
+<script
+  async
+  crossorigin="anonymous"
+  data-clerk-publishable-key="YOUR_CLERK_PUBLISHABLE_KEY"
+  src="https://clerk.dev/static/js/clerk.js">
+</script>
+    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -117,6 +125,9 @@
     </style>
 </head>
 <body>
+
+    <button onclick="Clerk.openSignIn()">Sign In</button>
+  <button onclick="Clerk.openSignUp()">Sign Up</button>
     <div class="paywall-container">
         <div class="logo">
             <span class="logo-stripe">Excel</span>
@@ -188,6 +199,24 @@
             }
         `;
         document.head.appendChild(style);
+
+
+     
+  window.addEventListener("clerkLoaded", async () => {
+    const user = await Clerk.user;
+    
+    if (!user) {
+      // Not signed in – show login prompt
+      console.log("User not signed in.");
+      Clerk.openSignIn();
+    } else {
+      // Signed in – reveal your app
+      console.log("Signed in as:", user.emailAddress);
+      document.getElementById("app").style.display = "block";
+    }
+  });
+
+
     </script>
 </body>
 </html>
