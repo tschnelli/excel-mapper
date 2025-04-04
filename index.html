@@ -242,190 +242,113 @@
       }
     });
 
-
-    // stripe-integration.js - Include this in your HTML file
-
-// Initialize Stripe with your publishable key
-const stripe = Stripe('pk_live_51R7Ka5L8VVJU7H2uOZnrNwZkxlBia3ShFXZju3w2aECLc1e9oc3DlL68QbYrtFUQzrmOkTBOcWGpjXpjqD7EkE9c00JbFRiLeE');
-
-// Wait for Clerk to be loaded
+// Clean up your frontend JavaScript for Clerk-Stripe integration
 window.addEventListener("clerkLoaded", async () => {
-  // Check if user is signed in
-  const user = await Clerk.user;
-  const subscribeButton = document.querySelector('.unlock-button');
-  
-  if (user) {
-    // User is signed in, replace password form with subscription button
-    const passwordForm = document.getElementById('password-form');
-    passwordForm.innerHTML = `
-      <button id="checkout-button" class="unlock-button">Subscribe Now</button>
-    `;
+  const stripe = Stripe('pk_live_51R7Ka5L8VVJU7H2uOZnrNwZkxlBia3ShFXZju3w2aECLc1e9oc3DlL68QbYrtFUQzrmOkTBOcWGpjXpjqD7EkE9c00JbFRiLeE');
+  const passwordForm = document.getElementById('password-form');
+  const errorContainer = document.getElementById('error-container');
+  const subscriptionStatus = document.getElementById('subscription-status');
+
+  try {
+    // Check if user is signed in
+    const user = await Clerk.user;
     
-    // Set up checkout button
-    document.getElementById('checkout-button').addEventListener('click', async (e) => {
-      e.preventDefault();
+    if (user) {
+      // User is signed in
+      console.log("Signed in as:", user.emailAddresses[0].emailAddress);
       
+      // Check if user already has active subscription
       try {
-        // Get JWT token from Clerk for authorization
         const token = await Clerk.session.getToken();
-        
-        // Call your backend API to create a Stripe checkout session
-        const response = await fetch('/api/create-checkout-session', {
-          method: 'POST',
+        const response = await fetch('/api/check-subscription', {
+          method: 'GET',
           headers: {
-            'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify({
-            priceId: 'prod_S4QyOGqvqXGYnN' // Replace with your actual price ID
-          })
+          }
         });
         
-        const session = await response.json();
+        const data = await response.json();
         
-        if (session.error) {
-          throw new Error(session.error);
-        }
-        
-        // Redirect to Stripe Checkout
-        const result = await stripe.redirectToCheckout({
-          sessionId: session.id
-        });
-        
-        if (result.error) {
-          throw new Error(result.error.message);
+        if (data.hasActiveSubscription) {
+          // User has active subscription, grant access
+          subscriptionStatus.textContent = "You have an active subscription!";
+          subscriptionStatus.style.color = "#4CAF50";
+          localStorage.setItem('siteAccess', 'granted');
+          
+          // Redirect after a short delay
+          setTimeout(() => {
+            window.location.href = '/home/home-page.html';
+          }, 1000);
+        } else {
+          // No active subscription, show subscription button
+          subscriptionStatus.textContent = "No active subscription found";
+          passwordForm.innerHTML = `
+            <button id="checkout-button" class="unlock-button">Subscribe Now - $75/month</button>
+          `;
+          
+          // Set up checkout button
+          document.getElementById('checkout-button').addEventListener('click', async (e) => {
+            e.preventDefault();
+            
+            try {
+              // Get JWT token from Clerk for authorization
+              const token = await Clerk.session.getToken();
+              
+              // Call backend API to create a Stripe checkout session
+              const response = await fetch('/api/create-checkout-session', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                  priceId: 'prod_S4QyOGqvqXGYnN' // Your price ID
+                })
+              });
+              
+              const session = await response.json();
+              
+              if (session.error) {
+                throw new Error(session.error);
+              }
+              
+              // Redirect to Stripe Checkout
+              const result = await stripe.redirectToCheckout({
+                sessionId: session.id
+              });
+              
+              if (result.error) {
+                throw new Error(result.error.message);
+              }
+            } catch (error) {
+              errorContainer.textContent = error.message;
+              errorContainer.style.opacity = '1';
+            }
+          });
         }
       } catch (error) {
-        const errorContainer = document.getElementById('error-container');
-        errorContainer.textContent = error.message;
+        console.error('Error checking subscription:', error);
+        errorContainer.textContent = 'Error checking subscription status';
         errorContainer.style.opacity = '1';
       }
-    });
-    
-    // Check if user already has active subscription
-    try {
-      const response = await fetch('/api/check-subscription', {
-        headers: {
-          'Authorization': `Bearer ${await Clerk.session.getToken()}`
-        }
+    } else {
+      // No user signed in, show login prompt
+      passwordForm.innerHTML = `
+        <button id="signin-button" class="unlock-button">Sign In to Subscribe</button>
+      `;
+      
+      document.getElementById('signin-button').addEventListener('click', (e) => {
+        e.preventDefault();
+        Clerk.openSignIn();
       });
-      
-      const data = await response.json();
-      
-      if (data.hasActiveSubscription) {
-        // User has active subscription, grant access
-        localStorage.setItem('siteAccess', 'granted');
-        window.location.href = '/home/home-page.html';
-      }
-    } catch (error) {
-      console.error('Error checking subscription:', error);
     }
-  } else {
-    // No user signed in, show login prompt
-    const errorContainer = document.getElementById('error-container');
-    errorContainer.textContent = 'Please sign in to subscribe';
+  } catch (error) {
+    console.error("Authentication error:", error);
+    errorContainer.textContent = "Authentication error. Please try again.";
     errorContainer.style.opacity = '1';
-    
-    // Make the button open Clerk sign-in
-    subscribeButton.textContent = 'Sign In to Subscribe';
-    subscribeButton.addEventListener('click', (e) => {
-      e.preventDefault();
-      Clerk.openSignIn();
-    });
   }
 });
 
-// API endpoint to create a Stripe checkout session (on your server)
-// File: /api/create-checkout-session.js
-/*
-import Stripe from 'stripe';
-import { clerkClient, getAuth } from '@clerk/nextjs/server';
-
-export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
-  try {
-    // Verify auth with Clerk
-    const { userId } = getAuth(req);
-    
-    if (!userId) {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
-    
-    // Get user from Clerk
-    const user = await clerkClient.users.getUser(userId);
-    
-    // Initialize Stripe
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-    
-    // Create checkout session
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      customer_email: user.emailAddresses[0].emailAddress,
-      client_reference_id: userId,
-      line_items: [
-        {
-          price: req.body.priceId, // Price ID from the request
-          quantity: 1,
-        },
-      ],
-      mode: 'subscription',
-      success_url: `${process.env.BASE_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.BASE_URL}/`,
-    });
-    
-    res.status(200).json({ id: session.id });
-  } catch (error) {
-    console.error('Error creating checkout session:', error);
-    res.status(500).json({ error: error.message });
-  }
-}
-*/
-
-// API endpoint to check subscription status (on your server)
-// File: /api/check-subscription.js
-/*
-import Stripe from 'stripe';
-import { clerkClient, getAuth } from '@clerk/nextjs/server';
-
-export default async function handler(req, res) {
-  if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
-  try {
-    // Verify auth with Clerk
-    const { userId } = getAuth(req);
-    
-    if (!userId) {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
-    
-    // Get user from Clerk to check private metadata
-    const user = await clerkClient.users.getUser(userId);
-    
-    // Check if user has subscription data in metadata
-    const subscription = user.privateMetadata.subscription;
-    
-    if (subscription && subscription.status === 'active') {
-      // Check if subscription is still valid
-      const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-      const stripeSubscription = await stripe.subscriptions.retrieve(subscription.stripeSubscriptionId);
-      
-      const hasActiveSubscription = stripeSubscription.status === 'active';
-      
-      return res.status(200).json({ hasActiveSubscription });
-    }
-    
-    return res.status(200).json({ hasActiveSubscription: false });
-  } catch (error) {
-    console.error('Error checking subscription:', error);
-    res.status(500).json({ error: error.message });
-  }
-}
-*/
   </script>
 </body>
 </html>
