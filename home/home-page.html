@@ -2375,6 +2375,7 @@
           
           // Mapping settings
           mappings,
+          suggestedMappings,
           
           // Multi-tab mapping settings
           enableMultiTabMapping,
@@ -2382,8 +2383,19 @@
           includeMainTab,
           mainTabSelection,
           categoryWorksheetMappings,
-          worksheetMappings
+          worksheetMappings,
+          activeTab,
+          activeWorksheet
         };
+        
+        // Save specific states based on current step
+        if (step === 2) {
+          // Save additional mapping details specific to step 2
+          newPreset.step2State = {
+            categoryValues,
+            mappingScores
+          };
+        }
         
         setPresets(prev => [...prev, newPreset]);
       };
@@ -2398,6 +2410,9 @@
         
         // Loading mapping settings
         setMappings(preset.mappings || {});
+        if (preset.suggestedMappings) {
+          setSuggestedMappings(preset.suggestedMappings);
+        }
         
         // Loading multi-tab mapping settings
         setEnableMultiTabMapping(preset.enableMultiTabMapping || false);
@@ -2407,14 +2422,51 @@
         setCategoryWorksheetMappings(preset.categoryWorksheetMappings || {});
         setWorksheetMappings(preset.worksheetMappings || {});
         
+        // Restore step 2 specific state if available
+        if (preset.step2State) {
+          if (preset.step2State.categoryValues) {
+            setCategoryValues(preset.step2State.categoryValues);
+          }
+          if (preset.step2State.mappingScores) {
+            setMappingScores(preset.step2State.mappingScores);
+          }
+        }
+        
+        // Set active tab and worksheet if they exist
+        if (preset.activeTab) {
+          setActiveTab(preset.activeTab);
+        } else if (preset.categoryWorksheetMappings && Object.keys(preset.categoryWorksheetMappings).length > 0) {
+          // Set to first category if none specified
+          setActiveTab(Object.keys(preset.categoryWorksheetMappings)[0]);
+        }
+        
+        if (preset.activeWorksheet) {
+          setActiveWorksheet(preset.activeWorksheet);
+        } else if (preset.activeTab && 
+                  preset.categoryWorksheetMappings && 
+                  preset.categoryWorksheetMappings[preset.activeTab] && 
+                  preset.categoryWorksheetMappings[preset.activeTab].length > 0) {
+          // Set to first worksheet for active category
+          setActiveWorksheet(preset.categoryWorksheetMappings[preset.activeTab][0]);
+        }
+        
         // If data is already loaded, we need to reset certain states
         if (data) {
           // If multi-tab mapping is enabled, refresh category values
           if (preset.enableMultiTabMapping && preset.categoryColumn) {
             if (data.data && data.data.length > 1) {
               const dataRows = data.data.slice(1);
-              updateCategoryValues(data.headers, dataRows, preset.categoryColumn);
+              // If we've restored category values from preset, use them directly
+              if (!preset.step2State || !preset.step2State.categoryValues) {
+                updateCategoryValues(data.headers, dataRows, preset.categoryColumn);
+              }
             }
+          }
+          
+          // Set suggestions reviewed to true to hide suggestion panel if mappings were already set
+          if (Object.keys(preset.mappings || {}).length > 0 || 
+              Object.keys(preset.worksheetMappings || {}).length > 0) {
+            setSuggestionsReviewed(true);
           }
         }
         
