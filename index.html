@@ -228,26 +228,7 @@
   </div>
 
   <script>
-    // Enable debug mode for troubleshooting
-    const DEBUG_MODE = true;
-    
-    function debug(message) {
-      if (!DEBUG_MODE) return;
-      
-      console.log(message);
-      
-      // Add to debug panel
-      const debugPanel = document.getElementById('debug-panel');
-      if (debugPanel) {
-        debugPanel.style.display = 'block';
-        const line = document.createElement('div');
-        line.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
-        debugPanel.appendChild(line);
-        debugPanel.scrollTop = debugPanel.scrollHeight;
-      }
-    }
-    
-    debug("Script started");
+  
     
     const CORRECT_PASSWORD = 'EasyWork2025!';
     
