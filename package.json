@@ -1,6 +1,7 @@
 {
   "name": "excel-mapper",
   "version": "1.0.0",
+  "type": "module",
   "description": "Excel Mapper with authentication and subscription",
   "main": "index.js",
   "scripts": {
