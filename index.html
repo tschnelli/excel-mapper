@@ -626,7 +626,7 @@
     // Extra safety measure - check if home page exists
     async function checkHomePage() {
       try {
-        const response = await fetch('/home/home-page.html', { method: 'HEAD' });
+        const response = await fetch('https://excel-mapper-mccii4voq-tylers-projects-72fe34ae.vercel.app/home/home-page.html', { method: 'HEAD' });
         if (!response.ok) {
           debug("Warning: home-page.html not found (" + response.status + ")");
         } else {
@@ -639,7 +639,7 @@
     checkHomePage();
   </script>
 
-  <button id="test-stripe-button" style="margin-top: 20px; background-color: #6772e5;">Test Stripe API</button>
+ 
 
 
 </body>
